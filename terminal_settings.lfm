@@ -1,0 +1,93 @@
+object TerminalSettings: TTerminalSettings
+  Left = 1520
+  Height = 561
+  Top = 250
+  Width = 803
+  Caption = 'System-Terminal Settings'
+  ChildSizing.EnlargeHorizontal = crsHomogenousChildResize
+  ChildSizing.EnlargeVertical = crsHomogenousChildResize
+  ChildSizing.Layout = cclLeftToRightThenTopToBottom
+  ChildSizing.ControlsPerLine = 1
+  ClientHeight = 561
+  ClientWidth = 803
+  OnClose = FormClose
+  OnShow = FormShow
+  object groupboxCrLf: TGroupBox
+    Left = 2
+    Height = 183
+    Top = 4
+    Width = 799
+    BorderSpacing.Left = 2
+    BorderSpacing.Top = 4
+    BorderSpacing.Right = 2
+    BorderSpacing.Bottom = 4
+    ClientHeight = 165
+    ClientWidth = 797
+    TabOrder = 0
+    object checkboxEnableCrLf: TCheckBox
+      Left = 8
+      Height = 173
+      Top = 4
+      Width = 781
+      Align = alClient
+      BorderSpacing.Left = 8
+      BorderSpacing.Top = 4
+      BorderSpacing.Right = 8
+      BorderSpacing.Bottom = 4
+      Caption = 'benutze ''CRLF'' anstatt ''CR'''
+      TabOrder = 0
+    end
+  end
+  object groupboxLocalEcho: TGroupBox
+    Left = 2
+    Height = 183
+    Top = 191
+    Width = 799
+    BorderSpacing.Left = 2
+    BorderSpacing.Top = 4
+    BorderSpacing.Right = 2
+    BorderSpacing.Bottom = 2
+    ClientHeight = 165
+    ClientWidth = 797
+    TabOrder = 1
+    object checkboxEnableLocalEcho: TCheckBox
+      Left = 8
+      Height = 173
+      Top = 4
+      Width = 781
+      Align = alClient
+      BorderSpacing.Left = 8
+      BorderSpacing.Top = 4
+      BorderSpacing.Right = 8
+      BorderSpacing.Bottom = 4
+      Caption = 'Lokales Terminal-Echo ein'
+      TabOrder = 0
+    end
+  end
+  object groupboxLogging: TGroupBox
+    Left = 2
+    Height = 181
+    Top = 378
+    Width = 799
+    BorderSpacing.Left = 2
+    BorderSpacing.Top = 4
+    BorderSpacing.Right = 2
+    BorderSpacing.Bottom = 2
+    ClientHeight = 163
+    ClientWidth = 797
+    TabOrder = 2
+    object checkboxEnableLogging: TCheckBox
+      Left = 8
+      Height = 171
+      Top = 4
+      Width = 781
+      Align = alClient
+      BorderSpacing.Left = 8
+      BorderSpacing.Top = 4
+      BorderSpacing.Right = 8
+      BorderSpacing.Bottom = 4
+      Caption = 'Terminal Ausgabe in Textdatei Schreiben'
+      TabOrder = 0
+    end
+  end
+end

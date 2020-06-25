@@ -1,0 +1,569 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <ProjectSession>
+    <Version Value="11"/>
+    <BuildModes Active="Debug"/>
+    <Units Count="48">
+      <Unit0>
+        <Filename Value="Z180SoftSystem.lpr"/>
+        <IsPartOfProject Value="True"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="2"/>
+        <CursorPos X="5" Y="37"/>
+        <UsageCount Value="200"/>
+      </Unit0>
+      <Unit1>
+        <Filename Value="main_window.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="MainWindow"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="Main_Window"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="1"/>
+        <TopLine Value="13"/>
+        <CursorPos X="25" Y="13"/>
+        <UsageCount Value="200"/>
+        <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
+      </Unit1>
+      <Unit2>
+        <Filename Value="cpu_register.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="CpuRegister"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="Cpu_Register"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="239"/>
+        <CursorPos X="37" Y="264"/>
+        <UsageCount Value="200"/>
+      </Unit2>
+      <Unit3>
+        <Filename Value="system_memory.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="System_Memory"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="134"/>
+        <CursorPos X="86" Y="141"/>
+        <UsageCount Value="200"/>
+      </Unit3>
+      <Unit4>
+        <Filename Value="memory_editor.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="MemoryEditor"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="Memory_Editor"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="41"/>
+        <CursorPos X="37" Y="71"/>
+        <UsageCount Value="200"/>
+      </Unit4>
+      <Unit5>
+        <Filename Value="system_settings.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="SystemSettings"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="DataModule"/>
+        <UnitName Value="System_Settings"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="96"/>
+        <CursorPos X="27" Y="115"/>
+        <UsageCount Value="200"/>
+      </Unit5>
+      <Unit6>
+        <Filename Value="z180_cpu.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="Z180_CPU"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="256"/>
+        <CursorPos X="78" Y="519"/>
+        <UsageCount Value="200"/>
+      </Unit6>
+      <Unit7>
+        <Filename Value="system_terminal.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="System_Terminal"/>
+        <TopLine Value="737"/>
+        <CursorPos X="20" Y="3"/>
+        <UsageCount Value="200"/>
+        <Loaded Value="True"/>
+      </Unit7>
+      <Unit8>
+        <Filename Value="cpu_io_register.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="CpuIoRegister"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="Cpu_Io_Register"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="291"/>
+        <CursorPos X="5" Y="365"/>
+        <UsageCount Value="200"/>
+      </Unit8>
+      <Unit9>
+        <Filename Value="system_fdc.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="System_Fdc"/>
+        <EditorIndex Value="2"/>
+        <CursorPos X="20" Y="3"/>
+        <UsageCount Value="200"/>
+        <Loaded Value="True"/>
+      </Unit9>
+      <Unit10>
+        <Filename Value="memory_settings.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="MemorySettings"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="Memory_Settings"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="117"/>
+        <CursorPos X="5" Y="153"/>
+        <UsageCount Value="145"/>
+      </Unit10>
+      <Unit11>
+        <Filename Value="system_inout.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="System_InOut"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="82"/>
+        <CursorPos X="49" Y="119"/>
+        <UsageCount Value="132"/>
+      </Unit11>
+      <Unit12>
+        <Filename Value="fdd_settings.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="FddSettings"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="Fdd_Settings"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="132"/>
+        <CursorPos X="27" Y="135"/>
+        <UsageCount Value="132"/>
+      </Unit12>
+      <Unit13>
+        <Filename Value="terminal_settings.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="TerminalSettings"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="Terminal_Settings"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="49"/>
+        <CursorPos X="28" Y="70"/>
+        <UsageCount Value="104"/>
+      </Unit13>
+      <Unit14>
+        <Filename Value="about_window.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="AboutWindow"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="About_Window"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="40"/>
+        <CursorPos X="74" Y="75"/>
+        <UsageCount Value="101"/>
+      </Unit14>
+      <Unit15>
+        <Filename Value="version_info.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="Version_Info"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="57"/>
+        <CursorPos X="20" Y="75"/>
+        <UsageCount Value="99"/>
+      </Unit15>
+      <Unit16>
+        <Filename Value="system_hdc.pas"/>
+        <UnitName Value="System_Hdc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="80"/>
+        <CursorPos X="34" Y="117"/>
+        <UsageCount Value="26"/>
+      </Unit16>
+      <Unit17>
+        <Filename Value="hdd_settings.pas"/>
+        <ComponentName Value="HddSettings"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="Hdd_Settings"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="30"/>
+        <CursorPos X="50" Y="65"/>
+        <UsageCount Value="25"/>
+      </Unit17>
+      <Unit18>
+        <Filename Value="system_sio.pas"/>
+        <UnitName Value="System_Sio"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="63"/>
+        <CursorPos X="13" Y="89"/>
+        <UsageCount Value="195"/>
+      </Unit18>
+      <Unit19>
+        <Filename Value="system_pio.pas"/>
+        <UnitName Value="System_Pio"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="102"/>
+        <CursorPos X="21" Y="134"/>
+        <UsageCount Value="195"/>
+      </Unit19>
+      <Unit20>
+        <Filename Value="/usr/share/lazarus/2.0.6/lcl/include/control.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="4258"/>
+        <CursorPos Y="4275"/>
+        <UsageCount Value="5"/>
+      </Unit20>
+      <Unit21>
+        <Filename Value="/usr/share/lazarus/2.0.6/lcl/include/buttoncontrol.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="9"/>
+        <CursorPos Y="22"/>
+        <UsageCount Value="5"/>
+      </Unit21>
+      <Unit22>
+        <Filename Value="/usr/share/lazarus/2.0.6/lcl/include/buttons.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="155"/>
+        <CursorPos Y="170"/>
+        <UsageCount Value="5"/>
+      </Unit22>
+      <Unit23>
+        <Filename Value="/usr/share/lazarus/2.0.6/lcl/include/application.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="1400"/>
+        <CursorPos Y="1419"/>
+        <UsageCount Value="9"/>
+      </Unit23>
+      <Unit24>
+        <Filename Value="/usr/share/lazarus/2.0.6/lcl/lclclasses.pp"/>
+        <UnitName Value="LCLClasses"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="82"/>
+        <CursorPos Y="95"/>
+        <UsageCount Value="5"/>
+      </Unit24>
+      <Unit25>
+        <Filename Value="/usr/share/lazarus/2.0.6/lcl/include/customform.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="2259"/>
+        <CursorPos Y="2279"/>
+        <UsageCount Value="9"/>
+      </Unit25>
+      <Unit26>
+        <Filename Value="/usr/share/lazarus/2.0.6/lcl/include/scrollingwincontrol.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="220"/>
+        <CursorPos Y="235"/>
+        <UsageCount Value="5"/>
+      </Unit26>
+      <Unit27>
+        <Filename Value="/usr/share/lazarus/2.0.6/lcl/include/customcontrol.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="68"/>
+        <CursorPos Y="83"/>
+        <UsageCount Value="5"/>
+      </Unit27>
+      <Unit28>
+        <Filename Value="/usr/share/lazarus/2.0.6/lcl/include/wincontrol.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="6250"/>
+        <CursorPos Y="6267"/>
+        <UsageCount Value="5"/>
+      </Unit28>
+      <Unit29>
+        <Filename Value="/usr/share/lazarus/2.0.6/lcl/widgetset/wscontrols.pp"/>
+        <UnitName Value="WSControls"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="468"/>
+        <CursorPos Y="490"/>
+        <UsageCount Value="5"/>
+      </Unit29>
+      <Unit30>
+        <Filename Value="/usr/share/lazarus/2.0.6/lcl/lresources.pp"/>
+        <UnitName Value="LResources"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="669"/>
+        <CursorPos Y="684"/>
+        <UsageCount Value="5"/>
+      </Unit30>
+      <Unit31>
+        <Filename Value="z180cpu.pas"/>
+        <UnitName Value="Z180Cpu"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos X="11"/>
+        <UsageCount Value="5"/>
+      </Unit31>
+      <Unit32>
+        <Filename Value="../MainForm_EMUZ80.pas"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="1285"/>
+        <CursorPos X="41" Y="694"/>
+        <UsageCount Value="9"/>
+      </Unit32>
+      <Unit33>
+        <Filename Value="/usr/share/lazarus/2.0.6/lcl/graphics.pp"/>
+        <UnitName Value="Graphics"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="49"/>
+        <CursorPos X="3" Y="66"/>
+        <UsageCount Value="9"/>
+      </Unit33>
+      <Unit34>
+        <Filename Value="/usr/share/lazarus/2.0.6/lcl/extctrls.pp"/>
+        <UnitName Value="ExtCtrls"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="493"/>
+        <CursorPos X="17" Y="532"/>
+        <UsageCount Value="9"/>
+      </Unit34>
+      <Unit35>
+        <Filename Value="/usr/share/lazarus/2.0.6/lcl/include/customimage.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="26"/>
+        <CursorPos Y="46"/>
+        <UsageCount Value="9"/>
+      </Unit35>
+      <Unit36>
+        <Filename Value="/usr/share/lazarus/2.0.6/lcl/customtimer.pas"/>
+        <UnitName Value="CustomTimer"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="82"/>
+        <CursorPos Y="103"/>
+        <UsageCount Value="9"/>
+      </Unit36>
+      <Unit37>
+        <Filename Value="/usr/share/lazarus/2.0.6/lcl/interfaces/gtk2/gtk2widgetset.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="2682"/>
+        <CursorPos Y="2703"/>
+        <UsageCount Value="9"/>
+      </Unit37>
+      <Unit38>
+        <Filename Value="/usr/share/lazarus/2.0.6/lcl/interfaces/gtk2/gtk2devicecontext.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="1324"/>
+        <CursorPos Y="1358"/>
+        <UsageCount Value="10"/>
+      </Unit38>
+      <Unit39>
+        <Filename Value="/usr/share/lazarus/2.0.6/lcl/interfaces/gtk2/gtk2winapi.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="3899"/>
+        <CursorPos Y="3920"/>
+        <UsageCount Value="10"/>
+      </Unit39>
+      <Unit40>
+        <Filename Value="/usr/share/lazarus/2.0.6/lcl/interfaces/gtk2/gtk2lclintf.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="165"/>
+        <CursorPos Y="184"/>
+        <UsageCount Value="10"/>
+      </Unit40>
+      <Unit41>
+        <Filename Value="/usr/share/lazarus/2.0.6/lcl/include/lclintf.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="134"/>
+        <CursorPos Y="153"/>
+        <UsageCount Value="10"/>
+      </Unit41>
+      <Unit42>
+        <Filename Value="/usr/share/lazarus/2.0.6/lcl/include/canvas.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="1766"/>
+        <CursorPos Y="1785"/>
+        <UsageCount Value="10"/>
+      </Unit42>
+      <Unit43>
+        <Filename Value="/usr/share/lazarus/2.0.6/lcl/controls.pp"/>
+        <UnitName Value="Controls"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="1729"/>
+        <CursorPos X="14" Y="1747"/>
+        <UsageCount Value="1"/>
+      </Unit43>
+      <Unit44>
+        <Filename Value="/usr/share/lazarus/2.0.8/lcl/controls.pp"/>
+        <UnitName Value="Controls"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="97"/>
+        <CursorPos X="6" Y="19"/>
+        <UsageCount Value="2"/>
+      </Unit44>
+      <Unit45>
+        <Filename Value="/usr/share/lazarus/2.0.8/lcl/include/customform.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="16"/>
+        <CursorPos Y="31"/>
+        <UsageCount Value="5"/>
+      </Unit45>
+      <Unit46>
+        <Filename Value="/usr/share/lazarus/2.0.8/components/lazutils/laztracer.pas"/>
+        <UnitName Value="LazTracer"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="36"/>
+        <CursorPos Y="50"/>
+        <UsageCount Value="8"/>
+      </Unit46>
+      <Unit47>
+        <Filename Value="Veröffentlicht/Term_Vorlage.pas"/>
+        <UnitName Value="MainForm_EMUZ80"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="787"/>
+        <CursorPos X="31" Y="2040"/>
+        <UsageCount Value="7"/>
+      </Unit47>
+    </Units>
+    <JumpHistory Count="30" HistoryIndex="29">
+      <Position1>
+        <Filename Value="system_terminal.pas"/>
+        <Caret Line="255" Column="15" TopLine="247"/>
+      </Position1>
+      <Position2>
+        <Filename Value="system_terminal.pas"/>
+        <Caret Line="256" Column="29" TopLine="239"/>
+      </Position2>
+      <Position3>
+        <Filename Value="system_terminal.pas"/>
+        <Caret Line="257" Column="32" TopLine="233"/>
+      </Position3>
+      <Position4>
+        <Filename Value="system_terminal.pas"/>
+        <Caret Line="256" Column="32" TopLine="240"/>
+      </Position4>
+      <Position5>
+        <Filename Value="system_terminal.pas"/>
+        <Caret Line="107" Column="35" TopLine="93"/>
+      </Position5>
+      <Position6>
+        <Filename Value="system_terminal.pas"/>
+        <Caret Line="694" Column="43" TopLine="674"/>
+      </Position6>
+      <Position7>
+        <Filename Value="system_terminal.pas"/>
+        <Caret Line="659" Column="29" TopLine="642"/>
+      </Position7>
+      <Position8>
+        <Filename Value="system_terminal.pas"/>
+        <Caret Line="973" Column="12" TopLine="963"/>
+      </Position8>
+      <Position9>
+        <Filename Value="system_terminal.pas"/>
+        <Caret Line="982" Column="19" TopLine="963"/>
+      </Position9>
+      <Position10>
+        <Filename Value="system_terminal.pas"/>
+        <Caret Line="74" Column="30" TopLine="70"/>
+      </Position10>
+      <Position11>
+        <Filename Value="system_terminal.pas"/>
+        <Caret Line="661" Column="32" TopLine="654"/>
+      </Position11>
+      <Position12>
+        <Filename Value="system_terminal.pas"/>
+        <Caret Line="74" Column="43" TopLine="72"/>
+      </Position12>
+      <Position13>
+        <Filename Value="system_terminal.pas"/>
+        <Caret Line="734" Column="17" TopLine="702"/>
+      </Position13>
+      <Position14>
+        <Filename Value="system_terminal.pas"/>
+        <Caret Line="655" Column="30" TopLine="625"/>
+      </Position14>
+      <Position15>
+        <Filename Value="system_terminal.pas"/>
+        <Caret Line="712" Column="35" TopLine="705"/>
+      </Position15>
+      <Position16>
+        <Filename Value="system_terminal.pas"/>
+        <Caret Line="655" Column="31" TopLine="639"/>
+      </Position16>
+      <Position17>
+        <Filename Value="system_terminal.pas"/>
+        <Caret Line="778" Column="35" TopLine="762"/>
+      </Position17>
+      <Position18>
+        <Filename Value="system_terminal.pas"/>
+        <Caret Line="655" Column="30" TopLine="637"/>
+      </Position18>
+      <Position19>
+        <Filename Value="system_terminal.pas"/>
+        <Caret Line="991" Column="34" TopLine="969"/>
+      </Position19>
+      <Position20>
+        <Filename Value="system_terminal.pas"/>
+        <Caret Line="992" Column="39" TopLine="969"/>
+      </Position20>
+      <Position21>
+        <Filename Value="system_terminal.pas"/>
+        <Caret Line="993" Column="44" TopLine="969"/>
+      </Position21>
+      <Position22>
+        <Filename Value="system_terminal.pas"/>
+        <Caret Line="994" Column="44" TopLine="969"/>
+      </Position22>
+      <Position23>
+        <Filename Value="system_terminal.pas"/>
+        <Caret Line="885" TopLine="865"/>
+      </Position23>
+      <Position24>
+        <Filename Value="system_terminal.pas"/>
+        <Caret Line="871" Column="50" TopLine="857"/>
+      </Position24>
+      <Position25>
+        <Filename Value="system_terminal.pas"/>
+        <Caret Line="762" TopLine="755"/>
+      </Position25>
+      <Position26>
+        <Filename Value="system_terminal.pas"/>
+        <Caret Line="756" Column="112" TopLine="755"/>
+      </Position26>
+      <Position27>
+        <Filename Value="system_terminal.pas"/>
+        <Caret Line="888" Column="44" TopLine="869"/>
+      </Position27>
+      <Position28>
+        <Filename Value="system_terminal.pas"/>
+        <Caret Line="326" Column="31" TopLine="300"/>
+      </Position28>
+      <Position29>
+        <Filename Value="system_terminal.pas"/>
+        <Caret Line="327" Column="43" TopLine="304"/>
+      </Position29>
+      <Position30>
+        <Filename Value="system_terminal.pas"/>
+        <Caret Line="986" TopLine="975"/>
+      </Position30>
+    </JumpHistory>
+    <RunParams>
+      <FormatVersion Value="2"/>
+      <Modes Count="0" ActiveMode=""/>
+    </RunParams>
+  </ProjectSession>
+  <Debugging>
+    <Watches Count="5">
+      <Item1>
+        <Expression Value="readValue"/>
+      </Item1>
+      <Item2>
+        <Expression Value="ioITC.Value"/>
+      </Item2>
+      <Item3>
+        <Expression Value="regPC.Value"/>
+        <DisplayStyle Value="wdfHex"/>
+      </Item3>
+      <Item4>
+        <Expression Value="testwidth"/>
+      </Item4>
+      <Item5>
+        <Expression Value="testheight"/>
+      </Item5>
+    </Watches>
+  </Debugging>
+</CONFIG>

@@ -1,0 +1,573 @@
+object FddSettings: TFddSettings
+  Left = 1520
+  Height = 610
+  Top = 250
+  Width = 1079
+  Caption = 'Disketten Laufwerke'
+  ChildSizing.VerticalSpacing = 8
+  ChildSizing.EnlargeHorizontal = crsHomogenousChildResize
+  ChildSizing.EnlargeVertical = crsHomogenousChildResize
+  ChildSizing.Layout = cclLeftToRightThenTopToBottom
+  ChildSizing.ControlsPerLine = 1
+  ClientHeight = 610
+  ClientWidth = 1079
+  OnClose = FormClose
+  OnShow = FormShow
+  object groupboxFdd0: TGroupBox
+    Left = 4
+    Height = 297
+    Top = 4
+    Width = 1071
+    BorderSpacing.Left = 4
+    BorderSpacing.Top = 4
+    BorderSpacing.Right = 4
+    Caption = ' Disketten Laufwerk 0 '
+    ChildSizing.LeftRightSpacing = 4
+    ChildSizing.VerticalSpacing = 4
+    ChildSizing.EnlargeHorizontal = crsHomogenousChildResize
+    ChildSizing.EnlargeVertical = crsHomogenousChildResize
+    ChildSizing.Layout = cclLeftToRightThenTopToBottom
+    ChildSizing.ControlsPerLine = 1
+    ClientHeight = 279
+    ClientWidth = 1069
+    TabOrder = 0
+    object groupboxFdd0Geometrie: TGroupBox
+      Left = 4
+      Height = 136
+      Top = 0
+      Width = 1061
+      Caption = ' Geometrie '
+      ChildSizing.EnlargeHorizontal = crsHomogenousChildResize
+      ChildSizing.EnlargeVertical = crsHomogenousChildResize
+      ChildSizing.Layout = cclLeftToRightThenTopToBottom
+      ChildSizing.ControlsPerLine = 5
+      ClientHeight = 118
+      ClientWidth = 1059
+      TabOrder = 0
+      object panelFdd0Sides: TPanel
+        Left = 4
+        Height = 114
+        Top = 0
+        Width = 205
+        BorderSpacing.Left = 4
+        BorderSpacing.Bottom = 4
+        BevelOuter = bvNone
+        ChildSizing.EnlargeHorizontal = crsHomogenousChildResize
+        ChildSizing.EnlargeVertical = crsHomogenousChildResize
+        ChildSizing.Layout = cclLeftToRightThenTopToBottom
+        ChildSizing.ControlsPerLine = 2
+        ClientHeight = 114
+        ClientWidth = 205
+        TabOrder = 0
+        object labelFdd0Sides: TLabel
+          Left = 0
+          Height = 114
+          Top = 0
+          Width = 71
+          AutoSize = False
+          Caption = ' Seiten: '
+          Layout = tlCenter
+          ParentColor = False
+        end
+        object comboboxFdd0Sides: TComboBox
+          Left = 71
+          Height = 114
+          Top = 0
+          Width = 126
+          ArrowKeysTraverseList = False
+          AutoSelect = False
+          BorderSpacing.Right = 8
+          ItemHeight = 0
+          ItemIndex = 1
+          Items.Strings = (
+            '1'
+            '2'
+          )
+          OnChange = onFdd0GeometryChange
+          Style = csDropDownList
+          TabOrder = 0
+          Text = '2'
+        end
+      end
+      object panelFdd0Tracks: TPanel
+        Left = 209
+        Height = 114
+        Top = 0
+        Width = 210
+        BorderSpacing.Bottom = 4
+        BevelOuter = bvNone
+        ChildSizing.EnlargeHorizontal = crsHomogenousChildResize
+        ChildSizing.EnlargeVertical = crsHomogenousChildResize
+        ChildSizing.Layout = cclLeftToRightThenTopToBottom
+        ChildSizing.ControlsPerLine = 2
+        ClientHeight = 114
+        ClientWidth = 210
+        TabOrder = 1
+        object labelFdd0Tracks: TLabel
+          Left = 0
+          Height = 114
+          Top = 0
+          Width = 76
+          AutoSize = False
+          Caption = ' Spuren: '
+          Layout = tlCenter
+          ParentColor = False
+        end
+        object comboboxFdd0Tracks: TComboBox
+          Left = 76
+          Height = 114
+          Top = 0
+          Width = 126
+          ArrowKeysTraverseList = False
+          AutoSelect = False
+          BorderSpacing.Right = 8
+          ItemHeight = 0
+          ItemIndex = 0
+          Items.Strings = (
+            '40'
+            '80'
+          )
+          OnChange = onFdd0GeometryChange
+          Style = csDropDownList
+          TabOrder = 0
+          Text = '40'
+        end
+      end
+      object panelFdd0Sectors: TPanel
+        Left = 419
+        Height = 114
+        Top = 0
+        Width = 220
+        BorderSpacing.Bottom = 4
+        BevelOuter = bvNone
+        ChildSizing.EnlargeHorizontal = crsHomogenousChildResize
+        ChildSizing.EnlargeVertical = crsHomogenousChildResize
+        ChildSizing.Layout = cclLeftToRightThenTopToBottom
+        ChildSizing.ControlsPerLine = 2
+        ClientHeight = 114
+        ClientWidth = 220
+        TabOrder = 2
+        object labelFdd0Sectors: TLabel
+          Left = 0
+          Height = 114
+          Top = 0
+          Width = 86
+          AutoSize = False
+          Caption = ' Sektoren: '
+          Layout = tlCenter
+          ParentColor = False
+        end
+        object comboboxFdd0Sectors: TComboBox
+          Left = 86
+          Height = 114
+          Top = 0
+          Width = 126
+          ArrowKeysTraverseList = False
+          AutoSelect = False
+          BorderSpacing.Right = 8
+          ItemHeight = 0
+          ItemIndex = 0
+          Items.Strings = (
+            '8'
+            '9'
+            '15'
+            '18'
+          )
+          OnChange = onFdd0GeometryChange
+          Style = csDropDownList
+          TabOrder = 0
+          Text = '8'
+        end
+      end
+      object panelFdd0SectorBytes: TPanel
+        Left = 639
+        Height = 114
+        Top = 0
+        Width = 241
+        BorderSpacing.Bottom = 4
+        BevelOuter = bvNone
+        ChildSizing.EnlargeHorizontal = crsHomogenousChildResize
+        ChildSizing.EnlargeVertical = crsHomogenousChildResize
+        ChildSizing.Layout = cclLeftToRightThenTopToBottom
+        ChildSizing.ControlsPerLine = 2
+        ClientHeight = 114
+        ClientWidth = 241
+        TabOrder = 3
+        object labelFdd0SectorBytes: TLabel
+          Left = 0
+          Height = 114
+          Top = 0
+          Width = 107
+          AutoSize = False
+          Caption = ' Bytes/Sektor: '
+          Layout = tlCenter
+          ParentColor = False
+        end
+        object comboboxFdd0SectorBytes: TComboBox
+          Left = 107
+          Height = 114
+          Top = 0
+          Width = 126
+          ArrowKeysTraverseList = False
+          AutoSelect = False
+          BorderSpacing.Right = 8
+          ItemHeight = 0
+          ItemIndex = 0
+          Items.Strings = (
+            '128'
+            '256'
+            '512'
+          )
+          OnChange = onFdd0GeometryChange
+          Style = csDropDownList
+          TabOrder = 0
+          Text = '128'
+        end
+      end
+      object panelFdd0Size: TPanel
+        Left = 880
+        Height = 114
+        Top = 0
+        Width = 175
+        BorderSpacing.Right = 4
+        BorderSpacing.Bottom = 4
+        BevelOuter = bvNone
+        ChildSizing.EnlargeHorizontal = crsHomogenousChildResize
+        ChildSizing.EnlargeVertical = crsHomogenousChildResize
+        ChildSizing.Layout = cclLeftToRightThenTopToBottom
+        ChildSizing.ControlsPerLine = 2
+        ClientHeight = 114
+        ClientWidth = 175
+        TabOrder = 4
+        object labelFdd0Size: TLabel
+          Left = 0
+          Height = 114
+          Top = 0
+          Width = 70
+          AutoSize = False
+          Caption = ' Größe: '
+          Layout = tlCenter
+          ParentColor = False
+        end
+        object editFdd0Size: TEdit
+          Left = 70
+          Height = 114
+          Top = 0
+          Width = 105
+          Alignment = taRightJustify
+          AutoSize = False
+          Color = cl3DLight
+          ReadOnly = True
+          TabOrder = 0
+        end
+      end
+    end
+    object groupboxFdd0Image: TGroupBox
+      Left = 4
+      Height = 135
+      Top = 140
+      Width = 1061
+      BorderSpacing.Bottom = 4
+      Caption = ' Image Datei '
+      ClientHeight = 117
+      ClientWidth = 1059
+      TabOrder = 1
+      object editFdd0ImageFile: TFileNameEdit
+        Left = 4
+        Height = 113
+        Top = 0
+        Width = 1051
+        DialogOptions = [ofPathMustExist, ofFileMustExist, ofNoNetworkButton, ofEnableSizing, ofViewDetail]
+        Filter = 'Disketten Image Dateien (*.fdd , *.img)|*.fdd;*.FDD;*.img;*.IMG|Alle Dateien (*.*)|*.*'
+        FilterIndex = 0
+        HideDirectories = False
+        ButtonWidth = 23
+        NumGlyphs = 1
+        Align = alClient
+        BorderSpacing.Left = 4
+        BorderSpacing.Right = 4
+        BorderSpacing.Bottom = 4
+        MaxLength = 0
+        TabOrder = 0
+      end
+    end
+  end
+  object groupboxFdd1: TGroupBox
+    Left = 4
+    Height = 297
+    Top = 309
+    Width = 1071
+    BorderSpacing.Left = 4
+    BorderSpacing.Right = 4
+    BorderSpacing.Bottom = 4
+    Caption = ' Disketten Laufwerk 1 '
+    ChildSizing.LeftRightSpacing = 4
+    ChildSizing.VerticalSpacing = 4
+    ChildSizing.EnlargeHorizontal = crsHomogenousChildResize
+    ChildSizing.EnlargeVertical = crsHomogenousChildResize
+    ChildSizing.Layout = cclLeftToRightThenTopToBottom
+    ChildSizing.ControlsPerLine = 1
+    ClientHeight = 279
+    ClientWidth = 1069
+    TabOrder = 1
+    object groupboxFdd1Geometrie: TGroupBox
+      Left = 4
+      Height = 136
+      Top = 0
+      Width = 1061
+      Caption = ' Geometrie '
+      ChildSizing.EnlargeHorizontal = crsHomogenousChildResize
+      ChildSizing.EnlargeVertical = crsHomogenousChildResize
+      ChildSizing.Layout = cclLeftToRightThenTopToBottom
+      ChildSizing.ControlsPerLine = 5
+      ClientHeight = 118
+      ClientWidth = 1059
+      TabOrder = 0
+      object panelFdd1Sides: TPanel
+        Left = 4
+        Height = 114
+        Top = 0
+        Width = 205
+        BorderSpacing.Left = 4
+        BorderSpacing.Bottom = 4
+        BevelOuter = bvNone
+        ChildSizing.EnlargeHorizontal = crsHomogenousChildResize
+        ChildSizing.EnlargeVertical = crsHomogenousChildResize
+        ChildSizing.Layout = cclLeftToRightThenTopToBottom
+        ChildSizing.ControlsPerLine = 2
+        ClientHeight = 114
+        ClientWidth = 205
+        TabOrder = 0
+        object labelFdd1Sides: TLabel
+          Left = 0
+          Height = 114
+          Top = 0
+          Width = 71
+          AutoSize = False
+          Caption = ' Seiten: '
+          Layout = tlCenter
+          ParentColor = False
+        end
+        object comboboxFdd1Sides: TComboBox
+          Left = 71
+          Height = 114
+          Top = 0
+          Width = 126
+          ArrowKeysTraverseList = False
+          AutoSelect = False
+          BorderSpacing.Right = 8
+          ItemHeight = 0
+          ItemIndex = 1
+          Items.Strings = (
+            '1'
+            '2'
+          )
+          OnChange = onFdd1GeometryChange
+          Style = csDropDownList
+          TabOrder = 0
+          Text = '2'
+        end
+      end
+      object panelFdd1Tracks: TPanel
+        Left = 209
+        Height = 114
+        Top = 0
+        Width = 210
+        BorderSpacing.Bottom = 4
+        BevelOuter = bvNone
+        ChildSizing.EnlargeHorizontal = crsHomogenousChildResize
+        ChildSizing.EnlargeVertical = crsHomogenousChildResize
+        ChildSizing.Layout = cclLeftToRightThenTopToBottom
+        ChildSizing.ControlsPerLine = 2
+        ClientHeight = 114
+        ClientWidth = 210
+        TabOrder = 1
+        object labelFdd1Tracks: TLabel
+          Left = 0
+          Height = 114
+          Top = 0
+          Width = 76
+          AutoSize = False
+          Caption = ' Spuren: '
+          Layout = tlCenter
+          ParentColor = False
+        end
+        object comboboxFdd1Tracks: TComboBox
+          Left = 76
+          Height = 114
+          Top = 0
+          Width = 126
+          ArrowKeysTraverseList = False
+          AutoSelect = False
+          BorderSpacing.Right = 8
+          ItemHeight = 0
+          ItemIndex = 0
+          Items.Strings = (
+            '40'
+            '80'
+          )
+          OnChange = onFdd1GeometryChange
+          Style = csDropDownList
+          TabOrder = 0
+          Text = '40'
+        end
+      end
+      object panelFdd1Sectors: TPanel
+        Left = 419
+        Height = 114
+        Top = 0
+        Width = 220
+        BorderSpacing.Bottom = 4
+        BevelOuter = bvNone
+        ChildSizing.EnlargeHorizontal = crsHomogenousChildResize
+        ChildSizing.EnlargeVertical = crsHomogenousChildResize
+        ChildSizing.Layout = cclLeftToRightThenTopToBottom
+        ChildSizing.ControlsPerLine = 2
+        ClientHeight = 114
+        ClientWidth = 220
+        TabOrder = 2
+        object labelFdd1Sectors: TLabel
+          Left = 0
+          Height = 114
+          Top = 0
+          Width = 86
+          AutoSize = False
+          Caption = ' Sektoren: '
+          Layout = tlCenter
+          ParentColor = False
+        end
+        object comboboxFdd1Sectors: TComboBox
+          Left = 86
+          Height = 114
+          Top = 0
+          Width = 126
+          ArrowKeysTraverseList = False
+          AutoSelect = False
+          BorderSpacing.Right = 8
+          ItemHeight = 0
+          ItemIndex = 0
+          Items.Strings = (
+            '8'
+            '9'
+            '15'
+            '18'
+          )
+          OnChange = onFdd1GeometryChange
+          Style = csDropDownList
+          TabOrder = 0
+          Text = '8'
+        end
+      end
+      object panelFdd1SectorBytes: TPanel
+        Left = 639
+        Height = 114
+        Top = 0
+        Width = 241
+        BorderSpacing.Bottom = 4
+        BevelOuter = bvNone
+        ChildSizing.EnlargeHorizontal = crsHomogenousChildResize
+        ChildSizing.EnlargeVertical = crsHomogenousChildResize
+        ChildSizing.Layout = cclLeftToRightThenTopToBottom
+        ChildSizing.ControlsPerLine = 2
+        ClientHeight = 114
+        ClientWidth = 241
+        TabOrder = 3
+        object labelFdd1SectorBytes: TLabel
+          Left = 0
+          Height = 114
+          Top = 0
+          Width = 107
+          AutoSize = False
+          Caption = ' Bytes/Sektor: '
+          Layout = tlCenter
+          ParentColor = False
+        end
+        object comboboxFdd1SectorBytes: TComboBox
+          Left = 107
+          Height = 114
+          Top = 0
+          Width = 126
+          ArrowKeysTraverseList = False
+          AutoSelect = False
+          BorderSpacing.Right = 8
+          ItemHeight = 0
+          ItemIndex = 0
+          Items.Strings = (
+            '128'
+            '256'
+            '512'
+          )
+          OnChange = onFdd1GeometryChange
+          Style = csDropDownList
+          TabOrder = 0
+          Text = '128'
+        end
+      end
+      object panelFdd1Size: TPanel
+        Left = 880
+        Height = 114
+        Top = 0
+        Width = 175
+        BorderSpacing.Right = 4
+        BorderSpacing.Bottom = 4
+        BevelOuter = bvNone
+        ChildSizing.EnlargeHorizontal = crsHomogenousChildResize
+        ChildSizing.EnlargeVertical = crsHomogenousChildResize
+        ChildSizing.Layout = cclLeftToRightThenTopToBottom
+        ChildSizing.ControlsPerLine = 2
+        ClientHeight = 114
+        ClientWidth = 175
+        TabOrder = 4
+        object labelFdd1Size: TLabel
+          Left = 0
+          Height = 114
+          Top = 0
+          Width = 70
+          AutoSize = False
+          Caption = ' Größe: '
+          Layout = tlCenter
+          ParentColor = False
+        end
+        object editFdd1Size: TEdit
+          Left = 70
+          Height = 114
+          Top = 0
+          Width = 105
+          Alignment = taRightJustify
+          Color = cl3DLight
+          ReadOnly = True
+          TabOrder = 0
+        end
+      end
+    end
+    object groupboxFdd1Image: TGroupBox
+      Left = 4
+      Height = 135
+      Top = 140
+      Width = 1061
+      BorderSpacing.Bottom = 4
+      Caption = ' Image Datei '
+      ClientHeight = 117
+      ClientWidth = 1059
+      TabOrder = 1
+      object editFdd1ImageFile: TFileNameEdit
+        Left = 4
+        Height = 113
+        Top = 0
+        Width = 1051
+        DialogOptions = [ofPathMustExist, ofFileMustExist, ofNoNetworkButton, ofEnableSizing, ofViewDetail]
+        Filter = 'Disketten Image Dateien (*.fdd , *.img)|*.fdd;*.FDD;*.img;*.IMG|Alle Dateien (*.*)|*.*'
+        FilterIndex = 0
+        HideDirectories = False
+        ButtonWidth = 23
+        NumGlyphs = 1
+        Align = alClient
+        BorderSpacing.Left = 4
+        BorderSpacing.Right = 4
+        BorderSpacing.Bottom = 4
+        MaxLength = 0
+        TabOrder = 0
+      end
+    end
+  end
+end

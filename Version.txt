@@ -1,0 +1,64 @@
+========== Z180SoftSystem V1.2.0 ==========
+- bei einem 'Reset' wird auch das Terminal auf Standard-Terminal funktionen zurückgesetzt
+- ANSI, VT52 und VT100 Steuerzeichen in Terminalemulation implementiert
+- in die ComboBoxen in den Disketten-Laufwerke- und Speichereinstellungen- Dialogen konnte
+  Text eingegeben und somit die Dialoge zum Absturz gebracht werden.  --> Fehler behoben.
+
+
+========== Z180SoftSystem V1.1.0 ==========
+- falsche Laufwerksbezeichnung im Disketten Laufwerke Dialog korrigiert
+- jedes Diskettenlaufwerk hat ein Icon mit welchem die Aktivität angezeigt wird
+- die Icons der Diskettenlaufwerke zeigen beim Darüberfahren den Namen des aktuell geladenen Imagefile an
+- Größenberechnung des Terminalfensters im Windows-Build korrigiert
+- Behandlung des FDD-Motor-On Signals in der Disketten-Controller Unit korrigiert
+
+
+
+
+========== Z180SoftSystem V1.0.0 ==========
+Prozessor:
+- Zilog Z80180 MPU. Die erweiterten Funktionen der Z8L und Z8S Typen sind nicht implementiert.
+- Z180 Assembler Befehlssatz ist komplett implementiert jedoch noch nicht vollständig getestet.
+- alle Z180 internen standart I/O-Register sind implementiert und können entsprechende beschrieben
+  und gelesen werden.
+- Z180 MMU ist implementiert.
+- die beiden ASCI-Kanäle sind implementiert und Interrupt fähig. Das 'OVERRUN' Fehler-Flag wird
+  entsprechend gesetzt. Am ASCI-Kanal0 ist das 'Terminal' angeschlossen.
+- die beiden PRT-Kanäle sind implementiert und Interrupt fähig.
+- die beiden DMA-Kanäle sind implementiert, jedoch noch nicht getestet. Die DMA-Memory
+  transfers sollten funktionieren. DMA-I/O, insbesondere die Möglichkeit die ASCI per DMA
+  bedienen zu können ist noch nicht angelegt.
+- es werden nur die Interrupts der internen I/O-Funktionen unterstützt. 'Externe' Interrupts
+  sind nicht möglich.
+- der Z180 Undefined-Op-Code TRAP ist implementiert.
+
+Disketten-Controller:
+- der Disketten Kontroller wurde ist WD 1770 kompatibel. Es werden die Befehle 'Restore', 'Seek',
+  'Step', 'Step-In', 'Step-Out', 'Read Sector' und 'Write Sector' ausgeführt. 'Read Sector' und
+  'Write Sector' auch mit der Multi-Sector option.
+- die Port-Adressen sind wie folgt belegt:
+	70h:	read:  Fdc-Status
+            write: Fdc-Command		
+
+	71h:	read/write: Fdc-Track Register
+
+	72h:	read/write: Fdc-Sector Register
+
+	73h:	read/write: Fdc-Data Register
+
+	74h:	read:	Externes Status Register
+            write:	Externes Control Register
+- das Externe Status Register ist wie folgt belegt:
+	Bit0:	INTRQ-Signal des Fdc-Controllers
+	Bit1:	DRQ-Signal des Fdc-Controllers
+	Bit3:	Disk-Change Signal der Disketten Laufwerke
+
+- das Externe Control Register ist wie folgt belegt:
+	Bit0:	Master-Reset des Fdc-Controllers
+	Bit2:	Disk-Drive 1 enable
+	Bit3:	Disk-Drive 0 enable
+	Bit4:	Side-Select (false = Seite 0 , true = Seite 1)
+
+Allgemein:
+- das Boot-ROM wird bei jedem Reset eingeschaltet. Dieses kann per Programm durch einen
+  Schreibzugriff auf Port-Adresse FFh ausgeschaltet werden.	 

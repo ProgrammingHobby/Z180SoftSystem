@@ -1,0 +1,16 @@
+object SystemSettings: TSystemSettings
+  OnCreate = DataModuleCreate
+  OldCreateOrder = False
+  Height = 150
+  HorizontalOffset = 962
+  VerticalOffset = 151
+  Width = 150
+  PPI = 96
+  object xmlStore: TXMLConfig
+    StartEmpty = False
+    RootName = 'CONFIG'
+    ReadOnly = False
+    left = 68
+    top = 40
+  end
+end

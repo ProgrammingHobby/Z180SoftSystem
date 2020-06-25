@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <ProjectOptions>
+    <Version Value="11"/>
+    <General>
+      <SessionStorage Value="InProjectDir"/>
+      <MainUnit Value="0"/>
+      <AutoCreateForms Value="False"/>
+      <Title Value="Z180SoftSystem"/>
+      <Scaled Value="True"/>
+      <ResourceType Value="res"/>
+      <UseXPManifest Value="True"/>
+      <XPManifest>
+        <DpiAware Value="True"/>
+      </XPManifest>
+      <Icon Value="0"/>
+    </General>
+    <VersionInfo>
+      <UseVersionInfo Value="True"/>
+      <AutoIncrementBuild Value="True"/>
+      <MajorVersionNr Value="1"/>
+      <MinorVersionNr Value="2"/>
+      <BuildNr Value="646"/>
+      <Language Value="0407"/>
+      <StringTable FileDescription="Zilog Z180MPU Emulation" InternalName="Z180SoftSystem" LegalCopyright="Uwe Merker  2020" OriginalFilename="Z180SoftSystem"/>
+    </VersionInfo>
+    <BuildModes Count="2">
+      <Item1 Name="Debug" Default="True"/>
+      <Item2 Name="Release">
+        <CompilerOptions>
+          <Version Value="11"/>
+          <Target>
+            <Filename Value="$(TargetCPU)-$(TargetOS)_release/bin/Z180SoftSystem"/>
+          </Target>
+          <SearchPaths>
+            <IncludeFiles Value="$(ProjOutDir)"/>
+            <UnitOutputDirectory Value="$(TargetCPU)-$(TargetOS)_release/lib"/>
+          </SearchPaths>
+          <CodeGeneration>
+            <SmartLinkUnit Value="True"/>
+            <Optimizations>
+              <OptimizationLevel Value="3"/>
+            </Optimizations>
+          </CodeGeneration>
+          <Linking>
+            <Debugging>
+              <GenerateDebugInfo Value="False"/>
+              <StripSymbols Value="True"/>
+            </Debugging>
+            <LinkSmart Value="True"/>
+            <Options>
+              <Win32>
+                <GraphicApplication Value="True"/>
+              </Win32>
+            </Options>
+          </Linking>
+        </CompilerOptions>
+      </Item2>
+    </BuildModes>
+    <PublishOptions>
+      <Version Value="2"/>
+      <UseFileFilters Value="True"/>
+    </PublishOptions>
+    <RunParams>
+      <FormatVersion Value="2"/>
+      <Modes Count="0"/>
+    </RunParams>
+    <RequiredPackages Count="2">
+      <Item1>
+        <PackageName Value="LazControls"/>
+      </Item1>
+      <Item2>
+        <PackageName Value="LCL"/>
+      </Item2>
+    </RequiredPackages>
+    <Units Count="16">
+      <Unit0>
+        <Filename Value="Z180SoftSystem.lpr"/>
+        <IsPartOfProject Value="True"/>
+      </Unit0>
+      <Unit1>
+        <Filename Value="main_window.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="MainWindow"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="Main_Window"/>
+      </Unit1>
+      <Unit2>
+        <Filename Value="cpu_register.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="CpuRegister"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="Cpu_Register"/>
+      </Unit2>
+      <Unit3>
+        <Filename Value="system_memory.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="System_Memory"/>
+      </Unit3>
+      <Unit4>
+        <Filename Value="memory_editor.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="MemoryEditor"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="Memory_Editor"/>
+      </Unit4>
+      <Unit5>
+        <Filename Value="system_settings.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="SystemSettings"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="DataModule"/>
+        <UnitName Value="System_Settings"/>
+      </Unit5>
+      <Unit6>
+        <Filename Value="z180_cpu.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="Z180_CPU"/>
+      </Unit6>
+      <Unit7>
+        <Filename Value="system_terminal.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="System_Terminal"/>
+      </Unit7>
+      <Unit8>
+        <Filename Value="cpu_io_register.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="CpuIoRegister"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="Cpu_Io_Register"/>
+      </Unit8>
+      <Unit9>
+        <Filename Value="system_fdc.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="System_Fdc"/>
+      </Unit9>
+      <Unit10>
+        <Filename Value="memory_settings.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="MemorySettings"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="Memory_Settings"/>
+      </Unit10>
+      <Unit11>
+        <Filename Value="system_inout.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="System_InOut"/>
+      </Unit11>
+      <Unit12>
+        <Filename Value="fdd_settings.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="FddSettings"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="Fdd_Settings"/>
+      </Unit12>
+      <Unit13>
+        <Filename Value="terminal_settings.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="TerminalSettings"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="Terminal_Settings"/>
+      </Unit13>
+      <Unit14>
+        <Filename Value="about_window.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="AboutWindow"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="About_Window"/>
+      </Unit14>
+      <Unit15>
+        <Filename Value="version_info.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="Version_Info"/>
+      </Unit15>
+    </Units>
+  </ProjectOptions>
+  <CompilerOptions>
+    <Version Value="11"/>
+    <Target>
+      <Filename Value="$(TargetCPU)-$(TargetOS)_debug/bin/Z180SoftSystem"/>
+    </Target>
+    <SearchPaths>
+      <IncludeFiles Value="$(ProjOutDir)"/>
+      <UnitOutputDirectory Value="$(TargetCPU)-$(TargetOS)_debug/lib"/>
+    </SearchPaths>
+    <Parsing>
+      <SyntaxOptions>
+        <IncludeAssertionCode Value="True"/>
+      </SyntaxOptions>
+    </Parsing>
+    <CodeGeneration>
+      <Checks>
+        <IOChecks Value="True"/>
+        <RangeChecks Value="True"/>
+        <OverflowChecks Value="True"/>
+        <StackChecks Value="True"/>
+      </Checks>
+      <VerifyObjMethodCallValidity Value="True"/>
+    </CodeGeneration>
+    <Linking>
+      <Debugging>
+        <DebugInfoType Value="dsDwarf2Set"/>
+        <UseHeaptrc Value="True"/>
+        <TrashVariables Value="True"/>
+        <UseExternalDbgSyms Value="True"/>
+      </Debugging>
+      <Options>
+        <Win32>
+          <GraphicApplication Value="True"/>
+        </Win32>
+      </Options>
+    </Linking>
+  </CompilerOptions>
+  <Debugging>
+    <Exceptions Count="3">
+      <Item1>
+        <Name Value="EAbort"/>
+      </Item1>
+      <Item2>
+        <Name Value="ECodetoolError"/>
+      </Item2>
+      <Item3>
+        <Name Value="EFOpenError"/>
+      </Item3>
+    </Exceptions>
+  </Debugging>
+</CONFIG>
