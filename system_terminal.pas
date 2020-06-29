@@ -1047,14 +1047,11 @@ var
     character: byte;
 begin
     character := $00;
-    if Shift = [] then begin
-        case Key of
-            08: begin
-                character := $7F;
-                //backspace;
-            end;
-            09: character := Key; // TAB
-            13: character := Key; // ENTER
+    if (Shift = []) then begin
+        case key of
+            08: character := $7F;
+            09: character := key; // TAB
+            13: character := key; // ENTER
             27: character := $1B; // ESC
             32: character := $20; // SPACE
             33: character := $12; // Ctrl R
@@ -1065,73 +1062,93 @@ begin
             40: character := $18; // unten
             45: character := $16; // Einfg = Ctrl V
             46: character := $07; // Entf = Ctrl G
-            48..57: character := Key; // 1..0
-            65..90: character := Key + 32; // a..z
-            186: character := $75; // ue
+            48..57: character := key; // 0..9
+            65..90: character := key + 32; // a..z
             187: character := $2B; // +
             188: character := $2C; // ,
             189: character := $2D; // -
             190: character := $2E; // .
+            111: character := $3A; // NUM :
+            106: character := $2A; // NUM *
+            109: character := $2D; // NUM -
+            107: character := $2B; // NUM +
+            96..105: character := key - 48; // NUM 0..9
+            {$ifdef Windows}
+            110: character := $2E; // NUM .
             191: character := $23; // #
-            192: character := $6F; // oe
             219: character := $73; // s
             220: character := $5E; // ^
-            221: character := $60; // `
-            222: character := $61; // a
+            221: character := $27; // `
             226: character := $3C; // <
+            {$else}
+            108: character := $2E; // NUM .
+            222: character := $23; // #
+            220: character := $73; // s
+            150: character := $5E; // ^
+            146: character := $27; // `
+            225: character := $3C; // <
+            {$endif}
             else character := $00;
         end;
     end;
 
-    if Shift = [SSSHIFT] then begin
-        if Key <> 16 then begin
-            case Key of
-                00: character := Key;
-                48: character := $3D; // =
-                49: character := $21; // !
-                50: character := $22; // "
-                51: character := $23; // §
-                52: character := $24; // $
-                53: character := $25; // %
-                54: character := $26; // &
-                55: character := $2F; // /
-                56: character := $28; // (
-                57: character := $29; // )
-                65..90: character := Key; // A..Z
-                187: character := $2A; // *
-                188: character := $3B; // ;
-                189: character := $5F; // _
-                190: character := $3A; // :
-                191: character := $27; // '
-                219: character := $3F; // ?
-                220: character := $7E; // ° -> ~
-                221: character := $60; // `
-                226: character := $3E; // >
-                else character := $00;
-            end;
+    if ((Shift = [ssShift]) and (key <> 16)) then begin
+        case key of
+            00: character := key;
+            48: character := $3D; // =
+            49: character := $21; // !
+            50: character := $22; // "
+            51: character := $23; // §
+            52: character := $24; // $
+            53: character := $25; // %
+            54: character := $26; // &
+            55: character := $2F; // /
+            56: character := $28; // (
+            57: character := $29; // )
+            65..90: character := key; // A..Z
+            187: character := $2A; // *
+            188: character := $3B; // ;
+            189: character := $5F; // _
+            190: character := $3A; // :
+            {$ifdef Windows}
+            191: character := $27; // '
+            219: character := $3F; // ?
+            220: character := $7E; // ° -> ~
+            221: character := $60; // `
+            226: character := $3E; // >
+            {$else}
+            222: character := $27; // '
+            220: character := $3F; // ?
+            150: character := $7E; // ° -> ~
+            146: character := $60; // `
+            225: character := $3E; // >
+            {$endif}
+            else character := $00;
         end;
     end;
 
-    if Shift = [SSCTRL] then begin
-        if Key <> 17 then begin
-            if (Key > 64) and (Key < 91) then
-                character := Key - 64;
+    if ((Shift = [ssCtrl]) and (key <> 17)) then begin
+        if (key > 64) and (key < 91) then begin
+            character := key - 64;
         end;
     end;
 
-    if Shift = [ssAlt] then begin
-        if Key <> 18 then begin
-            case Key of
-                48: character := $7D; // }
-                55: character := $7B; // {
-                56: character := $5B; // [
-                57: character := $5D; // ]
-                81: character := $40; // @
-                187: character := $7E; // ~
-                219: character := $5C; // \
-                226: character := $7D; // |
-                else character := $00;
-            end;
+    if ((Shift = [ssAlt..ssCtrl]) and (key <> 18)) then begin
+        case key of
+            48: character := $7D; // }
+            55: character := $7B; // {
+            56: character := $5B; // [
+            57: character := $5D; // ]
+            81: character := $40; // @
+            187: character := $7E; // ~
+            {$ifdef Windows}
+            219: character := $5C; // \
+            226: character := $7C; // |
+            {$else}
+            220: character := $5C; // \
+            225: character := $7C; // |
+            {$endif}
+            else character := $00;
         end;
     end;
 

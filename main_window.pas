@@ -12,6 +12,8 @@ type
 
     { TformMainWindow }
 
+    { TMainWindow }
+
     TMainWindow = class(TForm)
         actionTerminalSettings: TAction;
         actionHardwareInfo: TAction;
@@ -104,6 +106,7 @@ type
         procedure cpuSlowRunTimer(Sender: TObject);
         procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
         procedure FormKeyDown(Sender: TObject; var Key: word; Shift: TShiftState);
+        procedure FormKeyUp(Sender: TObject; var Key: word; Shift: TShiftState);
         procedure FormShow(Sender: TObject);
         procedure panelFdd0Paint(Sender: TObject);
         procedure panelFdd1Paint(Sender: TObject);
@@ -111,6 +114,9 @@ type
 
     private
         bootRomEnabled: boolean;
+        {$ifndef Windows}
+        isKeyAltGr: boolean;
+        {$endif}
         procedure setSlowRunSpeed;
     public
 
@@ -175,8 +181,34 @@ end;
 
 // --------------------------------------------------------------------------------
 procedure TMainWindow.FormKeyDown(Sender: TObject; var Key: word; Shift: TShiftState);
+{$ifndef Windows}
+var
+    termShift: TShiftState;
+{$endif}
 begin
+    {$ifndef Windows}
+    if ((Key = 235) and (Shift = [SSALT])) then begin
+        isKeyAltGr := True;
+    end;
+    if (isKeyAltGr) then begin
+        termShift := [ssAlt..ssCtrl];
+    end
+    else begin
+        termShift := Shift;
+    end;
+    SystemTerminal.getKeyBoardInput(Key, termShift);
+    {$else}
     SystemTerminal.getKeyBoardInput(Key, Shift);
+    {$endif}
+end;
+
+procedure TMainWindow.FormKeyUp(Sender: TObject; var Key: word; Shift: TShiftState);
+begin
+    {$ifndef Windows}
+    if ((Key = 235) and (Shift = [])) then begin
+        isKeyAltGr := False;
+    end;
+    {$endif}
 end;
 
 // --------------------------------------------------------------------------------
@@ -203,7 +235,6 @@ begin
     SystemInOut := TSystemInOut.Create;
     Z180Cpu := TZ180Cpu.Create;
     SystemTerminal := TSystemTerminal.Create(panelSystemTerminal);
-
     SystemMemory.setBootRomSize(SystemSettings.ReadString('Memory', 'RomSize', '8KB'));
     SystemMemory.setSystemRamSize(SystemSettings.ReadString('Memory', 'RamSize', '64KB'));
     SystemMemory.EnableReloadImageOnEnable(SystemSettings.ReadBoolean('Memory', 'ReloadOnEnable', False));
@@ -243,6 +274,10 @@ begin
         ImageFile := '';
     end;
     SystemFdc.setFdd1Image(ImageFile);
+
+    {$ifndef Windows}
+    isKeyAltGr := False;
+    {$endif}
 
     setSlowRunSpeed;
 
@@ -326,7 +361,7 @@ end;
 procedure TMainWindow.cpuRunTimer(Sender: TObject);
 begin
     cpuRun.Enabled := False;
-    Z180Cpu.exec(35000);
+    Z180Cpu.exec(25000);
     cpuRun.Enabled := True;
 end;
 

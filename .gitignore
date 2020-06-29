@@ -1,0 +1,10 @@
+.directory
+backup
+CPU_Doku
+Drive_Images
+i386-win32_debug
+x86_64-linux_debug
+i386-win32_release
+x86_64-linux_release
+ToDo.txt
+KeyCodes.xls

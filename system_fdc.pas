@@ -2,7 +2,9 @@ unit System_Fdc;
 
 {$mode objfpc}{$H+}
 
-//{$define FASTFDC}
+{$ifdef _DEBUG_}
+{$define FASTFDC}
+{$endif}
 
 interface
 

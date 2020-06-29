@@ -1,3 +1,9 @@
+========== Z180SoftSystem V1.2.1 ==========
+- Im Mainwindow die Tastatur Shortcuts geändert, um konflikte mit CP/M Shortcuts zu umgehen.
+- Im Mainwindow einen Workaround eingefügt damit auch unter Linux die Taste 'ALTGR' funktioniert
+- Im System-Terminal die Sonderzeichen Eingabe für Windows und Linux angepasst.
+
+
 ========== Z180SoftSystem V1.2.0 ==========
 - bei einem 'Reset' wird auch das Terminal auf Standard-Terminal funktionen zurückgesetzt
 - ANSI, VT52 und VT100 Steuerzeichen in Terminalemulation implementiert

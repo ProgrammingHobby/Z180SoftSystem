@@ -14,7 +14,9 @@ object MainWindow: TMainWindow
   Menu = menuMainWindow
   OnClose = FormClose
   OnKeyDown = FormKeyDown
+  OnKeyUp = FormKeyUp
   OnShow = FormShow
+  LCLVersion = '2.0.8.0'
   object toolbarMainWindow: TToolBar
     Left = 0
     Height = 36
@@ -2059,14 +2061,14 @@ object MainWindow: TMainWindow
       Hint = 'Lädt eine Binärdatei ins RAM. Deaktiviert das Boot-ROM.'
       ImageIndex = 2
       OnExecute = actionLoadFileToRamExecute
-      ShortCut = 49228
+      ShortCut = 24652
     end
     object actionClose: TAction
       Caption = 'Schliessen'
       Hint = 'Beendet Z180EMU...'
       ImageIndex = 11
       OnExecute = actionCloseExecute
-      ShortCut = 49233
+      ShortCut = 32882
     end
     object actionMemoryEditor: TAction
       Caption = 'Zeige Memory-Editor'
@@ -2094,20 +2096,20 @@ object MainWindow: TMainWindow
       Hint = 'Einstellungen für Boot-Rom und System-RAM an. '
       ImageIndex = 8
       OnExecute = actionMemorySettingsExecute
-      ShortCut = 49229
+      ShortCut = 24653
     end
     object actionFloppyDrive: TAction
       Caption = 'Disketten Laufwerke'
       Hint = 'Einstellungen für die virtuellen Disketten Laufwerke an.'
       ImageIndex = 4
       OnExecute = actionFloppyDriveExecute
-      ShortCut = 49222
+      ShortCut = 24646
     end
     object actionHddDrive: TAction
       Caption = 'Festplatten Laufwerk'
       Hint = 'Einstellungen für das virtuelle Festplatten Laufwerk an.'
       ImageIndex = 5
-      ShortCut = 49224
+      ShortCut = 24648
     end
     object actionStop: TAction
       Caption = 'Stop'
@@ -2155,14 +2157,14 @@ object MainWindow: TMainWindow
       Caption = 'Emulierte Hardware'
       Hint = 'Informationen über die emulierte Hardware.'
       ImageIndex = 17
-      ShortCut = 49225
+      ShortCut = 24649
     end
     object actionTerminalSettings: TAction
       Caption = 'Terminal Einstellungen'
       Hint = 'Terminal Einstellungen'
       ImageIndex = 18
       OnExecute = actionTerminalSettingsExecute
-      ShortCut = 49236
+      ShortCut = 24660
     end
   end
   object popupmenuSlowRunSpeed: TPopupMenu
