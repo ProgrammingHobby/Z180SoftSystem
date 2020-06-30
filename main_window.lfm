@@ -16,7 +16,6 @@ object MainWindow: TMainWindow
   OnKeyDown = FormKeyDown
   OnKeyUp = FormKeyUp
   OnShow = FormShow
-  LCLVersion = '2.0.8.0'
   object toolbarMainWindow: TToolBar
     Left = 0
     Height = 36
@@ -142,18 +141,21 @@ object MainWindow: TMainWindow
       Top = 2
       Action = actionRun
       AutoSize = True
+      DropdownMenu = popupmenuRunSpeed
       ParentShowHint = False
+      PopupMenu = popupmenuRunSpeed
       ShowCaption = False
       ShowHint = True
+      Style = tbsDropDown
     end
     object toolbuttonSeparator5: TToolButton
-      Left = 461
+      Left = 473
       Top = 2
       Caption = 'toolbuttonSeparator5'
       Enabled = False
     end
     object toolbuttonTerminal: TToolButton
-      Left = 493
+      Left = 505
       Top = 2
       Action = actionTerminalSettings
       ParentShowHint = False
@@ -185,8 +187,8 @@ object MainWindow: TMainWindow
     Width = 778
     Align = alBottom
     BevelOuter = bvNone
-    ClientHeight = 24
-    ClientWidth = 778
+    ClientHeight = 20
+    ClientWidth = 774
     Constraints.MaxHeight = 24
     Constraints.MinHeight = 24
     ParentColor = False
@@ -2193,6 +2195,34 @@ object MainWindow: TMainWindow
       Caption = '10 Op/s'
       RadioItem = True
       OnClick = popupSlowRunSpeedClick
+    end
+  end
+  object popupmenuRunSpeed: TPopupMenu
+    left = 648
+    top = 368
+    object popup4Mhz: TMenuItem
+      AutoCheck = True
+      Caption = '4 MHz'
+      RadioItem = True
+      OnClick = popupRunSpeedClick
+    end
+    object popup8Mhz: TMenuItem
+      AutoCheck = True
+      Caption = '8 MHz'
+      RadioItem = True
+      OnClick = popupRunSpeedClick
+    end
+    object popup12Mhz: TMenuItem
+      AutoCheck = True
+      Caption = '12 MHz'
+      RadioItem = True
+      OnClick = popupRunSpeedClick
+    end
+    object popup16Mhz: TMenuItem
+      AutoCheck = True
+      Caption = '16 MHz'
+      RadioItem = True
+      OnClick = popupRunSpeedClick
     end
   end
 end
