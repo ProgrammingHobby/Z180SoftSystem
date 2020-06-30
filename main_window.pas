@@ -40,6 +40,10 @@ type
         menuHardwareInfo: TMenuItem;
         menuCopyCpmFiles: TMenuItem;
         menuCreateCpmDiscImages: TMenuItem;
+        popup4Mhz: TMenuItem;
+        popup8Mhz: TMenuItem;
+        popup12Mhz: TMenuItem;
+        popup16Mhz: TMenuItem;
         panelFdd0: TPanel;
         panelFdd1: TPanel;
         popup1Ops: TMenuItem;
@@ -69,6 +73,7 @@ type
         FileOpenDialog: TOpenDialog;
         cpuRun: TTimer;
         panelSystemTerminal: TPanel;
+        popupmenuRunSpeed: TPopupMenu;
         popupmenuSlowRunSpeed: TPopupMenu;
         statusbarMainWindow: TPanel;
         toolbarMainWindow: TToolBar;
@@ -110,14 +115,17 @@ type
         procedure FormShow(Sender: TObject);
         procedure panelFdd0Paint(Sender: TObject);
         procedure panelFdd1Paint(Sender: TObject);
+        procedure popupRunSpeedClick(Sender: TObject);
         procedure popupSlowRunSpeedClick(Sender: TObject);
 
     private
         bootRomEnabled: boolean;
+        runSpeedValue:integer;
         {$ifndef Windows}
         isKeyAltGr: boolean;
         {$endif}
         procedure setSlowRunSpeed;
+        procedure setRunSpeed;
     public
 
     end;
@@ -202,6 +210,7 @@ begin
     {$endif}
 end;
 
+// --------------------------------------------------------------------------------
 procedure TMainWindow.FormKeyUp(Sender: TObject; var Key: word; Shift: TShiftState);
 begin
     {$ifndef Windows}
@@ -280,7 +289,7 @@ begin
     {$endif}
 
     setSlowRunSpeed;
-
+    setRunSpeed;
 end;
 
 // --------------------------------------------------------------------------------
@@ -302,6 +311,31 @@ begin
     end
     else begin
         imagelistMainWindow.Draw(panelFdd1.Canvas, 0, 1, 23);
+    end;
+end;
+
+// --------------------------------------------------------------------------------
+procedure TMainWindow.popupRunSpeedClick(Sender: TObject);
+begin
+    if (Sender = popup4Mhz) then begin
+        runSpeedValue := 2000;
+        SystemSettings.WriteInteger('Emulation', 'RunSpeed', 0);
+    end
+    else if (Sender = popup8Mhz) then begin
+        runSpeedValue := 4000;
+        SystemSettings.WriteInteger('Emulation', 'RunSpeed', 1);
+    end
+    else if (Sender = popup12Mhz) then begin
+        runSpeedValue := 6000;
+        SystemSettings.WriteInteger('Emulation', 'RunSpeed', 2);
+    end
+    else if (Sender = popup16Mhz) then begin
+        runSpeedValue := 8000;
+        SystemSettings.WriteInteger('Emulation', 'RunSpeed', 3);
+    end
+    else begin
+        runSpeedValue := 2000;
+        SystemSettings.WriteInteger('Emulation', 'RunSpeed', 0);
     end;
 end;
 
@@ -351,17 +385,44 @@ begin
             cpuRun.Interval := 100;
         end;
         else begin
-            popup1Ops.Checked := True;
-            cpuRun.Interval := 1000;
+            popup5Ops.Checked := True;
+            cpuRun.Interval := 200;
         end;
     end;
+end;
+
+// --------------------------------------------------------------------------------
+procedure TMainWindow.setRunSpeed;
+begin
+   case (SystemSettings.ReadInteger('Emulation', 'RunSpeed', 0)) of
+        0: begin
+            popup4Mhz.Checked := True;
+            runSpeedValue := 2000;
+        end;
+        1: begin
+            popup8Mhz.Checked := True;
+            runSpeedValue := 4000;
+        end;
+        2: begin
+            popup12Mhz.Checked := True;
+            runSpeedValue := 6000;
+        end;
+        3: begin
+            popup16Mhz.Checked := True;
+            runSpeedValue := 8000;
+        end;
+        else begin
+            popup4Mhz.Checked := True;
+            runSpeedValue := 2000;
+        end;
+end;
 end;
 
 // --------------------------------------------------------------------------------
 procedure TMainWindow.cpuRunTimer(Sender: TObject);
 begin
     cpuRun.Enabled := False;
-    Z180Cpu.exec(25000);
+    Z180Cpu.exec(runSpeedValue);
     cpuRun.Enabled := True;
 end;
 
@@ -445,6 +506,7 @@ begin
         cpuRun.OnTimer := nil;
     end;
     cpuRun.OnTimer := @cpuRunTimer;
+    setRunSpeed;
     cpuRun.Interval := 2;
     cpuRun.Enabled := True;
     actionMemorySettings.Enabled := False;
