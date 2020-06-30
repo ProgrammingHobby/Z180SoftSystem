@@ -307,7 +307,6 @@ procedure TSystemTerminal.scrollTerminalContentUp;
 var
     column, row: integer;
 begin
-    timerTerminalPageRefresh.Enabled := False;
     for row := 1 to terminalRows - 1 do begin
         charData[row] := charData[row + 1];
         charColor[row] := charColor[row + 1];
@@ -320,7 +319,6 @@ begin
     end;
     terminalCursor.column := 1;
     terminalCursor.row := terminalRows;
-    timerTerminalPageRefresh.Enabled := True;
 end;
 
 // --------------------------------------------------------------------------------
