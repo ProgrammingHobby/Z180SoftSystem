@@ -2111,6 +2111,7 @@ object MainWindow: TMainWindow
       Caption = 'Festplatten Laufwerk'
       Hint = 'Einstellungen für das virtuelle Festplatten Laufwerk an.'
       ImageIndex = 5
+      OnExecute = actionHddDriveExecute
       ShortCut = 24648
     end
     object actionStop: TAction

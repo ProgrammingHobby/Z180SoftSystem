@@ -98,6 +98,7 @@ type
         procedure actionCpuCoreRegisterExecute(Sender: TObject);
         procedure actionCpuIoRegisterExecute(Sender: TObject);
         procedure actionFloppyDriveExecute(Sender: TObject);
+        procedure actionHddDriveExecute(Sender: TObject);
         procedure actionLoadFileToRamExecute(Sender: TObject);
         procedure actionMemoryEditorExecute(Sender: TObject);
         procedure actionMemorySettingsExecute(Sender: TObject);
@@ -120,7 +121,7 @@ type
 
     private
         bootRomEnabled: boolean;
-        runSpeedValue:integer;
+        runSpeedValue: integer;
         {$ifndef Windows}
         isKeyAltGr: boolean;
         {$endif}
@@ -139,7 +140,7 @@ implementation
 
 uses UscaleDPI, System_Settings, Cpu_Register, Cpu_Io_Register, Memory_Editor, Memory_Settings,
     System_Memory, System_InOut, Z180_CPU, System_Terminal, System_Fdc, Fdd_Settings, Terminal_Settings,
-    About_Window;
+    About_Window, System_Hdc, Hdd_Settings;
 
 { TformMainWindow }
 
@@ -173,6 +174,10 @@ begin
 
     if Assigned(SystemFdc) then begin
         SystemFdc.Destroy;
+    end;
+
+    if Assigned(SystemHdc) then begin
+        SystemHdc.Destroy;
     end;
 
     if Assigned(SystemMemory) then begin
@@ -238,9 +243,9 @@ begin
     Constraints.MaxWidth := Constraints.MinWidth;
     Constraints.MaxHeight := Constraints.MinHeight;
 
-
     SystemMemory := TSystemMemory.Create;
     SystemFdc := TSystemFdc.Create;
+    SystemHdc := TSystemHdc.Create;
     SystemInOut := TSystemInOut.Create;
     Z180Cpu := TZ180Cpu.Create;
     SystemTerminal := TSystemTerminal.Create(panelSystemTerminal);
@@ -394,7 +399,7 @@ end;
 // --------------------------------------------------------------------------------
 procedure TMainWindow.setRunSpeed;
 begin
-   case (SystemSettings.ReadInteger('Emulation', 'RunSpeed', 0)) of
+    case (SystemSettings.ReadInteger('Emulation', 'RunSpeed', 0)) of
         0: begin
             popup4Mhz.Checked := True;
             runSpeedValue := 2000;
@@ -415,7 +420,7 @@ begin
             popup4Mhz.Checked := True;
             runSpeedValue := 2000;
         end;
-end;
+    end;
 end;
 
 // --------------------------------------------------------------------------------
@@ -647,6 +652,15 @@ var
     dialog: TFddSettings;
 begin
     Application.CreateForm(TFddSettings, dialog);
+    dialog.ShowModal;
+end;
+
+// --------------------------------------------------------------------------------
+procedure TMainWindow.actionHddDriveExecute(Sender: TObject);
+var
+    dialog: THddSettings;
+begin
+    Application.CreateForm(THddSettings, dialog);
     dialog.ShowModal;
 end;
 
