@@ -3,7 +3,7 @@
   <ProjectSession>
     <Version Value="11"/>
     <BuildModes Active="Debug"/>
-    <Units Count="49">
+    <Units Count="50">
       <Unit0>
         <Filename Value="Z180SoftSystem.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -19,10 +19,8 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="Main_Window"/>
-        <IsVisibleTab Value="True"/>
-        <EditorIndex Value="1"/>
-        <TopLine Value="413"/>
-        <CursorPos X="31" Y="425"/>
+        <TopLine Value="148"/>
+        <CursorPos X="16" Y="180"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -85,10 +83,10 @@
         <Filename Value="system_terminal.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="System_Terminal"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="299"/>
         <CursorPos X="40" Y="321"/>
         <UsageCount Value="200"/>
-        <Loaded Value="True"/>
       </Unit7>
       <Unit8>
         <Filename Value="cpu_io_register.pas"/>
@@ -121,7 +119,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="117"/>
         <CursorPos X="5" Y="153"/>
-        <UsageCount Value="158"/>
+        <UsageCount Value="159"/>
       </Unit10>
       <Unit11>
         <Filename Value="system_inout.pas"/>
@@ -130,7 +128,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="143"/>
         <CursorPos X="49" Y="119"/>
-        <UsageCount Value="145"/>
+        <UsageCount Value="146"/>
       </Unit11>
       <Unit12>
         <Filename Value="fdd_settings.pas"/>
@@ -139,10 +137,12 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="Fdd_Settings"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="132"/>
-        <CursorPos X="27" Y="135"/>
-        <UsageCount Value="145"/>
+        <EditorIndex Value="2"/>
+        <TopLine Value="207"/>
+        <CursorPos X="53" Y="242"/>
+        <UsageCount Value="146"/>
+        <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
       </Unit12>
       <Unit13>
         <Filename Value="terminal_settings.pas"/>
@@ -154,7 +154,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="49"/>
         <CursorPos X="28" Y="70"/>
-        <UsageCount Value="117"/>
+        <UsageCount Value="118"/>
       </Unit13>
       <Unit14>
         <Filename Value="about_window.pas"/>
@@ -166,7 +166,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="40"/>
         <CursorPos X="74" Y="75"/>
-        <UsageCount Value="114"/>
+        <UsageCount Value="115"/>
       </Unit14>
       <Unit15>
         <Filename Value="version_info.pas"/>
@@ -175,26 +175,30 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="57"/>
         <CursorPos X="20" Y="75"/>
-        <UsageCount Value="112"/>
+        <UsageCount Value="113"/>
       </Unit15>
       <Unit16>
         <Filename Value="system_hdc.pas"/>
+        <IsPartOfProject Value="True"/>
         <UnitName Value="System_Hdc"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="80"/>
+        <EditorIndex Value="3"/>
         <CursorPos X="34" Y="117"/>
-        <UsageCount Value="26"/>
+        <UsageCount Value="27"/>
+        <Loaded Value="True"/>
       </Unit16>
       <Unit17>
         <Filename Value="hdd_settings.pas"/>
+        <IsPartOfProject Value="True"/>
         <ComponentName Value="HddSettings"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="Hdd_Settings"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="30"/>
-        <CursorPos X="50" Y="65"/>
-        <UsageCount Value="25"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="1"/>
+        <CursorPos X="45" Y="92"/>
+        <UsageCount Value="26"/>
+        <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
       </Unit17>
       <Unit18>
         <Filename Value="system_sio.pas"/>
@@ -425,8 +429,17 @@
         <CursorPos X="3" Y="102"/>
         <UsageCount Value="10"/>
       </Unit48>
+      <Unit49>
+        <Filename Value="hdd_settings.lfm"/>
+        <EditorIndex Value="-1"/>
+        <WindowIndex Value="-1"/>
+        <TopLine Value="-1"/>
+        <CursorPos X="-1" Y="-1"/>
+        <UsageCount Value="20"/>
+        <DefaultSyntaxHighlighter Value="LFM"/>
+      </Unit49>
     </Units>
-    <JumpHistory Count="25" HistoryIndex="24">
+    <JumpHistory Count="21" HistoryIndex="20">
       <Position1>
         <Filename Value="main_window.pas"/>
         <Caret Line="205" TopLine="183"/>
@@ -436,97 +449,81 @@
         <Caret Line="191" TopLine="183"/>
       </Position2>
       <Position3>
-        <Filename Value="system_terminal.pas"/>
-        <Caret Line="1141" Column="9" TopLine="1132"/>
+        <Filename Value="main_window.pas"/>
+        <Caret Line="280" Column="25" TopLine="182"/>
       </Position3>
       <Position4>
         <Filename Value="main_window.pas"/>
-        <Caret Line="280" Column="25" TopLine="182"/>
+        <Caret Line="279" Column="25" TopLine="245"/>
       </Position4>
       <Position5>
         <Filename Value="main_window.pas"/>
-        <Caret Line="279" Column="25" TopLine="245"/>
+        <Caret Line="278" Column="25" TopLine="244"/>
       </Position5>
       <Position6>
         <Filename Value="main_window.pas"/>
-        <Caret Line="278" Column="25" TopLine="244"/>
+        <Caret Line="283" Column="8" TopLine="256"/>
       </Position6>
       <Position7>
         <Filename Value="main_window.pas"/>
-        <Caret Line="283" Column="8" TopLine="256"/>
+        <Caret Line="335" Column="11" TopLine="332"/>
       </Position7>
       <Position8>
         <Filename Value="main_window.pas"/>
-        <Caret Line="335" Column="11" TopLine="332"/>
+        <Caret Line="336" Column="11" TopLine="333"/>
       </Position8>
       <Position9>
         <Filename Value="main_window.pas"/>
-        <Caret Line="336" Column="11" TopLine="333"/>
+        <Caret Line="337" Column="11" TopLine="334"/>
       </Position9>
       <Position10>
         <Filename Value="main_window.pas"/>
-        <Caret Line="337" Column="11" TopLine="334"/>
+        <Caret Line="338" Column="11" TopLine="335"/>
       </Position10>
       <Position11>
         <Filename Value="main_window.pas"/>
-        <Caret Line="338" Column="11" TopLine="335"/>
+        <Caret Line="339" Column="11" TopLine="336"/>
       </Position11>
       <Position12>
         <Filename Value="main_window.pas"/>
-        <Caret Line="339" Column="11" TopLine="336"/>
+        <Caret Line="346" Column="11" TopLine="343"/>
       </Position12>
       <Position13>
         <Filename Value="main_window.pas"/>
-        <Caret Line="346" Column="11" TopLine="343"/>
+        <Caret Line="128" Column="22" TopLine="100"/>
       </Position13>
       <Position14>
         <Filename Value="main_window.pas"/>
-        <Caret Line="315" Column="84" TopLine="546"/>
+        <Caret Line="508" Column="11" TopLine="499"/>
       </Position14>
       <Position15>
         <Filename Value="main_window.pas"/>
-        <Caret Line="123" Column="31" TopLine="271"/>
+        <Caret Line="413" Column="55" TopLine="382"/>
       </Position15>
       <Position16>
         <Filename Value="main_window.pas"/>
-        <Caret Line="128" Column="22" TopLine="100"/>
+        <Caret Line="418" Column="5" TopLine="391"/>
       </Position16>
       <Position17>
         <Filename Value="main_window.pas"/>
-        <Caret Line="508" Column="11" TopLine="499"/>
+        <Caret Line="426" Column="31" TopLine="414"/>
       </Position17>
       <Position18>
         <Filename Value="main_window.pas"/>
-        <Caret Line="413" Column="55" TopLine="382"/>
+        <Caret Line="143" Column="44" TopLine="128"/>
       </Position18>
       <Position19>
         <Filename Value="main_window.pas"/>
-        <Caret Line="418" Column="5" TopLine="391"/>
+        <Caret Line="660" Column="22" TopLine="512"/>
       </Position19>
       <Position20>
-        <Filename Value="system_terminal.pas"/>
-        <Caret Line="1136" Column="72" TopLine="1121"/>
+        <Filename Value="main_window.pas"/>
+        <Caret Line="240" Column="52" TopLine="225"/>
       </Position20>
       <Position21>
-        <Filename Value="system_terminal.pas"/>
-        <Caret Line="290" Column="11" TopLine="272"/>
+        <Filename Value="hdd_settings.pas"/>
+        <Caret Line="66" Column="50" TopLine="36"/>
       </Position21>
-      <Position22>
-        <Filename Value="system_terminal.pas"/>
-        <Caret Line="140" Column="11" TopLine="134"/>
-      </Position22>
-      <Position23>
-        <Filename Value="system_terminal.pas"/>
-        <Caret Line="290" Column="11" TopLine="272"/>
-      </Position23>
-      <Position24>
-        <Filename Value="system_terminal.pas"/>
-        <Caret Line="596" Column="11" TopLine="626"/>
-      </Position24>
-      <Position25>
-        <Filename Value="system_terminal.pas"/>
-        <Caret Line="301" Column="20" TopLine="278"/>
-      </Position25>
     </JumpHistory>
     <RunParams>
       <FormatVersion Value="2"/>

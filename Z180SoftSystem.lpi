@@ -78,7 +78,7 @@
         <PackageName Value="LCL"/>
       </Item2>
     </RequiredPackages>
-    <Units Count="16">
+    <Units Count="18">
       <Unit0>
         <Filename Value="Z180SoftSystem.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -185,6 +185,19 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="Version_Info"/>
       </Unit15>
+      <Unit16>
+        <Filename Value="system_hdc.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="System_Hdc"/>
+      </Unit16>
+      <Unit17>
+        <Filename Value="hdd_settings.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="HddSettings"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="Hdd_Settings"/>
+      </Unit17>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
