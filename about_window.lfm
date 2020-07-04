@@ -3,7 +3,6 @@ object AboutWindow: TAboutWindow
   Height = 361
   Top = 250
   Width = 320
-  BorderStyle = bsSingle
   Caption = 'Über Z180SoftSystem ...'
   ChildSizing.EnlargeHorizontal = crsHomogenousChildResize
   ChildSizing.EnlargeVertical = crsHomogenousChildResize
@@ -15,7 +14,6 @@ object AboutWindow: TAboutWindow
   Constraints.MinWidth = 320
   OnClose = FormClose
   OnShow = FormShow
-  LCLVersion = '2.0.8.0'
   object labelAboutAppName: TLabel
     Left = 0
     Height = 36

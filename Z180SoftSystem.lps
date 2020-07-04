@@ -19,7 +19,6 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="Main_Window"/>
-        <IsVisibleTab Value="True"/>
         <TopLine Value="311"/>
         <CursorPos X="42" Y="343"/>
         <UsageCount Value="200"/>
@@ -105,7 +104,7 @@
         <Filename Value="system_fdc.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="System_Fdc"/>
-        <EditorIndex Value="2"/>
+        <EditorIndex Value="3"/>
         <TopLine Value="5"/>
         <CursorPos X="16" Y="5"/>
         <UsageCount Value="200"/>
@@ -163,10 +162,13 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="About_Window"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="40"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="1"/>
+        <TopLine Value="37"/>
         <CursorPos X="74" Y="75"/>
         <UsageCount Value="117"/>
+        <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
       </Unit14>
       <Unit15>
         <Filename Value="version_info.pas"/>
@@ -181,7 +183,7 @@
         <Filename Value="system_hdc.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="System_Hdc"/>
-        <EditorIndex Value="3"/>
+        <EditorIndex Value="4"/>
         <TopLine Value="34"/>
         <CursorPos X="34" Y="117"/>
         <UsageCount Value="29"/>
@@ -194,7 +196,7 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="Hdd_Settings"/>
-        <EditorIndex Value="1"/>
+        <EditorIndex Value="2"/>
         <TopLine Value="85"/>
         <CursorPos X="69" Y="117"/>
         <UsageCount Value="28"/>
