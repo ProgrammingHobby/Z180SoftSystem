@@ -40,6 +40,7 @@ type
         menuHardwareInfo: TMenuItem;
         menuCopyCpmFiles: TMenuItem;
         menuCreateCpmDiscImages: TMenuItem;
+        panelHdd: TPanel;
         popup4Mhz: TMenuItem;
         popup8Mhz: TMenuItem;
         popup12Mhz: TMenuItem;
@@ -116,6 +117,7 @@ type
         procedure FormShow(Sender: TObject);
         procedure panelFdd0Paint(Sender: TObject);
         procedure panelFdd1Paint(Sender: TObject);
+        procedure panelHddPaint(Sender: TObject);
         procedure popupRunSpeedClick(Sender: TObject);
         procedure popupSlowRunSpeedClick(Sender: TObject);
 
@@ -289,6 +291,18 @@ begin
     end;
     SystemFdc.setFdd1Image(ImageFile);
 
+    //SystemHdc.setHddStatusPanel(panelHdd);
+    SystemHdc.setHddHeads(SystemSettings.ReadInteger('Hdd', 'Heads', 16));
+    SystemHdc.setHddTracks(SystemSettings.ReadInteger('Hdd', 'Tracks', 246));
+    SystemHdc.setHddSectors(SystemSettings.ReadInteger('Hdd', 'Sectors', 63));
+    SystemHdc.setHddSectorBytes(SystemSettings.ReadInteger('Hdd', 'SectorBytes', 512));
+    ImageFile := SystemSettings.ReadString('Hdd', 'ImageFile', '');
+    if ((ImageFile <> '') and (not FileExists(ImageFile))) then begin
+        SystemSettings.WriteString('Hdd', 'ImageFile', '');
+        ImageFile := '';
+    end;
+    SystemHdc.setHddImage(ImageFile);
+
     {$ifndef Windows}
     isKeyAltGr := False;
     {$endif}
@@ -316,6 +330,17 @@ begin
     end
     else begin
         imagelistMainWindow.Draw(panelFdd1.Canvas, 0, 1, 23);
+    end;
+end;
+
+// --------------------------------------------------------------------------------
+procedure TMainWindow.panelHddPaint(Sender: TObject);
+begin
+    if (panelHdd.Enabled) then begin
+        imagelistMainWindow.Draw(panelHdd.Canvas, 0, 1, 5);
+    end
+    else begin
+        imagelistMainWindow.Draw(panelHdd.Canvas, 0, 1, 24);
     end;
 end;
 
