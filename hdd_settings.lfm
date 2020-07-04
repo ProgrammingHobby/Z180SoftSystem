@@ -64,7 +64,9 @@ object HddSettings: THddSettings
         NumbersOnly = True
         TabOrder = 0
         OnChange = HddGeometryChange
-        MaxValue = 15
+        MaxValue = 16
+        MinValue = 1
+        Value = 1
       end
     end
     object panelHddTracks: TPanel
@@ -103,7 +105,9 @@ object HddSettings: THddSettings
         NumbersOnly = True
         TabOrder = 0
         OnChange = HddGeometryChange
-        MaxValue = 2047
+        MaxValue = 2048
+        MinValue = 1
+        Value = 1
       end
     end
     object panelHddSectors: TPanel
