@@ -19,8 +19,9 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="Main_Window"/>
-        <TopLine Value="148"/>
-        <CursorPos X="16" Y="180"/>
+        <IsVisibleTab Value="True"/>
+        <TopLine Value="311"/>
+        <CursorPos X="42" Y="343"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -104,10 +105,11 @@
         <Filename Value="system_fdc.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="System_Fdc"/>
-        <EditorIndex Value="-1"/>
+        <EditorIndex Value="2"/>
         <TopLine Value="5"/>
         <CursorPos X="16" Y="5"/>
         <UsageCount Value="200"/>
+        <Loaded Value="True"/>
       </Unit9>
       <Unit10>
         <Filename Value="memory_settings.pas"/>
@@ -119,7 +121,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="117"/>
         <CursorPos X="5" Y="153"/>
-        <UsageCount Value="159"/>
+        <UsageCount Value="161"/>
       </Unit10>
       <Unit11>
         <Filename Value="system_inout.pas"/>
@@ -128,7 +130,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="143"/>
         <CursorPos X="49" Y="119"/>
-        <UsageCount Value="146"/>
+        <UsageCount Value="148"/>
       </Unit11>
       <Unit12>
         <Filename Value="fdd_settings.pas"/>
@@ -137,12 +139,10 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="Fdd_Settings"/>
-        <EditorIndex Value="2"/>
-        <TopLine Value="207"/>
-        <CursorPos X="53" Y="242"/>
-        <UsageCount Value="146"/>
-        <Loaded Value="True"/>
-        <LoadedDesigner Value="True"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="121"/>
+        <CursorPos X="18" Y="182"/>
+        <UsageCount Value="148"/>
       </Unit12>
       <Unit13>
         <Filename Value="terminal_settings.pas"/>
@@ -154,7 +154,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="49"/>
         <CursorPos X="28" Y="70"/>
-        <UsageCount Value="118"/>
+        <UsageCount Value="120"/>
       </Unit13>
       <Unit14>
         <Filename Value="about_window.pas"/>
@@ -166,7 +166,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="40"/>
         <CursorPos X="74" Y="75"/>
-        <UsageCount Value="115"/>
+        <UsageCount Value="117"/>
       </Unit14>
       <Unit15>
         <Filename Value="version_info.pas"/>
@@ -175,15 +175,16 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="57"/>
         <CursorPos X="20" Y="75"/>
-        <UsageCount Value="113"/>
+        <UsageCount Value="115"/>
       </Unit15>
       <Unit16>
         <Filename Value="system_hdc.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="System_Hdc"/>
         <EditorIndex Value="3"/>
+        <TopLine Value="34"/>
         <CursorPos X="34" Y="117"/>
-        <UsageCount Value="27"/>
+        <UsageCount Value="29"/>
         <Loaded Value="True"/>
       </Unit16>
       <Unit17>
@@ -193,10 +194,10 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="Hdd_Settings"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
-        <CursorPos X="45" Y="92"/>
-        <UsageCount Value="26"/>
+        <TopLine Value="85"/>
+        <CursorPos X="69" Y="117"/>
+        <UsageCount Value="28"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit17>
@@ -439,91 +440,127 @@
         <DefaultSyntaxHighlighter Value="LFM"/>
       </Unit49>
     </Units>
-    <JumpHistory Count="21" HistoryIndex="20">
+    <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
-        <Filename Value="main_window.pas"/>
-        <Caret Line="205" TopLine="183"/>
+        <Filename Value="hdd_settings.pas"/>
+        <Caret Line="137" TopLine="123"/>
       </Position1>
       <Position2>
-        <Filename Value="main_window.pas"/>
-        <Caret Line="191" TopLine="183"/>
+        <Filename Value="hdd_settings.pas"/>
+        <Caret Line="138" TopLine="123"/>
       </Position2>
       <Position3>
-        <Filename Value="main_window.pas"/>
-        <Caret Line="280" Column="25" TopLine="182"/>
+        <Filename Value="hdd_settings.pas"/>
+        <Caret Line="139" TopLine="123"/>
       </Position3>
       <Position4>
-        <Filename Value="main_window.pas"/>
-        <Caret Line="279" Column="25" TopLine="245"/>
+        <Filename Value="hdd_settings.pas"/>
+        <Caret Line="140" TopLine="123"/>
       </Position4>
       <Position5>
-        <Filename Value="main_window.pas"/>
-        <Caret Line="278" Column="25" TopLine="244"/>
+        <Filename Value="hdd_settings.pas"/>
+        <Caret Line="135" TopLine="123"/>
       </Position5>
       <Position6>
-        <Filename Value="main_window.pas"/>
-        <Caret Line="283" Column="8" TopLine="256"/>
+        <Filename Value="hdd_settings.pas"/>
+        <Caret Line="136" TopLine="123"/>
       </Position6>
       <Position7>
-        <Filename Value="main_window.pas"/>
-        <Caret Line="335" Column="11" TopLine="332"/>
+        <Filename Value="hdd_settings.pas"/>
+        <Caret Line="137" TopLine="123"/>
       </Position7>
       <Position8>
-        <Filename Value="main_window.pas"/>
-        <Caret Line="336" Column="11" TopLine="333"/>
+        <Filename Value="hdd_settings.pas"/>
+        <Caret Line="138" TopLine="123"/>
       </Position8>
       <Position9>
-        <Filename Value="main_window.pas"/>
-        <Caret Line="337" Column="11" TopLine="334"/>
+        <Filename Value="hdd_settings.pas"/>
+        <Caret Line="139" TopLine="123"/>
       </Position9>
       <Position10>
-        <Filename Value="main_window.pas"/>
-        <Caret Line="338" Column="11" TopLine="335"/>
+        <Filename Value="hdd_settings.pas"/>
+        <Caret Line="140" TopLine="123"/>
       </Position10>
       <Position11>
-        <Filename Value="main_window.pas"/>
-        <Caret Line="339" Column="11" TopLine="336"/>
+        <Filename Value="hdd_settings.pas"/>
+        <Caret Line="142" Column="33" TopLine="115"/>
       </Position11>
       <Position12>
-        <Filename Value="main_window.pas"/>
-        <Caret Line="346" Column="11" TopLine="343"/>
+        <Filename Value="hdd_settings.pas"/>
+        <Caret Line="134" Column="16" TopLine="115"/>
       </Position12>
       <Position13>
-        <Filename Value="main_window.pas"/>
-        <Caret Line="128" Column="22" TopLine="100"/>
+        <Filename Value="hdd_settings.pas"/>
+        <Caret Line="142" Column="11" TopLine="115"/>
       </Position13>
       <Position14>
-        <Filename Value="main_window.pas"/>
-        <Caret Line="508" Column="11" TopLine="499"/>
+        <Filename Value="hdd_settings.pas"/>
+        <Caret Line="136" TopLine="115"/>
       </Position14>
       <Position15>
-        <Filename Value="main_window.pas"/>
-        <Caret Line="413" Column="55" TopLine="382"/>
+        <Filename Value="hdd_settings.pas"/>
+        <Caret Line="137" TopLine="115"/>
       </Position15>
       <Position16>
-        <Filename Value="main_window.pas"/>
-        <Caret Line="418" Column="5" TopLine="391"/>
+        <Filename Value="hdd_settings.pas"/>
+        <Caret Line="138" TopLine="115"/>
       </Position16>
       <Position17>
-        <Filename Value="main_window.pas"/>
-        <Caret Line="426" Column="31" TopLine="414"/>
+        <Filename Value="hdd_settings.pas"/>
+        <Caret Line="139" TopLine="115"/>
       </Position17>
       <Position18>
-        <Filename Value="main_window.pas"/>
-        <Caret Line="143" Column="44" TopLine="128"/>
+        <Filename Value="hdd_settings.pas"/>
+        <Caret Line="140" TopLine="116"/>
       </Position18>
       <Position19>
-        <Filename Value="main_window.pas"/>
-        <Caret Line="660" Column="22" TopLine="512"/>
+        <Filename Value="hdd_settings.pas"/>
+        <Caret Line="136" TopLine="116"/>
       </Position19>
       <Position20>
-        <Filename Value="main_window.pas"/>
-        <Caret Line="240" Column="52" TopLine="225"/>
+        <Filename Value="hdd_settings.pas"/>
+        <Caret Line="137" TopLine="116"/>
       </Position20>
       <Position21>
         <Filename Value="hdd_settings.pas"/>
-        <Caret Line="66" Column="50" TopLine="36"/>
+        <Caret Line="138" TopLine="116"/>
       </Position21>
+      <Position22>
+        <Filename Value="hdd_settings.pas"/>
+        <Caret Line="139" TopLine="116"/>
+      </Position22>
+      <Position23>
+        <Filename Value="hdd_settings.pas"/>
+        <Caret Line="140" TopLine="116"/>
+      </Position23>
+      <Position24>
+        <Filename Value="hdd_settings.pas"/>
+        <Caret Line="141" TopLine="117"/>
+      </Position24>
+      <Position25>
+        <Filename Value="hdd_settings.pas"/>
+        <Caret Line="142" TopLine="118"/>
+      </Position25>
+      <Position26>
+        <Filename Value="hdd_settings.pas"/>
+        <Caret Line="143" TopLine="119"/>
+      </Position26>
+      <Position27>
+        <Filename Value="hdd_settings.pas"/>
+        <Caret Line="133" Column="22" TopLine="96"/>
+      </Position27>
+      <Position28>
+        <Filename Value="main_window.pas"/>
+        <Caret Line="293" Column="74" TopLine="269"/>
+      </Position28>
+      <Position29>
+        <Filename Value="main_window.pas"/>
+        <Caret Line="302" Column="14" TopLine="254"/>
+      </Position29>
+      <Position30>
+        <Filename Value="main_window.pas"/>
+        <Caret Line="304" Column="14" TopLine="304"/>
+      </Position30>
     </JumpHistory>
     <RunParams>
       <FormatVersion Value="2"/>
@@ -575,35 +612,25 @@
         <Line Value="6689"/>
       </Item6>
     </BreakPoints>
-    <Watches Count="9">
+    <Watches Count="6">
       <Item1>
-        <Expression Value="readValue"/>
+        <Expression Value="tracks"/>
       </Item1>
       <Item2>
-        <Expression Value="ioITC.Value"/>
+        <Expression Value="sectors"/>
       </Item2>
       <Item3>
-        <Expression Value="regPC.Value"/>
-        <DisplayStyle Value="wdfHex"/>
+        <Expression Value="bytes"/>
       </Item3>
       <Item4>
-        <Expression Value="testwidth"/>
+        <Expression Value="heads"/>
       </Item4>
       <Item5>
-        <Expression Value="testheight"/>
+        <Expression Value="size"/>
       </Item5>
       <Item6>
-        <Expression Value="key"/>
+        <Expression Value="test"/>
       </Item6>
-      <Item7>
-        <Expression Value="shift"/>
-      </Item7>
-      <Item8>
-        <Expression Value="oldKey"/>
-      </Item8>
-      <Item9>
-        <Expression Value="Result"/>
-      </Item9>
     </Watches>
   </Debugging>
 </CONFIG>
