@@ -19,7 +19,7 @@ type
 
     private   // Attribute
         type
-        TbitReg8 = bitpacked record
+        TBitReg8 = bitpacked record
             case byte of
                 0: (Value: byte); // 8Bit Register Value
                 2: (bit: bitpacked array[0..7] of boolean); // Bit Data
@@ -41,13 +41,13 @@ type
         timerFdcBusy: TTimer;
         timerFdcMotorOn: TTimer;
         timerFddStatus: TTimer;
-        fdcStatus: TbitReg8;
+        fdcStatus: TBitReg8;
         fdcTrack, tmpTrack: byte;
         fdcSector: byte;
         fdcData: byte;
         byteCount: word;
-        extStatus: TbitReg8;
-        extControl: TbitReg8;
+        extStatus: TBitReg8;
+        extControl: TBitReg8;
         stepForward: boolean;
         isMultiSectorCommand: boolean;
         isReadCommand: boolean;
@@ -108,7 +108,7 @@ type
         destructor Destroy; override;
 
     private   // Methoden
-        procedure fdcReset;
+        procedure doReset;
         procedure setMotorOn;
         procedure recallMotorOn;
         function calcSteppingRate(command: byte): DWord;
@@ -125,14 +125,14 @@ type
         procedure performSectorWrite(Sender: TObject);
 
     public    // Methoden
-        function getFdcStatus: byte;
-        procedure setFdcCommand(command: byte);
-        function getFdcTrack: byte;
-        procedure setFdcTrack(track: byte);
-        function getFdcSector: byte;
-        procedure setFdcSector(sector: byte);
-        function readFdcData: byte;
-        procedure writeFdcData(Data: byte);
+        function getStatus: byte;
+        procedure setCommand(command: byte);
+        function getTrack: byte;
+        procedure setTrack(track: byte);
+        function getSector: byte;
+        procedure setSector(sector: byte);
+        function readData: byte;
+        procedure writeData(Data: byte);
         function getExtStatus: byte;
         procedure setExtControl(control: byte);
         procedure setFdd0Sides(sides: integer);
@@ -181,7 +181,7 @@ begin
     floppyDrive1.Size := 0;
     floppyDrive1.ImageChanged := False;
     floppyDrive1.MotorOn := False;
-    fdcReset;
+    doReset;
 end;
 
 // --------------------------------------------------------------------------------
@@ -206,7 +206,7 @@ begin
 end;
 
 // --------------------------------------------------------------------------------
-procedure TSystemFdc.fdcReset;
+procedure TSystemFdc.doReset;
 begin
     fdcStatus.Value := 0;
     tmpTrack := 0;
@@ -402,7 +402,7 @@ begin
 end;
 
 // --------------------------------------------------------------------------------
-function TSystemFdc.getFdcStatus: byte;
+function TSystemFdc.getStatus: byte;
 begin
     // Verhalten nicht eindeutig geklaert. Auf der Original Hardware scheint das Flag verzoegert gejoescht zu werden.
     //if (canClearIntrq) then begin
@@ -413,7 +413,7 @@ begin
 end;
 
 // --------------------------------------------------------------------------------
-procedure TSystemFdc.setFdcCommand(command: byte);
+procedure TSystemFdc.setCommand(command: byte);
 var
     cmdDuration: DWord;
     cmd: TbitReg8;
@@ -658,31 +658,31 @@ begin
 end;
 
 // --------------------------------------------------------------------------------
-function TSystemFdc.getFdcTrack: byte;
+function TSystemFdc.getTrack: byte;
 begin
     Result := fdcTrack;
 end;
 
 // --------------------------------------------------------------------------------
-procedure TSystemFdc.setFdcTrack(track: byte);
+procedure TSystemFdc.setTrack(track: byte);
 begin
     fdcTrack := track;
 end;
 
 // --------------------------------------------------------------------------------
-function TSystemFdc.getFdcSector: byte;
+function TSystemFdc.getSector: byte;
 begin
     Result := fdcSector;
 end;
 
 // --------------------------------------------------------------------------------
-procedure TSystemFdc.setFdcSector(sector: byte);
+procedure TSystemFdc.setSector(sector: byte);
 begin
     fdcSector := sector;
 end;
 
 // --------------------------------------------------------------------------------
-function TSystemFdc.readFdcData: byte;
+function TSystemFdc.readData: byte;
 begin
     fdcStatus.bit[DRQ] := False;
     extStatus.bit[DRQ] := False;
@@ -722,7 +722,7 @@ begin
     Result := fdcData;
 end;
 // --------------------------------------------------------------------------------
-procedure TSystemFdc.writeFdcData(Data: byte);
+procedure TSystemFdc.writeData(Data: byte);
 begin
     fdcStatus.bit[DRQ] := False;
     extStatus.bit[DRQ] := False;
@@ -777,7 +777,7 @@ begin
     oldExtControl := extControl;
     extControl.Value := control;
     if (extControl.bit[MRES]) then begin
-        fdcReset;
+        doReset;
     end;
     if ((extControl.bit[D0S]) and (not oldExtControl.bit[D0S])) then begin
         if Assigned(actualFloppyDrive.FddStatus) then begin
