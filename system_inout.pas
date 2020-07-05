@@ -81,16 +81,16 @@ begin
 
     case (port) of
         $70: begin
-            readValue := SystemFdc.getFdcStatus;
+            readValue := SystemFdc.getStatus;
         end;
         $71: begin
-            readValue := SystemFdc.getFdcTrack;
+            readValue := SystemFdc.getTrack;
         end;
         $72: begin
-            readValue := SystemFdc.getFdcSector;
+            readValue := SystemFdc.getSector;
         end;
         $73: begin
-            readValue := SystemFdc.readFdcData;
+            readValue := SystemFdc.readData;
         end;
         $74: begin
             readValue := SystemFdc.getExtStatus;
@@ -105,16 +105,16 @@ procedure TSystemInOut.cpuIoWrite(port: word; Data: byte);
 begin
     case (port) of
         $70: begin
-            SystemFdc.setFdcCommand(Data);
+            SystemFdc.setCommand(Data);
         end;
         $71: begin
-            SystemFdc.setFdcTrack(Data);
+            SystemFdc.setTrack(Data);
         end;
         $72: begin
-            SystemFdc.setFdcSector(Data);
+            SystemFdc.setSector(Data);
         end;
         $73: begin
-            SystemFdc.writeFdcData(Data);
+            SystemFdc.writeData(Data);
         end;
         $78: begin
             SystemFdc.setExtControl(Data);
