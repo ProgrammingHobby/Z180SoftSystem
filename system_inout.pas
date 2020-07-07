@@ -54,7 +54,7 @@ var
 
 implementation
 
-uses System_Terminal, System_Memory, System_Fdc;
+uses System_Terminal, System_Memory, System_Fdc, System_Hdc;
 
 // --------------------------------------------------------------------------------
 constructor TSystemInOut.Create;
@@ -95,6 +95,33 @@ begin
         $74: begin
             readValue := SystemFdc.getExtStatus;
         end;
+        $A0: begin
+            readValue := SystemHdc.getDataLow;
+        end;
+        $A1: begin
+            readValue := SystemHdc.getError;
+        end;
+        $A2: begin
+            readValue := SystemHdc.getSectorCount;
+        end;
+        $A3: begin
+            readValue := SystemHdc.getSector;
+        end;
+        $A4: begin
+            readValue := SystemHdc.getTrackLow;
+        end;
+        $A5: begin
+            readValue := SystemHdc.getTrackHigh;
+        end;
+        $A6: begin
+            readValue := SystemHdc.getDriveHead;
+        end;
+        $A7: begin
+            readValue := SystemHdc.getStatus;
+        end;
+        $A8: begin
+            readValue := SystemHdc.getDataHigh;
+        end;
     end;
     Result := readValue;
 
@@ -118,6 +145,33 @@ begin
         end;
         $78: begin
             SystemFdc.setExtControl(Data);
+        end;
+        $A0: begin
+            SystemHdc.setDataLow(Data);
+        end;
+        $A1: begin
+            SystemHdc.setPrecomp(Data);
+        end;
+        $A2: begin
+            SystemHdc.setSectorCount(Data);
+        end;
+        $A3: begin
+            SystemHdc.setSector(Data);
+        end;
+        $A4: begin
+            SystemHdc.setTrackLow(Data);
+        end;
+        $A5: begin
+            SystemHdc.setTrackHigh(Data);
+        end;
+        $A6: begin
+            SystemHdc.setDriveHead(Data);
+        end;
+        $A7: begin
+            SystemHdc.setCommand(Data);
+        end;
+        $A8: begin
+            SystemHdc.setDataHigh(Data);
         end;
         $FF: begin
             SystemMemory.EnableBootRom(False);
