@@ -451,9 +451,9 @@ end;
 // --------------------------------------------------------------------------------
 procedure TMainWindow.cpuRunTimer(Sender: TObject);
 begin
-    cpuRun.Enabled := False;
+    //cpuRun.Enabled := False;
     Z180Cpu.exec(runSpeedValue);
-    cpuRun.Enabled := True;
+    //cpuRun.Enabled := True;
 end;
 
 // --------------------------------------------------------------------------------

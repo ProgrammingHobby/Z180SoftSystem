@@ -16,6 +16,7 @@ object MainWindow: TMainWindow
   OnKeyDown = FormKeyDown
   OnKeyUp = FormKeyUp
   OnShow = FormShow
+  LCLVersion = '2.0.8.0'
   object toolbarMainWindow: TToolBar
     Left = 0
     Height = 36
