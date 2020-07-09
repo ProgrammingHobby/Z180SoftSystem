@@ -45,6 +45,7 @@ type
         fdcTrack, tmpTrack: byte;
         fdcSector: byte;
         fdcData: byte;
+        fdcSide: byte;
         byteCount: word;
         extStatus: TBitReg8;
         extControl: TBitReg8;
@@ -251,18 +252,8 @@ end;
 
 // --------------------------------------------------------------------------------
 function TSystemFdc.calcFilePosition: DWord;
-var
-    trackBytes: word;
-    filePos: DWord;
 begin
-    if ((extControl.bit[SS]) and (actualFloppyDrive.Sides = 2)) then begin
-        filePos := (((fdcSector) * actualFloppyDrive.SectorBytes) + ((actualFloppyDrive.Sectors - 1) * actualFloppyDrive.SectorBytes));
-    end
-    else begin
-        filePos := ((fdcSector - 1) * actualFloppyDrive.SectorBytes);
-    end;
-    trackBytes := ((((actualFloppyDrive.Sectors - 1) * 2) + 2) * actualFloppyDrive.SectorBytes);
-    Result := filePos + (fdcTrack * trackBytes);
+    Result := (((((fdcTrack * actualFloppyDrive.Sides) + fdcSide) * actualFloppyDrive.Sectors) + (fdcSector - 1)) * actualFloppyDrive.SectorBytes);
 end;
 
 // --------------------------------------------------------------------------------
@@ -351,7 +342,6 @@ begin
     end
     else begin
         try
-            AssignFile(fddData, actualFloppyDrive.ImageFileName);
             Reset(fddData);
             Seek(fddData, filePos);
         except
@@ -385,7 +375,6 @@ begin
     end
     else begin
         try
-            AssignFile(fddData, actualFloppyDrive.ImageFileName);
             Reset(fddData);
             Seek(fddData, filePos);
         except
@@ -774,6 +763,9 @@ procedure TSystemFdc.setExtControl(control: byte);
 var
     oldExtControl: TbitReg8;
 begin
+    if (extControl.Value = control) then begin
+        exit;
+    end;
     oldExtControl := extControl;
     extControl.Value := control;
     if (extControl.bit[MRES]) then begin
@@ -784,12 +776,20 @@ begin
             setFddOffState(nil);
         end;
         actualFloppyDrive := floppyDrive0;
+        AssignFile(fddData, floppyDrive0.ImageFileName);
     end;
     if ((extControl.bit[D1S]) and (not oldExtControl.bit[D1S])) then begin
         if Assigned(actualFloppyDrive.FddStatus) then begin
             setFddOffState(nil);
         end;
         actualFloppyDrive := floppyDrive1;
+        AssignFile(fddData, floppyDrive1.ImageFileName);
+    end;
+    if ((extControl.bit[SS]) and (actualFloppyDrive.Sides = 2)) then begin
+        fdcSide := 1;
+    end
+    else begin
+        fdcSide := 0;
     end;
 end;
 
