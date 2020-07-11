@@ -150,7 +150,7 @@ begin
             SystemHdc.setDataLow(Data);
         end;
         $A1: begin
-            SystemHdc.setPrecomp(Data);
+            SystemHdc.setFeatures(Data);
         end;
         $A2: begin
             SystemHdc.setSectorCount(Data);
