@@ -291,7 +291,7 @@ begin
     end;
     SystemFdc.setFdd1Image(ImageFile);
 
-    //SystemHdc.setHddStatusPanel(panelHdd);
+    SystemHdc.setHddStatusPanel(panelHdd);
     SystemHdc.setHddHeads(SystemSettings.ReadInteger('Hdd', 'Heads', 16));
     SystemHdc.setHddTracks(SystemSettings.ReadInteger('Hdd', 'Tracks', 246));
     SystemHdc.setHddSectors(SystemSettings.ReadInteger('Hdd', 'Sectors', 63));
