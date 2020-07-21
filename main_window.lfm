@@ -16,7 +16,6 @@ object MainWindow: TMainWindow
   OnKeyDown = FormKeyDown
   OnKeyUp = FormKeyUp
   OnShow = FormShow
-  LCLVersion = '2.0.8.0'
   object toolbarMainWindow: TToolBar
     Left = 0
     Height = 36
@@ -188,8 +187,8 @@ object MainWindow: TMainWindow
     Width = 778
     Align = alBottom
     BevelOuter = bvNone
-    ClientHeight = 24
-    ClientWidth = 778
+    ClientHeight = 20
+    ClientWidth = 774
     Constraints.MaxHeight = 24
     Constraints.MinHeight = 24
     ParentColor = False
@@ -231,14 +230,16 @@ object MainWindow: TMainWindow
       Align = alRight
       BevelOuter = bvNone
       Enabled = False
+      ParentShowHint = False
+      ShowHint = True
       TabOrder = 2
       OnPaint = panelHddPaint
     end
   end
   object menuMainWindow: TMainMenu
     Images = imagelistMainWindow
-    left = 456
-    top = 288
+    Left = 456
+    Top = 288
     object menuFile: TMenuItem
       Caption = 'Datei'
       object menuLoadFileToRam: TMenuItem
@@ -318,24 +319,23 @@ object MainWindow: TMainWindow
       end
       object menuHardwareInfo: TMenuItem
         Action = actionHardwareInfo
-        Visible = False
       end
     end
   end
   object FileOpenDialog: TOpenDialog
     Options = [ofPathMustExist, ofFileMustExist, ofNoNetworkButton, ofEnableSizing, ofViewDetail]
-    left = 552
-    top = 288
+    Left = 552
+    Top = 288
   end
   object cpuRun: TTimer
-    left = 376
-    top = 288
+    Left = 376
+    Top = 288
   end
   object imagelistMainWindow: TImageList
     Height = 24
     Width = 24
-    left = 312
-    top = 288
+    Left = 312
+    Top = 288
     Bitmap = {
       4C69190000001800000018000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -2142,8 +2142,8 @@ object MainWindow: TMainWindow
   end
   object actionlistMainWindow: TActionList
     Images = imagelistMainWindow
-    left = 203
-    top = 288
+    Left = 203
+    Top = 288
     object actionLoadFileToRam: TAction
       Caption = 'Lade Binärdatei ins RAM'
       Hint = 'Lädt eine Binärdatei ins RAM. Deaktiviert das Boot-ROM.'
@@ -2246,6 +2246,7 @@ object MainWindow: TMainWindow
       Caption = 'Emulierte Hardware'
       Hint = 'Informationen über die emulierte Hardware.'
       ImageIndex = 17
+      OnExecute = actionHardwareInfoExecute
       ShortCut = 24649
     end
     object actionTerminalSettings: TAction
@@ -2257,8 +2258,8 @@ object MainWindow: TMainWindow
     end
   end
   object popupmenuSlowRunSpeed: TPopupMenu
-    left = 648
-    top = 288
+    Left = 648
+    Top = 288
     object popup1Ops: TMenuItem
       AutoCheck = True
       Caption = '1 Op/s'
@@ -2285,8 +2286,8 @@ object MainWindow: TMainWindow
     end
   end
   object popupmenuRunSpeed: TPopupMenu
-    left = 648
-    top = 368
+    Left = 648
+    Top = 368
     object popup4Mhz: TMenuItem
       AutoCheck = True
       Caption = '4 MHz'

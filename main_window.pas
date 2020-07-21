@@ -2,6 +2,8 @@ unit Main_Window;
 
 {$mode objfpc}{$H+}
 
+{ TODO : Im Menü 'Hilfe' Menüpunkt 'System' anlegen um Informationen über die Emulierte Hardware anzuzeigen }
+
 interface
 
 uses
@@ -99,6 +101,7 @@ type
         procedure actionCpuCoreRegisterExecute(Sender: TObject);
         procedure actionCpuIoRegisterExecute(Sender: TObject);
         procedure actionFloppyDriveExecute(Sender: TObject);
+        procedure actionHardwareInfoExecute(Sender: TObject);
         procedure actionHddDriveExecute(Sender: TObject);
         procedure actionLoadFileToRamExecute(Sender: TObject);
         procedure actionMemoryEditorExecute(Sender: TObject);
@@ -142,7 +145,7 @@ implementation
 
 uses UscaleDPI, System_Settings, Cpu_Register, Cpu_Io_Register, Memory_Editor, Memory_Settings,
     System_Memory, System_InOut, Z180_CPU, System_Terminal, System_Fdc, Fdd_Settings, Terminal_Settings,
-    About_Window, System_Hdc, Hdd_Settings;
+    About_Window, System_Hdc, Hdd_Settings, Hardware_Info;
 
 { TformMainWindow }
 
@@ -155,15 +158,19 @@ begin
     end;
 
     if Assigned(CpuRegister) then begin
-        CpuRegister.Close;
+        CpuRegister.Destroy;
     end;
 
     if Assigned(MemoryEditor) then begin
-        MemoryEditor.Close;
+        MemoryEditor.Destroy;
     end;
 
     if Assigned(CpuIoRegister) then begin
-        CpuIoRegister.Close;
+        CpuIoRegister.Destroy;
+    end;
+
+    if Assigned(HardwareInfo) then begin
+        HardwareInfo.Destroy;
     end;
 
     if Assigned(Z180Cpu) then begin
@@ -493,7 +500,7 @@ begin
         Application.CreateForm(TMemoryEditor, MemoryEditor);
     end;
 
-    if (Assigned(MemoryEditor) and (MemoryEditor.IsVisible) and (MemoryEditor.WindowState <> wsMinimized)) then begin
+    if ((MemoryEditor.IsVisible) and (MemoryEditor.WindowState <> wsMinimized)) then begin
         MemoryEditor.Close;
     end
     else begin
@@ -648,7 +655,7 @@ begin
         Application.CreateForm(TCpuRegister, CpuRegister);
     end;
 
-    if (Assigned(CpuRegister) and (CpuRegister.IsVisible) and (CpuRegister.WindowState <> wsMinimized)) then begin
+    if ((CpuRegister.IsVisible) and (CpuRegister.WindowState <> wsMinimized)) then begin
         CpuRegister.Close;
     end
     else begin
@@ -663,7 +670,7 @@ begin
         Application.CreateForm(TCpuIoRegister, CpuIoRegister);
     end;
 
-    if (Assigned(CpuIoRegister) and (CpuIoRegister.IsVisible) and (CpuIoRegister.WindowState <> wsMinimized)) then begin
+    if ((CpuIoRegister.IsVisible) and (CpuIoRegister.WindowState <> wsMinimized)) then begin
         CpuIoRegister.Close;
     end
     else begin
@@ -678,6 +685,21 @@ var
 begin
     Application.CreateForm(TFddSettings, dialog);
     dialog.ShowModal;
+end;
+
+// --------------------------------------------------------------------------------
+procedure TMainWindow.actionHardwareInfoExecute(Sender: TObject);
+begin
+  if not Assigned(HardwareInfo) then begin
+        Application.CreateForm(THardwareInfo, HardwareInfo);
+    end;
+
+    if ((HardwareInfo.IsVisible) and (HardwareInfo.WindowState <> wsMinimized)) then begin
+        HardwareInfo.Close;
+    end
+    else begin
+        HardwareInfo.Show;
+    end;
 end;
 
 // --------------------------------------------------------------------------------
