@@ -1,0 +1,263 @@
+object HardwareInfo: THardwareInfo
+  Left = 362
+  Height = 557
+  Top = 250
+  Width = 640
+  Caption = 'Emulierte Hardware'
+  ClientHeight = 557
+  ClientWidth = 640
+  Constraints.MinHeight = 480
+  Constraints.MinWidth = 640
+  OnClose = FormClose
+  OnShow = FormShow
+  object pagecontrolHardwareInfo: TPageControl
+    Left = 0
+    Height = 557
+    Top = 0
+    Width = 640
+    ActivePage = tabZ180Mpu
+    Align = alClient
+    Font.Height = -12
+    Font.Name = 'Monospace'
+    ParentFont = False
+    TabIndex = 0
+    TabOrder = 0
+    object tabZ180Mpu: TTabSheet
+      Caption = 'Z180MPU / Boot ROM'
+      ClientHeight = 530
+      ClientWidth = 630
+      object memoZ180Mpu: TMemo
+        Left = 0
+        Height = 530
+        Top = 0
+        Width = 630
+        Align = alClient
+        Lines.Strings = (
+          '- Standard Zilog Z80180 MPU. Die erweiterten Funktionen der Z8L und Z8S Typen sind nicht verfügbar.'
+          '- Der Z180 Assembler Befehlssatz ist komplett emuliert.'
+          '- Alle Z180 internen standart I/O-Register sind angelegt und können entsprechende beschrieben und gelesen werden.'
+          '- Die Z180 MMU ist emuliert.'
+          '- Die beiden ASCI-Kanäle sind implementiert und Interrupt fähig. Das ''OVERRUN'' Fehler-Flag wird entsprechend gesetzt.'
+          '   Am ASCI-Kanal0 ist das ''Terminal'' angeschlossen.'
+          '- Die beiden PRT-Kanäle sind implementiert und Interrupt fähig.'
+          '- Die beiden DMA-Kanäle sind implementiert, jedoch noch nicht getestet. Die DMA-Memory'
+          '  transfers sollten funktionieren. DMA-I/O, insbesondere die Möglichkeit die ASCI per DMA'
+          '  bedienen zu können ist noch nicht angelegt.'
+          '- Es werden nur die Interrupts der internen I/O-Funktionen unterstützt. ''Externe'' Interrupts sind nicht möglich.'
+          '- Der Z180 Undefined-Op-Code TRAP ist implementiert.'
+          ''
+          '- das Boot-ROM wird bei jedem Reset eingeschaltet. Dieses kann per Programm durch einen'
+          '  Schreibzugriff auf Port-Adresse FFh ausgeschaltet werden.'
+        )
+        ReadOnly = True
+        ScrollBars = ssAutoBoth
+        TabOrder = 0
+        WantReturns = False
+        WordWrap = False
+      end
+    end
+    object tabTerminal: TTabSheet
+      Caption = 'Terminal'
+      ClientHeight = 530
+      ClientWidth = 630
+      object memoTerminal: TMemo
+        Left = 0
+        Height = 530
+        Top = 0
+        Width = 618
+        Align = alClient
+        Font.Height = -12
+        Font.Name = 'Monospace'
+        Lines.Strings = (
+          '- VT100/VT52 kompatibles Textterminal mit 24 Zeilen und 80 Zeichen pro Zeile.'
+          '- folgende Steuerzeichen/ESC-Sequenzen sind implementiert:'
+          ''
+          '    - 0x01 : Cursor home            - 0x04 : Cursor right'
+          '    - 0x05 : Cursor up              - 0x08 : Backspace'
+          '    - 0x09 : Tabulator              - 0x0A : Line Feed'
+          '    - 0x0C : Clear Screen           - 0x0D : Carriage Return ( optional mit Linefeed)'
+          '    - 0x13 : Cursor left            - 0x16 : Delete End of Line'
+          '    - 0x18 : Cursor down            - 0x1B : VT52-Mode einschalten'
+          '    - 0x7F : Backspace'
+          ''
+          '    - ESC A : Cursor up                 - ESC B : Cursor down'
+          '    - ESC C : Cursor right              - ESC D : Cursor left'
+          '    - ESC H : Cursor home               - ESC I : Reverse Line Feed'
+          '    - ESC J : Delete End of Screen      - ESC K : Delete End of Line'
+          '    - ESC L : Insert Line               - ESC M : Remove Line'
+          '    - ESC Y : Direct Cursor Address     - ESC Z : Identify VT52 Mode'
+          ''
+          '    - ESC [ A : Cursor up               - ESC [ B : Cursor down'
+          '    - ESC [ C : Cursor right            - ESC [ D : Cursor left'
+          '    - ESC [ H : Cursor home             - ESC [ J : Delete End of Screen'
+          '    - ESC [ K : Delete End of Line      - ESC [ L : Insert Line'
+          '    - ESC [ M : Delete Line             - ESC [ m : Clear Character Attributes'
+          '    - ESC [ f : Cursor home'
+          ''
+          '    - ESC [ n A : Cursor n Lines up         - ESC [ n B : Cursor n Lines down'
+          '    - ESC [ n C : Cursor n Columns right    - ESC [ n D : Cursor n Columns left'
+          ''
+          '    - ESC [ n K : n = 0 : Delete End of Line'
+          '                  n = 1 : Delete Beginning of Line'
+          '                  n = 2 : Delete Line, do not move Cursor'
+          ''
+          '    - ESC [ n J : n = 0 : Delete End of Screen'
+          '                  n = 1 : Delete Beginning of Screen'
+          '                  n = 2 : Erase Screen, do not move Cursor'
+          ''
+          '    - ESC [ n L : Insert n Lines            - ESC [ n M : Delete n Lines'
+          ''
+          '    - ESC [ 0 m : Reset Attributes          - ESC [ 1 m : Bold enable'
+          '    - ESC [ 4 m : Underline enable          - ESC [ 5 m : Italic enable'
+          '    - ESC [ 7 m : Bold + Font Color grey    - ESC [ 22 m : Bold disable'
+          '    - ESC [ 24 m : Underline disable        - ESC [ 25 m : Italic disbale'
+          '    - ESC [ 27 m : Bold + Font Color grey disable'
+          ''
+          '    - ESC [ 30 m : Font Color black         - ESC [ 31 m : Font Color red'
+          '    - ESC [ 32 m : Font Color green         - ESC [ 33 m : Font Color yellow'
+          '    - ESC [ 34 m : Font Color blue          - ESC [ 35 m : Font Color magenta'
+          '    - ESC [ 36 m : Font Color Cyan          - ESC [ 37 m : Font Color white'
+          ''
+          '    - ESC [ 30 m : Background Color black   - ESC [ 31 m : Background Color red'
+          '    - ESC [ 32 m : Background Color green   - ESC [ 33 m : Background Color yellow'
+          '    - ESC [ 34 m : Background Color blue    - ESC [ 35 m : Background Color magenta'
+          '    - ESC [ 36 m : Background Color Cyan    - ESC [ 37 m : Background Color white'
+        )
+        ParentFont = False
+        ReadOnly = True
+        ScrollBars = ssAutoBoth
+        TabOrder = 0
+        WantReturns = False
+        WordWrap = False
+      end
+    end
+    object tabFddController: TTabSheet
+      Caption = 'FDD-Controller'
+      ClientHeight = 530
+      ClientWidth = 630
+      object memoFddController: TMemo
+        Left = 0
+        Height = 530
+        Top = 0
+        Width = 618
+        Align = alClient
+        Lines.Strings = (
+          '- Der Disketten Kontroller ist WD 1770 kompatibel. Es werden folgende Befehle ausgeführt:'
+          ''
+          '    +------+----------+-------------------------+   +-------------------------------------------+'
+          '    |      |'#9'      |'#9'   Bits                 |   | Type 1 Commands                           |'
+          '    | Type | Command  |  7  6  5  4  3  2  1  0 |   +-------------------------------------------+'
+          '    +------+----------+-------------------------+   | h =    Motor on Flag (bit 3)              |'
+          '    |   1  | Restore  |  0  0  0  0  h  v r1 r0 |   | h = 0  Enable spin-up Sequence            |'
+          '    |   1  | Seek     |  0  0  0  1  h  v r1 r0 |   | h = 1  Disable spin-up Sequemce           |'
+          '    |   1  | Step     |  0  0  1  u  h  v r1 r0 |   |                                           |'
+          '    |   1  | Step-in  |  0  1  0  u  h  v r1 r0 |   | v =    Verify Flag (bit 2)                |'
+          '    |   1  | Step-out |  0  1  1  u  h  v r1 r0 |   | v = 0  No verify                          |'
+          '    |   2  | Rd sectr |  1  0  0  m  h  E  0  0 |   | v = 1  Verify on destn track              |'
+          '    |   2  | Wt sectr |  1  0  1  m  h  E  0  0 |   |                                           |'
+          '    +------+----------+-------------------------+   | r1, r0 = Stepping rate (bits 1, 0)        |'
+          '                                                    | r1  r0                                    |'
+          '    +-------------------------------------------+   |  0   0'#9' 6 ms                           |'
+          '    | Type 2 Commands                           |   |  0   1'#9'12 ms                           |'
+          '    +-------------------------------------------+   |  1   0'#9'20 ms                           |  '
+          '    | m =    Multiple Sector Flag (bit 4)       |   |  1   1'#9'30 ms                           |'
+          '    | m = 0  Single sector                      |   |                                           |'
+          '    | m = 1  Multiple sector                    |   | u =    Update Flag (bit 4)                |'
+          '    |                                           |   | u = 0  No update                          |'
+          '    | E =    30ms Settling Delay (bit 2)        |   | u = 1  Update Track Register              |'
+          '    | E = 0  No delay                           |   +-------------------------------------------+'
+          '    | E = 1  Add 30ms Delay                     |'
+          '    +-------------------------------------------+'
+          ''
+          '- die Port-Adressen sind wie folgt verteilt:'
+          #9'70h:'#9'read: Fdc-Status   write: Fdc-Command'
+          #9'71h:'#9'read/write: Fdc-Track Register'
+          #9'72h:'#9'read/write: Fdc-Sector Register'
+          #9'73h:'#9'read/write: Fdc-Data Register'
+          #9'74h:'#9'read: Externes Status Register   write: Externes Control Register'
+          ''
+          '- das Externe Status Register ist wie folgt belegt:'
+          #9'Bit0:'#9'INTRQ-Signal des Fdc-Controllers'
+          #9'Bit1:'#9'DRQ-Signal des Fdc-Controllers'
+          #9'Bit3:'#9'Disk-Change Signal der Disketten Laufwerke'
+          ''
+          '- das Externe Control Register ist wie folgt belegt:'
+          #9'Bit0:'#9'Master-Reset des Fdc-Controllers'
+          #9'Bit2:'#9'Disk-Drive 1 enable'
+          #9'Bit3:'#9'Disk-Drive 0 enable'
+          #9'Bit4:'#9'Side-Select (false = Seite 0 , true = Seite 1)'
+        )
+        ReadOnly = True
+        ScrollBars = ssAutoBoth
+        TabOrder = 0
+        WantReturns = False
+        WordWrap = False
+      end
+    end
+    object tabHddController: TTabSheet
+      Caption = 'HDD-Controller'
+      ClientHeight = 530
+      ClientWidth = 630
+      object memoHddController: TMemo
+        Left = 0
+        Height = 530
+        Top = 0
+        Width = 618
+        Align = alClient
+        Lines.Strings = (
+          '- Der Festplatten Kontroller ATA-1 kompatibel. Es werden folgende Befehle ausgeführt:'
+          '    - 0x10 : Recalibrate'
+          '    - 0x20 : Read Sectors'
+          '    - 0x30 : Write Sectors'
+          '    - 0xE4 : Read Buffer'
+          '    - 0xE8 : Write Buffer'
+          '    - 0xEF : Set Feature'
+          '    '
+          '- Die Belegung der entsprechenden Register entspricht dem ATA-1 Standart.'
+          ''
+          '- Das Feature Register kann mit 2 Werten geladen werden:'
+          '    - 0x01h : Enable 8-bit data transfers'
+          '    - 0x81h : Disable 8-bit data transfers'
+          '    '
+          '- Im Status-Register werden folgende Bits von der Emulation benutzt:'
+          '    - ERR  : Error'
+          '    - DRQ  : Data request'
+          '    - DSC  : Drive seek complete'
+          '    - DRDY : Drive ready'
+          '    - BSY  : Busy'
+          '    '
+          '- Im Error-Register werden folgende Bits von der Emulation benutzt:'
+          '    - AMNF : Address Mark not found'
+          '    - ABRT : Command Aborted'
+          '    - IDNF : ID-Field not found'
+          '    '
+          '- Im Drive/Head-Register werden folgende Bits ausgewertet:'
+          '    - 0..3 : Head number'
+          '    - DRV : Drive (muß 0 sein, für Drive 0);'
+          '    '
+          '- Folgende Port-Adressen sind belegt:'
+          '    - 0xA0h:'#9'Daten Register low Byte'
+          '    - 0xA1h:'#9'read: Error Register   ;   write: Features Register'
+          '    - 0xA2h:'#9'Sector-Count Register'
+          '    - 0xA3h:'#9'Sector Nummer Register'
+          '    - 0xA4h:'#9'Cylinder Register untere 8Bit'
+          '    - 0xA5h:'#9'Cylinder Register obere 8Bit'
+          '    - 0xA6h:'#9'Drive Head Register'
+          '    - 0xA7h:'#9'read: Status Register  ;  write: Command Register'
+          '    - 0xA8h:'#9'Daten Register high Byte'
+          '    '
+          '- Beim Lesen und Schreiben von 16-Bit Daten ist folgende Reihenfolge einzuhalten:'
+          '    - Lesen: zuerst das Daten low Byte dann das Daten high Byte'
+          '    - Schreiben: zuerst das Daten high Byte dann das Daten low Byte'
+          '    '
+          '- Bei 8-Bit Datentransfers wird das Daten high Byte Register nicht benutzt.'
+        )
+        ReadOnly = True
+        ScrollBars = ssAutoBoth
+        TabOrder = 0
+        WantReturns = False
+        WordWrap = False
+      end
+    end
+  end
+end
