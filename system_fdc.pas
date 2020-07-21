@@ -822,8 +822,10 @@ function TSystemFdc.setFdd0Image(FileName: string): boolean;
 var
     isLoaded: boolean;
     imageFileSize: integer;
+    hintString: string;
 begin
     isLoaded := False;
+    hintString:='';
     floppyDrive0.FddStatus.Enabled := False;
     if (FileExists(FileName)) then begin
         try
@@ -838,7 +840,12 @@ begin
                 floppyDrive0.ImageFileName := FileName;
                 floppyDrive0.Size := imageFileSize;
                 floppyDrive0.FddStatus.Enabled := True;
-                floppyDrive0.FddStatus.Hint := FileName;
+                hintString:='Image:  '+ExtractFileName(FileName)+LineEnding+
+                            'Größe:  '+IntToStr(floppyDrive0.Size div 1024) + 'KB'+LineEnding+
+                            'Seiten:  '+IntToStr(floppyDrive0.Sides)+LineEnding+
+                            'Spuren:  '+IntToStr(floppyDrive0.Tracks)+LineEnding+
+                            'Sektoren:  '+ IntToStr(floppyDrive0.Sectors)+LineEnding+
+                            'Bytes/Sektor:  '+ IntToStr(floppyDrive0.SectorBytes);
             end;
             isLoaded := True;
             Close(fddData);
@@ -847,9 +854,9 @@ begin
     end
     else begin
         floppyDrive0.ImageFileName := '';
-        floppyDrive0.FddStatus.Hint := '';
         floppyDrive0.Size := 0;
-    end;
+    end; 
+        floppyDrive0.FddStatus.Hint := hintString;
     Result := isLoaded;
 end;
 
@@ -888,8 +895,10 @@ function TSystemFdc.setFdd1Image(FileName: string): boolean;
 var
     isLoaded: boolean;
     imageFileSize: integer;
+    hintString: string;
 begin
     isLoaded := False;
+    hintString:='';
     floppyDrive1.FddStatus.Enabled := False;
     if (FileExists(FileName)) then begin
         try
@@ -904,7 +913,12 @@ begin
                 floppyDrive1.ImageFileName := FileName;
                 floppyDrive1.Size := imageFileSize;
                 floppyDrive1.FddStatus.Enabled := True;
-                floppyDrive1.FddStatus.Hint := FileName;
+                hintString:='Image:  '+ExtractFileName(FileName)+LineEnding+
+                            'Größe:  '+IntToStr(floppyDrive1.Size div 1024) + 'KB'+LineEnding+
+                            'Seiten:  '+IntToStr(floppyDrive1.Sides)+LineEnding+
+                            'Spuren:  '+IntToStr(floppyDrive1.Tracks)+LineEnding+
+                            'Sektoren:  '+ IntToStr(floppyDrive1.Sectors)+LineEnding+
+                            'Bytes/Sektor:  '+ IntToStr(floppyDrive1.SectorBytes);
             end;
             isLoaded := True;
             Close(fddData);
@@ -913,9 +927,9 @@ begin
     end
     else begin
         floppyDrive1.ImageFileName := '';
-        floppyDrive1.FddStatus.Hint := '';
         floppyDrive1.Size := 0;
     end;
+        floppyDrive1.FddStatus.Hint := hintString;
     Result := isLoaded;
 end;
 
