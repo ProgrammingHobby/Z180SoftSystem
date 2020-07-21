@@ -32,13 +32,15 @@ object HardwareInfo: THardwareInfo
         Top = 0
         Width = 630
         Align = alClient
+        Font.Height = -12
+        Font.Name = 'Fixedsys'
         Lines.Strings = (
           '- Standard Zilog Z80180 MPU. Die erweiterten Funktionen der Z8L und Z8S Typen sind nicht verfügbar.'
           '- Der Z180 Assembler Befehlssatz ist komplett emuliert.'
           '- Alle Z180 internen standart I/O-Register sind angelegt und können entsprechende beschrieben und gelesen werden.'
           '- Die Z180 MMU ist emuliert.'
           '- Die beiden ASCI-Kanäle sind implementiert und Interrupt fähig. Das ''OVERRUN'' Fehler-Flag wird entsprechend gesetzt.'
-          '   Am ASCI-Kanal0 ist das ''Terminal'' angeschlossen.'
+          '  Am ASCI-Kanal0 ist das ''Terminal'' angeschlossen.'
           '- Die beiden PRT-Kanäle sind implementiert und Interrupt fähig.'
           '- Die beiden DMA-Kanäle sind implementiert, jedoch noch nicht getestet. Die DMA-Memory'
           '  transfers sollten funktionieren. DMA-I/O, insbesondere die Möglichkeit die ASCI per DMA'
@@ -49,6 +51,7 @@ object HardwareInfo: THardwareInfo
           '- das Boot-ROM wird bei jedem Reset eingeschaltet. Dieses kann per Programm durch einen'
           '  Schreibzugriff auf Port-Adresse FFh ausgeschaltet werden.'
         )
+        ParentFont = False
         ReadOnly = True
         ScrollBars = ssAutoBoth
         TabOrder = 0
@@ -62,12 +65,12 @@ object HardwareInfo: THardwareInfo
       ClientWidth = 630
       object memoTerminal: TMemo
         Left = 0
-        Height = 530
+        Height = 529
         Top = 0
-        Width = 618
+        Width = 632
         Align = alClient
         Font.Height = -12
-        Font.Name = 'Monospace'
+        Font.Name = 'Fixedsys'
         Lines.Strings = (
           '- VT100/VT52 kompatibles Textterminal mit 24 Zeilen und 80 Zeichen pro Zeile.'
           '- folgende Steuerzeichen/ESC-Sequenzen sind implementiert:'
@@ -139,13 +142,15 @@ object HardwareInfo: THardwareInfo
         Left = 0
         Height = 530
         Top = 0
-        Width = 618
+        Width = 630
         Align = alClient
+        Font.Height = -12
+        Font.Name = 'Fixedsys'
         Lines.Strings = (
           '- Der Disketten Kontroller ist WD 1770 kompatibel. Es werden folgende Befehle ausgeführt:'
           ''
           '    +------+----------+-------------------------+   +-------------------------------------------+'
-          '    |      |'#9'      |'#9'   Bits                 |   | Type 1 Commands                           |'
+          '    |      |          |    Bits                 |   | Type 1 Commands                           |'
           '    | Type | Command  |  7  6  5  4  3  2  1  0 |   +-------------------------------------------+'
           '    +------+----------+-------------------------+   | h =    Motor on Flag (bit 3)              |'
           '    |   1  | Restore  |  0  0  0  0  h  v r1 r0 |   | h = 0  Enable spin-up Sequence            |'
@@ -157,10 +162,10 @@ object HardwareInfo: THardwareInfo
           '    |   2  | Wt sectr |  1  0  1  m  h  E  0  0 |   |                                           |'
           '    +------+----------+-------------------------+   | r1, r0 = Stepping rate (bits 1, 0)        |'
           '                                                    | r1  r0                                    |'
-          '    +-------------------------------------------+   |  0   0'#9' 6 ms                           |'
-          '    | Type 2 Commands                           |   |  0   1'#9'12 ms                           |'
-          '    +-------------------------------------------+   |  1   0'#9'20 ms                           |  '
-          '    | m =    Multiple Sector Flag (bit 4)       |   |  1   1'#9'30 ms                           |'
+          '    +-------------------------------------------+   |  0   0     6 ms                           |'
+          '    | Type 2 Commands                           |   |  0   1    12 ms                           |'
+          '    +-------------------------------------------+   |  1   0    20 ms                           |  '
+          '    | m =    Multiple Sector Flag (bit 4)       |   |  1   1    30 ms                           |'
           '    | m = 0  Single sector                      |   |                                           |'
           '    | m = 1  Multiple sector                    |   | u =    Update Flag (bit 4)                |'
           '    |                                           |   | u = 0  No update                          |'
@@ -187,6 +192,7 @@ object HardwareInfo: THardwareInfo
           #9'Bit3:'#9'Disk-Drive 0 enable'
           #9'Bit4:'#9'Side-Select (false = Seite 0 , true = Seite 1)'
         )
+        ParentFont = False
         ReadOnly = True
         ScrollBars = ssAutoBoth
         TabOrder = 0
@@ -200,10 +206,12 @@ object HardwareInfo: THardwareInfo
       ClientWidth = 630
       object memoHddController: TMemo
         Left = 0
-        Height = 530
+        Height = 534
         Top = 0
-        Width = 618
+        Width = 638
         Align = alClient
+        Font.Height = -12
+        Font.Name = 'Fixedsys'
         Lines.Strings = (
           '- Der Festplatten Kontroller ATA-1 kompatibel. Es werden folgende Befehle ausgeführt:'
           '    - 0x10 : Recalibrate'
@@ -252,6 +260,7 @@ object HardwareInfo: THardwareInfo
           '    '
           '- Bei 8-Bit Datentransfers wird das Daten high Byte Register nicht benutzt.'
         )
+        ParentFont = False
         ReadOnly = True
         ScrollBars = ssAutoBoth
         TabOrder = 0
