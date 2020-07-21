@@ -64,7 +64,7 @@ type
         enableLocalEcho: boolean;
         enableTerminalLogging: boolean;
         loggingFile: file of char;
-        fontColor, backgroundColor: TColor;
+        fontColor, tmpFontColor, backgroundColor: TColor;
         fontStyle: TFontStyles;
         termMode: TTermMode;
         csiPar1, csiPar2, dcaRow: integer;
@@ -871,43 +871,30 @@ procedure TSystemTerminal.writeCharacter(character: byte);
                     end;
                     1: begin
                         fontStyle := fontStyle + [fsBold];
-                        fontColor := clBlack;
-                        backgroundColor := clWhite;
                     end;
                     4: begin
                         fontStyle := fontStyle + [fsUnderline];
-                        fontColor := clBlack;
-                        backgroundColor := clWhite;
                     end;
                     5: begin
                         fontStyle := fontStyle + [fsItalic];
-                        fontColor := clBlack;
-                        backgroundColor := clWhite;
                     end;
                     7: begin
                         fontStyle := fontStyle + [fsBold];
+                        tmpFontColor:=fontColor;
                         fontColor := clGray;
-                        backgroundColor := clWhite;
                     end;
                     22: begin
                         fontStyle := fontStyle - [fsBold];
-                        fontColor := clBlack;
-                        backgroundColor := clWhite;
                     end;
                     24: begin
                         fontStyle := fontStyle - [fsUnderline];
-                        fontColor := clBlack;
-                        backgroundColor := clWhite;
                     end;
                     25: begin
                         fontStyle := fontStyle - [fsItalic];
-                        fontColor := clBlack;
-                        backgroundColor := clWhite;
                     end;
                     27: begin
                         fontStyle := fontStyle - [fsBold];
-                        fontColor := clBlack;
-                        backgroundColor := clWhite;
+                        fontColor := tmpFontColor;
                     end;
                     30: begin
                         fontColor := clBlack;
