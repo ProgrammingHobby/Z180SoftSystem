@@ -1,3 +1,10 @@
+========== Z180SoftSystem V2.0.0 ==========
+- die virtuelle Taktfrequenz im CPU-Run Modus ist in 4 Schritten einstellbar (4MHz, 8MHz, 12MHz, 16MHz).
+- in der FDC-Controller Unit die Berechnung der File-Position und Zuweisung des Imagefiles an die Laufwerke geändert.
+- ebenso in der FDC-Controller Unit die Icon-Hints um die Größe und Angabe der Laufwerksgeometrie ergänzt.
+- Unit HDC-Controller mit Grundlegenden Schreib/Lese-Funktionen erstellt.
+- Im Hilfe Menü sind nun Informationen über die emulierte Hardware zu finden.
+
 ========== Z180SoftSystem V1.2.1 ==========
 - Im Mainwindow die Tastatur Shortcuts geändert, um konflikte mit CP/M Shortcuts zu umgehen.
 - Im Mainwindow einen Workaround eingefügt damit auch unter Linux die Taste 'ALTGR' funktioniert
@@ -17,8 +24,6 @@
 - die Icons der Diskettenlaufwerke zeigen beim Darüberfahren den Namen des aktuell geladenen Imagefile an
 - Größenberechnung des Terminalfensters im Windows-Build korrigiert
 - Behandlung des FDD-Motor-On Signals in der Disketten-Controller Unit korrigiert
-
-
 
 
 ========== Z180SoftSystem V1.0.0 ==========
