@@ -18,10 +18,8 @@
     <VersionInfo>
       <UseVersionInfo Value="True"/>
       <AutoIncrementBuild Value="True"/>
-      <MajorVersionNr Value="1"/>
-      <MinorVersionNr Value="2"/>
-      <RevisionNr Value="1"/>
-      <BuildNr Value="663"/>
+      <MajorVersionNr Value="2"/>
+      <BuildNr Value="781"/>
       <Language Value="0407"/>
       <StringTable FileDescription="Zilog Z180MPU Emulation" InternalName="Z180SoftSystem" LegalCopyright="Uwe Merker  2020" OriginalFilename="Z180SoftSystem"/>
     </VersionInfo>
@@ -40,7 +38,7 @@
           <CodeGeneration>
             <SmartLinkUnit Value="True"/>
             <Optimizations>
-              <OptimizationLevel Value="3"/>
+              <OptimizationLevel Value="2"/>
             </Optimizations>
           </CodeGeneration>
           <Linking>
@@ -64,6 +62,7 @@
     </BuildModes>
     <PublishOptions>
       <Version Value="2"/>
+      <DestinationDirectory Value="/home/uwe/Videos"/>
       <UseFileFilters Value="True"/>
     </PublishOptions>
     <RunParams>
@@ -78,7 +77,7 @@
         <PackageName Value="LCL"/>
       </Item2>
     </RequiredPackages>
-    <Units Count="18">
+    <Units Count="19">
       <Unit0>
         <Filename Value="Z180SoftSystem.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -198,6 +197,14 @@
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="Hdd_Settings"/>
       </Unit17>
+      <Unit18>
+        <Filename Value="hardware_info.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="HardwareInfo"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="Hardware_Info"/>
+      </Unit18>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
