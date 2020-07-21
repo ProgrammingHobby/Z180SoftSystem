@@ -389,7 +389,7 @@ end;
 // --------------------------------------------------------------------------------
 procedure TSystemHdc.setHddOffState(Sender: TObject);
 begin
-   timerHddStatus.Enabled := False;
+    timerHddStatus.Enabled := False;
     with hardDrive.HddStatus do begin
         Canvas.Brush.Style := bsSolid;
         Canvas.Brush.Color := clDefault;
@@ -472,7 +472,7 @@ var
     hintString: string;
 begin
     isLoaded := False;
-    hintString:='';
+    hintString := '';
     if (FileExists(FileName)) then begin
         try
             AssignFile(hddData, FileName);
@@ -483,12 +483,10 @@ begin
                 hardDrive.ImageFileName := FileName;
                 hardDrive.Size := imageFileSize;
                 hardDrive.HddStatus.Enabled := True;
-                hintString:='Image:  '+ExtractFileName(fileName)+LineEnding+
-                            'Größe:  '+calcHddSize+LineEnding+
-                            'Köpfe:  '+IntToStr(hardDrive.Heads)+LineEnding+
-                            'Spuren:  '+IntToStr(hardDrive.Tracks)+LineEnding+
-                            'Sektoren:  '+ IntToStr(hardDrive.Sectors)+LineEnding+
-                            'Bytes/Sektor:  '+ IntToStr(hardDrive.SectorBytes);
+                hintString := 'Image:  ' + ExtractFileName(fileName) + LineEnding + 'Größe:  ' + calcHddSize + LineEnding +
+                    'Köpfe:  ' + IntToStr(hardDrive.Heads) + LineEnding + 'Spuren:  ' + IntToStr(hardDrive.Tracks) +
+                    LineEnding + 'Sektoren:  ' + IntToStr(hardDrive.Sectors) + LineEnding + 'Bytes/Sektor:  ' +
+                    IntToStr(hardDrive.SectorBytes);
             end;
             isLoaded := True;
             Close(hddData);
@@ -500,7 +498,7 @@ begin
         hardDrive.Size := 0;
     end;
     hardDrive.HddStatus.Hint := hintString;
-    hdcStatus.bit[DRDY] :=isLoaded;
+    hdcStatus.bit[DRDY] := isLoaded;
     Result := isLoaded;
 end;
 
@@ -564,8 +562,8 @@ end;
 // --------------------------------------------------------------------------------
 procedure TSystemHdc.setCommand(Value: byte);
 begin
-    hdcStatus.Value:=0;
-    hdcError.Value:=0;
+    hdcStatus.Value := 0;
+    hdcError.Value := 0;
     hdcStatus.bit[DRDY] := hardDrive.HddStatus.Enabled;
     hardDrive.ImageChanged := False;
     case (Value) of
@@ -589,8 +587,10 @@ begin
             setFeatures;
         end;
         else begin
-            hdcStatus.bit[ERR]:=true;
-            hdcError.bit[ABRT]:=true;
+            hdcStatus.bit[ERR] := True;
+            hdcError.bit[ABRT] := True;
+
+
         end;
     end;
 end;
