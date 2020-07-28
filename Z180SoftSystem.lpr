@@ -10,7 +10,7 @@ uses
   Forms, lazcontrols, Main_Window, Cpu_Register, System_Memory, Memory_Editor,
   System_Settings, Z180_CPU, System_Terminal, Cpu_Io_Register, System_Fdc,
   Memory_Settings, System_InOut, Fdd_Settings, Terminal_Settings, About_Window,
-  Version_Info, Hdd_Settings, System_Hdc, Hardware_Info;
+  Version_Info, Hdd_Settings, System_Hdc, Hardware_Info, System_Rtc;
 
 {$R *.res}
 

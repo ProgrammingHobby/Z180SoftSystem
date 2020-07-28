@@ -145,7 +145,7 @@ implementation
 
 uses UscaleDPI, System_Settings, Cpu_Register, Cpu_Io_Register, Memory_Editor, Memory_Settings,
     System_Memory, System_InOut, Z180_CPU, System_Terminal, System_Fdc, Fdd_Settings, Terminal_Settings,
-    About_Window, System_Hdc, Hdd_Settings, Hardware_Info;
+    About_Window, System_Hdc, Hdd_Settings, Hardware_Info, System_Rtc;
 
 { TformMainWindow }
 
@@ -187,6 +187,10 @@ begin
 
     if Assigned(SystemHdc) then begin
         SystemHdc.Destroy;
+    end;
+
+    if Assigned(SystemRtc) then begin
+        SystemRtc.Destroy;
     end;
 
     if Assigned(SystemMemory) then begin
@@ -255,6 +259,7 @@ begin
     SystemMemory := TSystemMemory.Create;
     SystemFdc := TSystemFdc.Create;
     SystemHdc := TSystemHdc.Create;
+    SystemRtc := TSystemRtc.Create;
     SystemInOut := TSystemInOut.Create;
     Z180Cpu := TZ180Cpu.Create;
     SystemTerminal := TSystemTerminal.Create(panelSystemTerminal);
@@ -690,7 +695,7 @@ end;
 // --------------------------------------------------------------------------------
 procedure TMainWindow.actionHardwareInfoExecute(Sender: TObject);
 begin
-  if not Assigned(HardwareInfo) then begin
+    if not Assigned(HardwareInfo) then begin
         Application.CreateForm(THardwareInfo, HardwareInfo);
     end;
 

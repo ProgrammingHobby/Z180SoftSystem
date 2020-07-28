@@ -3,7 +3,7 @@
   <ProjectSession>
     <Version Value="11"/>
     <BuildModes Active="Debug"/>
-    <Units Count="51">
+    <Units Count="52">
       <Unit0>
         <Filename Value="Z180SoftSystem.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -18,10 +18,13 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="Main_Window"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="494"/>
-        <CursorPos X="9" Y="503"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="3"/>
+        <TopLine Value="666"/>
+        <CursorPos X="45" Y="698"/>
         <UsageCount Value="200"/>
+        <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
       </Unit1>
       <Unit2>
         <Filename Value="cpu_register.pas"/>
@@ -103,8 +106,8 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="System_Fdc"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="7"/>
-        <CursorPos X="9" Y="7"/>
+        <TopLine Value="830"/>
+        <CursorPos X="76" Y="914"/>
         <UsageCount Value="200"/>
       </Unit9>
       <Unit10>
@@ -117,16 +120,17 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="117"/>
         <CursorPos X="5" Y="153"/>
-        <UsageCount Value="198"/>
+        <UsageCount Value="199"/>
       </Unit10>
       <Unit11>
         <Filename Value="system_inout.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="System_InOut"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="46"/>
-        <CursorPos X="27" Y="46"/>
-        <UsageCount Value="185"/>
+        <EditorIndex Value="2"/>
+        <TopLine Value="122"/>
+        <CursorPos X="12" Y="155"/>
+        <UsageCount Value="186"/>
+        <Loaded Value="True"/>
       </Unit11>
       <Unit12>
         <Filename Value="fdd_settings.pas"/>
@@ -136,9 +140,9 @@
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="Fdd_Settings"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="202"/>
+        <TopLine Value="163"/>
         <CursorPos X="56" Y="229"/>
-        <UsageCount Value="185"/>
+        <UsageCount Value="186"/>
       </Unit12>
       <Unit13>
         <Filename Value="terminal_settings.pas"/>
@@ -150,7 +154,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="49"/>
         <CursorPos X="28" Y="70"/>
-        <UsageCount Value="157"/>
+        <UsageCount Value="158"/>
       </Unit13>
       <Unit14>
         <Filename Value="about_window.pas"/>
@@ -162,7 +166,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="37"/>
         <CursorPos X="74" Y="75"/>
-        <UsageCount Value="154"/>
+        <UsageCount Value="155"/>
       </Unit14>
       <Unit15>
         <Filename Value="version_info.pas"/>
@@ -171,16 +175,15 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="57"/>
         <CursorPos X="20" Y="75"/>
-        <UsageCount Value="152"/>
+        <UsageCount Value="153"/>
       </Unit15>
       <Unit16>
         <Filename Value="system_hdc.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="System_Hdc"/>
-        <EditorIndex Value="1"/>
-        <TopLine Value="60"/>
-        <CursorPos X="34" Y="371"/>
-        <UsageCount Value="66"/>
+        <TopLine Value="163"/>
+        <CursorPos X="23" Y="183"/>
+        <UsageCount Value="67"/>
         <Loaded Value="True"/>
       </Unit16>
       <Unit17>
@@ -193,7 +196,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="117"/>
         <CursorPos X="22" Y="133"/>
-        <UsageCount Value="65"/>
+        <UsageCount Value="66"/>
       </Unit17>
       <Unit18>
         <Filename Value="hardware_info.pas"/>
@@ -202,12 +205,10 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="Hardware_Info"/>
-        <IsVisibleTab Value="True"/>
-        <TopLine Value="22"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="21"/>
         <CursorPos X="100" Y="34"/>
-        <UsageCount Value="27"/>
-        <Loaded Value="True"/>
-        <LoadedDesigner Value="True"/>
+        <UsageCount Value="28"/>
       </Unit18>
       <Unit19>
         <Filename Value="system_sio.pas"/>
@@ -447,99 +448,34 @@
         <UsageCount Value="17"/>
         <DefaultSyntaxHighlighter Value="LFM"/>
       </Unit50>
+      <Unit51>
+        <Filename Value="system_rtc.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="System_Rtc"/>
+        <EditorIndex Value="1"/>
+        <TopLine Value="41"/>
+        <CursorPos X="17" Y="71"/>
+        <UsageCount Value="20"/>
+        <Loaded Value="True"/>
+      </Unit51>
     </Units>
-    <JumpHistory Count="23" HistoryIndex="22">
+    <JumpHistory Count="4" HistoryIndex="3">
       <Position1>
-        <Filename Value="hardware_info.pas"/>
+        <Filename Value="system_hdc.pas"/>
+        <Caret Line="3" Column="20"/>
       </Position1>
       <Position2>
-        <Filename Value="hardware_info.pas"/>
-        <Caret Line="40" Column="3" TopLine="5"/>
+        <Filename Value="system_hdc.pas"/>
+        <Caret Line="150" Column="18" TopLine="133"/>
       </Position2>
       <Position3>
-        <Filename Value="hardware_info.pas"/>
-        <Caret Line="50" Column="84" TopLine="13"/>
+        <Filename Value="system_rtc.pas"/>
+        <Caret Line="24" Column="39"/>
       </Position3>
       <Position4>
-        <Filename Value="hardware_info.pas"/>
-        <Caret Line="51" Column="84" TopLine="16"/>
+        <Filename Value="system_rtc.pas"/>
+        <Caret Line="33" Column="33" TopLine="7"/>
       </Position4>
-      <Position5>
-        <Filename Value="hardware_info.pas"/>
-        <Caret Line="52" Column="84" TopLine="17"/>
-      </Position5>
-      <Position6>
-        <Filename Value="hardware_info.pas"/>
-        <Caret Line="51" Column="84" TopLine="16"/>
-      </Position6>
-      <Position7>
-        <Filename Value="hardware_info.pas"/>
-        <Caret Line="50" Column="84"/>
-      </Position7>
-      <Position8>
-        <Filename Value="hardware_info.pas"/>
-        <Caret Line="52" Column="84" TopLine="17"/>
-      </Position8>
-      <Position9>
-        <Filename Value="hardware_info.pas"/>
-        <Caret Line="53" Column="84" TopLine="18"/>
-      </Position9>
-      <Position10>
-        <Filename Value="hardware_info.pas"/>
-        <Caret Line="52" Column="84" TopLine="17"/>
-      </Position10>
-      <Position11>
-        <Filename Value="hardware_info.pas"/>
-        <Caret Line="51" Column="84" TopLine="16"/>
-      </Position11>
-      <Position12>
-        <Filename Value="hardware_info.pas"/>
-        <Caret Line="52" Column="84" TopLine="17"/>
-      </Position12>
-      <Position13>
-        <Filename Value="hardware_info.pas"/>
-        <Caret Line="53" Column="84" TopLine="18"/>
-      </Position13>
-      <Position14>
-        <Filename Value="hardware_info.pas"/>
-        <Caret Line="54" Column="84" TopLine="19"/>
-      </Position14>
-      <Position15>
-        <Filename Value="hardware_info.pas"/>
-        <Caret Line="55" Column="84" TopLine="20"/>
-      </Position15>
-      <Position16>
-        <Filename Value="hardware_info.pas"/>
-        <Caret Line="56" Column="84" TopLine="21"/>
-      </Position16>
-      <Position17>
-        <Filename Value="hardware_info.pas"/>
-        <Caret Line="57" Column="84" TopLine="22"/>
-      </Position17>
-      <Position18>
-        <Filename Value="hardware_info.pas"/>
-        <Caret Line="56" Column="84" TopLine="21"/>
-      </Position18>
-      <Position19>
-        <Filename Value="hardware_info.pas"/>
-        <Caret Line="63" Column="84" TopLine="26"/>
-      </Position19>
-      <Position20>
-        <Filename Value="hardware_info.pas"/>
-        <Caret Line="56" Column="3" TopLine="22"/>
-      </Position20>
-      <Position21>
-        <Filename Value="hardware_info.pas"/>
-        <Caret Line="57" Column="3" TopLine="23"/>
-      </Position21>
-      <Position22>
-        <Filename Value="hardware_info.pas"/>
-        <Caret Line="58" Column="3" TopLine="24"/>
-      </Position22>
-      <Position23>
-        <Filename Value="hardware_info.pas"/>
-        <Caret Line="49" Column="51" TopLine="25"/>
-      </Position23>
     </JumpHistory>
     <RunParams>
       <FormatVersion Value="2"/>

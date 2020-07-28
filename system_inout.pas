@@ -54,7 +54,7 @@ var
 
 implementation
 
-uses System_Terminal, System_Memory, System_Fdc, System_Hdc;
+uses System_Terminal, System_Memory, System_Fdc, System_Hdc, System_Rtc;
 
 // --------------------------------------------------------------------------------
 constructor TSystemInOut.Create;
@@ -94,6 +94,9 @@ begin
         end;
         $74: begin
             readValue := SystemFdc.getExtStatus;
+        end;
+        $7D: begin
+            readValue := SystemRtc.readData;
         end;
         $A0: begin
             readValue := SystemHdc.getDataLow;
@@ -145,6 +148,12 @@ begin
         end;
         $78: begin
             SystemFdc.setExtControl(Data);
+        end;
+        $7C: begin
+            SystemRtc.setAddress(Data);
+        end;
+        $7D: begin
+            SystemRtc.writeData(Data);
         end;
         $A0: begin
             SystemHdc.setDataLow(Data);

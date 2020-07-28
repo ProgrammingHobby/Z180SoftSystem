@@ -77,7 +77,7 @@
         <PackageName Value="LCL"/>
       </Item2>
     </RequiredPackages>
-    <Units Count="19">
+    <Units Count="20">
       <Unit0>
         <Filename Value="Z180SoftSystem.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -205,6 +205,11 @@
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="Hardware_Info"/>
       </Unit18>
+      <Unit19>
+        <Filename Value="system_rtc.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="System_Rtc"/>
+      </Unit19>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
