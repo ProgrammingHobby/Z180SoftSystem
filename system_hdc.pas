@@ -482,7 +482,6 @@ begin
                 hardDrive.ImageChanged := True;
                 hardDrive.ImageFileName := FileName;
                 hardDrive.Size := imageFileSize;
-                hardDrive.HddStatus.Enabled := True;
                 hintString := 'Image:  ' + ExtractFileName(fileName) + LineEnding + 'Größe:  ' + calcHddSize + LineEnding +
                     'Köpfe:  ' + IntToStr(hardDrive.Heads) + LineEnding + 'Spuren:  ' + IntToStr(hardDrive.Tracks) +
                     LineEnding + 'Sektoren:  ' + IntToStr(hardDrive.Sectors) + LineEnding + 'Bytes/Sektor:  ' +
@@ -499,6 +498,7 @@ begin
     end;
     hardDrive.HddStatus.Hint := hintString;
     hdcStatus.bit[DRDY] := isLoaded;
+    hardDrive.HddStatus.Enabled := isLoaded;
     Result := isLoaded;
 end;
 

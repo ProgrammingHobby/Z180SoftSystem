@@ -825,8 +825,7 @@ var
     hintString: string;
 begin
     isLoaded := False;
-    hintString:='';
-    floppyDrive0.FddStatus.Enabled := False;
+    hintString := '';
     if (FileExists(FileName)) then begin
         try
             AssignFile(fddData, FileName);
@@ -839,13 +838,10 @@ begin
                 end;
                 floppyDrive0.ImageFileName := FileName;
                 floppyDrive0.Size := imageFileSize;
-                floppyDrive0.FddStatus.Enabled := True;
-                hintString:='Image:  '+ExtractFileName(FileName)+LineEnding+
-                            'Größe:  '+IntToStr(floppyDrive0.Size div 1024) + 'KB'+LineEnding+
-                            'Seiten:  '+IntToStr(floppyDrive0.Sides)+LineEnding+
-                            'Spuren:  '+IntToStr(floppyDrive0.Tracks)+LineEnding+
-                            'Sektoren:  '+ IntToStr(floppyDrive0.Sectors)+LineEnding+
-                            'Bytes/Sektor:  '+ IntToStr(floppyDrive0.SectorBytes);
+                hintString := 'Image:  ' + ExtractFileName(FileName) + LineEnding + 'Größe:  ' + IntToStr(floppyDrive0.Size div 1024) +
+                    'KB' + LineEnding + 'Seiten:  ' + IntToStr(floppyDrive0.Sides) + LineEnding + 'Spuren:  ' +
+                    IntToStr(floppyDrive0.Tracks) + LineEnding + 'Sektoren:  ' + IntToStr(floppyDrive0.Sectors) + LineEnding +
+                    'Bytes/Sektor:  ' + IntToStr(floppyDrive0.SectorBytes);
             end;
             isLoaded := True;
             Close(fddData);
@@ -855,8 +851,9 @@ begin
     else begin
         floppyDrive0.ImageFileName := '';
         floppyDrive0.Size := 0;
-    end; 
-        floppyDrive0.FddStatus.Hint := hintString;
+    end;
+    floppyDrive0.FddStatus.Hint := hintString;
+    floppyDrive0.FddStatus.Enabled := isLoaded;
     Result := isLoaded;
 end;
 
@@ -898,8 +895,7 @@ var
     hintString: string;
 begin
     isLoaded := False;
-    hintString:='';
-    floppyDrive1.FddStatus.Enabled := False;
+    hintString := '';
     if (FileExists(FileName)) then begin
         try
             AssignFile(fddData, FileName);
@@ -912,13 +908,10 @@ begin
                 end;
                 floppyDrive1.ImageFileName := FileName;
                 floppyDrive1.Size := imageFileSize;
-                floppyDrive1.FddStatus.Enabled := True;
-                hintString:='Image:  '+ExtractFileName(FileName)+LineEnding+
-                            'Größe:  '+IntToStr(floppyDrive1.Size div 1024) + 'KB'+LineEnding+
-                            'Seiten:  '+IntToStr(floppyDrive1.Sides)+LineEnding+
-                            'Spuren:  '+IntToStr(floppyDrive1.Tracks)+LineEnding+
-                            'Sektoren:  '+ IntToStr(floppyDrive1.Sectors)+LineEnding+
-                            'Bytes/Sektor:  '+ IntToStr(floppyDrive1.SectorBytes);
+                hintString := 'Image:  ' + ExtractFileName(FileName) + LineEnding + 'Größe:  ' + IntToStr(floppyDrive1.Size div 1024) +
+                    'KB' + LineEnding + 'Seiten:  ' + IntToStr(floppyDrive1.Sides) + LineEnding + 'Spuren:  ' +
+                    IntToStr(floppyDrive1.Tracks) + LineEnding + 'Sektoren:  ' + IntToStr(floppyDrive1.Sectors) + LineEnding +
+                    'Bytes/Sektor:  ' + IntToStr(floppyDrive1.SectorBytes);
             end;
             isLoaded := True;
             Close(fddData);
@@ -929,7 +922,8 @@ begin
         floppyDrive1.ImageFileName := '';
         floppyDrive1.Size := 0;
     end;
-        floppyDrive1.FddStatus.Hint := hintString;
+    floppyDrive1.FddStatus.Hint := hintString;
+    floppyDrive1.FddStatus.Enabled := isLoaded;
     Result := isLoaded;
 end;
 
