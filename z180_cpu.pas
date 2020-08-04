@@ -816,6 +816,9 @@ begin
             end;
             $30: begin   //portDSTAT
                 ioDSTAT.Value := ((ioDSTAT.Value and not $FC) or (Data and $FC));
+                if ((ioDSTAT.bit[DE0]) or (ioDSTAT.bit[DE1])) then begin
+                    ioDSTAT.bit[DME] := True; // DME setzen
+                end;
             end;
             $31: begin   //portDMODE
                 ioDMODE.Value := ((ioDMODE.Value and not $3E) or (Data and $3E));
@@ -1103,6 +1106,7 @@ begin
     end;
     if (ioBCR0.Value = 0) then begin // aktueller DMA-Transfer beendet
         ioDSTAT.bit[DE0] := False; // DMA0-Enable loeschen
+        ioDSTAT.bit[DME] := False; // DMA Main Enable loeschen
         if (ioDSTAT.bit[DIE0]) then begin // und falls Interrupts eingeschaltet
             intDMA0 := True; // DMA0-Interrupt generieren
         end;
@@ -1148,6 +1152,7 @@ begin
         end;
         if (ioBCR1.Value = 0) then begin // aktueller DMA-Transfer beendet
             ioDSTAT.bit[DE1] := False; // DMA0-Enable loeschen
+            ioDSTAT.bit[DME] := False; // DMA Main Enable loeschen
             if (ioDSTAT.bit[DIE1]) then begin // und falls Interrupts eingeschaltet
                 intDMA1 := True; // DMA0-Interrupt generieren
             end;
@@ -1224,7 +1229,7 @@ var
 begin
     while (opCount >= 1) do begin
         Dec(opCount);
-        if ((not HALT) and (not dmaBurstMode)) then begin
+        if ((not HALT) and not (ioDSTAT.bit[DME] and ioDSTAT.bit[DE0] and dmaBurstMode)) then begin
             extraWaitCycles := 0;
             execOp00Codes;
             clockCycles := clockCycles + extraWaitCycles;
@@ -1233,12 +1238,15 @@ begin
             machineCycles := 1;
             clockCycles := 1;
         end;
-        while ((not SLP) and ioDSTAT.bit[DME] and (machineCycles >= 1)) do begin // Zaehlschleife fuer Maschinen-Zyklen
-            if (ioDSTAT.bit[DE0]) then begin
-                doDma0;
-            end;
-            if (ioDSTAT.bit[DE1] and (not dmaBurstMode)) then begin // DMA Channel1 kann nur aktiv werden wenn DMA0 nicht im Burst-Mode laeuft
-                doDma1;
+        while (machineCycles >= 1) do begin // Zaehlschleife fuer Maschinen-Zyklen
+            machineCycles := machineCycles - 1;
+            if ((not SLP) and ioDSTAT.bit[DME]) then begin
+                if (ioDSTAT.bit[DE0]) then begin
+                    doDma0;
+                end;
+                if (ioDSTAT.bit[DE1] and (not dmaBurstMode)) then begin // DMA Channel1 kann nur aktiv werden wenn DMA0 nicht im Burst-Mode laeuft
+                    doDma1;
+                end;
             end;
         end;
         while (clockCycles >= 1) do begin // Zaehlschleife um den 'Systemtakt Phi' abbilden zu koennen
