@@ -12,17 +12,14 @@ type
     { THddSettings }
 
     THddSettings = class(TForm)
-        comboboxHddSectorBytes: TComboBox;
         editHddImageFile: TFileNameEdit;
         editHddSize: TEdit;
         groupboxHddGeometrie: TGroupBox;
         groupboxHddImage: TGroupBox;
-        labelHddSectorBytes: TLabel;
         labelHddHeads: TLabel;
         labelHddSectors: TLabel;
         labelHddSize: TLabel;
         labelHddTracks: TLabel;
-        panelHddSectorBytes: TPanel;
         panelHddHeads: TPanel;
         panelHddSectors: TPanel;
         panelHddSize: TPanel;
@@ -34,11 +31,15 @@ type
         procedure FormShow(Sender: TObject);
         procedure HddGeometryChange(Sender: TObject);
     private
+    var
         oldTracks: integer;
         oldSectors: integer;
-        oldSectorBytes: string;
         oldHeads: integer;
         oldImageFile: string;
+
+    const
+        SECBYTES = 512;
+
         procedure calcHddSize;
 
     public
@@ -73,10 +74,6 @@ begin
         SystemSettings.WriteString('Hdd', 'Sectors', IntToStr(spineditHddSectors.Value));
         SystemHdc.setHddSectors(spineditHddSectors.Value);
     end;
-    if (oldSectorBytes <> comboboxHddSectorBytes.Items[comboboxHddSectorBytes.ItemIndex]) then begin
-        SystemSettings.WriteString('Hdd', 'SectorBytes', comboboxHddSectorBytes.Items[comboboxHddSectorBytes.ItemIndex]);
-        SystemHdc.setHddSectorBytes(comboboxHddSectorBytes.Items[comboboxHddSectorBytes.ItemIndex].ToInteger);
-    end;
     if (oldImageFile <> editHddImageFile.FileName) then begin
         SystemSettings.WriteString('Hdd', 'ImageFile', editHddImageFile.FileName);
         SystemHdc.setHddImage(editHddImageFile.FileName);
@@ -87,8 +84,6 @@ end;
 
 // --------------------------------------------------------------------------------
 procedure THddSettings.FormShow(Sender: TObject);
-var
-    ItemIndex: integer;
 begin
     SystemSettings.restoreFormState(TForm(self));
     ScaleDPI(self, 96);
@@ -100,20 +95,10 @@ begin
 
     oldHeads := SystemSettings.ReadString('Hdd', 'Heads', '16').ToInteger;
     spineditHddHeads.Value := oldHeads;
-
     oldTracks := SystemSettings.ReadString('Hdd', 'Tracks', '246').ToInteger;
     spineditHddTracks.Value := oldTracks;
-
     oldSectors := SystemSettings.ReadString('Hdd', 'Sectors', '63').ToInteger;
     spineditHddSectors.Value := oldSectors;
-
-    oldSectorBytes := SystemSettings.ReadString('Hdd', 'SectorBytes', '512');
-    ItemIndex := comboboxHddSectorBytes.Items.IndexOf(oldSectorBytes);
-    if (ItemIndex = -1) then begin
-        ItemIndex := 2;
-    end;
-    comboboxHddSectorBytes.ItemIndex := ItemIndex;
-
     oldImageFile := SystemSettings.ReadString('Hdd', 'ImageFile', '');
     editHddImageFile.FileName := oldImageFile;
 
@@ -129,14 +114,13 @@ end;
 // --------------------------------------------------------------------------------
 procedure THddSettings.calcHddSize;
 var
-    tracks, sectors, bytes, heads, size: integer;
+    tracks, sectors, heads, size: integer;
     sizeView: string;
 begin
     tracks := spineditHddTracks.Value;
     sectors := spineditHddSectors.Value;
-    bytes := comboboxHddSectorBytes.Items[comboboxHddSectorBytes.ItemIndex].ToInteger;
     heads := spineditHddHeads.Value;
-    size := tracks * sectors * bytes * heads;
+    size := tracks * sectors * SECBYTES * heads;
     if ((size div 1048576) > 0) then begin
         sizeView := FloatToStrF((size / 1048576), ffNumber, 15, 2) + 'MB';
     end
@@ -151,4 +135,3 @@ end;
 
 // --------------------------------------------------------------------------------
 end.
-

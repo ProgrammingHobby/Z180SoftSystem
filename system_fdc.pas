@@ -29,7 +29,6 @@ type
             Sides: integer;
             Tracks: integer;
             Sectors: integer;
-            SectorBytes: integer;
             ImageFileName: string;
             Size: integer;
             ImageChanged: boolean;
@@ -100,6 +99,9 @@ type
         D0S = 3; // Wenn dieses Bit gesetzt ist, wird Drive-0 selektiert.
         SS = 4; // Side selekt der Laufwerke. Gesetzt Seite 1, gelöscht Seite 0
 
+        // Konstante für die Anzahl an Bytes / Sektor
+        SECBYTES = 512;
+
     protected // Attribute
 
     public    // Attribute
@@ -139,13 +141,11 @@ type
         procedure setFdd0Sides(sides: integer);
         procedure setFdd0Tracks(tracks: integer);
         procedure setFdd0Sectors(sectors: integer);
-        procedure setFdd0SectorBytes(sectorbytes: integer);
         function setFdd0Image(FileName: string): boolean;
         procedure setFdd0StatusPanel(var panel: TPanel);
         procedure setFdd1Sides(sides: integer);
         procedure setFdd1Tracks(tracks: integer);
         procedure setFdd1Sectors(sectors: integer);
-        procedure setFdd1SectorBytes(sectorbytes: integer);
         function setFdd1Image(FileName: string): boolean;
         procedure setFdd1StatusPanel(var panel: TPanel);
 
@@ -253,7 +253,7 @@ end;
 // --------------------------------------------------------------------------------
 function TSystemFdc.calcFilePosition: DWord;
 begin
-    Result := (((((fdcTrack * actualFloppyDrive.Sides) + fdcSide) * actualFloppyDrive.Sectors) + (fdcSector - 1)) * actualFloppyDrive.SectorBytes);
+    Result := (((((fdcTrack * actualFloppyDrive.Sides) + fdcSide) * actualFloppyDrive.Sectors) + (fdcSector - 1)) * SECBYTES);
 end;
 
 // --------------------------------------------------------------------------------
@@ -335,8 +335,8 @@ begin
         timerFdcBusy.OnTimer := @clearBusySetRecordNotFoundSetIntrq;  // und Command beenden
         timerFdcBusy.Enabled := True;
     end
-    else if ((filePos > (actualFloppyDrive.Size - actualFloppyDrive.SectorBytes)) or (actualFloppyDrive.Size = 0) or
-        (fdcSector > actualFloppyDrive.Sectors) or (fdcTrack >= actualFloppyDrive.Tracks)) then begin  // Sector und/oder Track ausserhalb der Disk
+    else if ((filePos > (actualFloppyDrive.Size - SECBYTES)) or (actualFloppyDrive.Size = 0) or (fdcSector > actualFloppyDrive.Sectors) or
+        (fdcTrack >= actualFloppyDrive.Tracks)) then begin  // Sector und/oder Track ausserhalb der Disk
         clearBusySetRecordNotFoundSetIntrq(nil);
         exit;
     end
@@ -369,8 +369,8 @@ begin
         timerFdcBusy.OnTimer := @clearBusySetRecordNotFoundSetIntrq;  // und Command beenden
         timerFdcBusy.Enabled := True;
     end
-    else if ((filePos > (actualFloppyDrive.Size - actualFloppyDrive.SectorBytes)) or (actualFloppyDrive.Size = 0) or
-        (fdcSector > actualFloppyDrive.Sectors) or (fdcTrack >= actualFloppyDrive.Tracks)) then begin  // Sector und/oder Track ausserhalb der Disk
+    else if ((filePos > (actualFloppyDrive.Size - SECBYTES)) or (actualFloppyDrive.Size = 0) or (fdcSector > actualFloppyDrive.Sectors) or
+        (fdcTrack >= actualFloppyDrive.Tracks)) then begin  // Sector und/oder Track ausserhalb der Disk
         clearBusySetRecordNotFoundSetIntrq(nil);
     end
     else begin
@@ -685,7 +685,7 @@ begin
             exit;
         end;
         byteCount := byteCount + 1;
-        if (byteCount = actualFloppyDrive.SectorBytes) then begin
+        if (byteCount = SECBYTES) then begin
             if ((isMultiSectorCommand) and (fdcSector < actualFloppyDrive.Sectors)) then begin
                 fdcSector := fdcSector + 1;
                 byteCount := 0;
@@ -725,7 +725,7 @@ begin
             exit;
         end;
         byteCount := byteCount + 1;
-        if (byteCount = actualFloppyDrive.SectorBytes) then begin
+        if (byteCount = SECBYTES) then begin
             if ((isMultiSectorCommand) and (fdcSector < actualFloppyDrive.Sectors)) then begin
                 fdcSector := fdcSector + 1;
                 byteCount := 0;
@@ -812,12 +812,6 @@ begin
 end;
 
 // --------------------------------------------------------------------------------
-procedure TSystemFdc.setFdd0SectorBytes(sectorbytes: integer);
-begin
-    floppyDrive0.SectorBytes := sectorbytes;
-end;
-
-// --------------------------------------------------------------------------------
 function TSystemFdc.setFdd0Image(FileName: string): boolean;
 var
     isLoaded: boolean;
@@ -841,7 +835,7 @@ begin
                 hintString := 'Image:  ' + ExtractFileName(FileName) + LineEnding + 'Größe:  ' + IntToStr(floppyDrive0.Size div 1024) +
                     'KB' + LineEnding + 'Seiten:  ' + IntToStr(floppyDrive0.Sides) + LineEnding + 'Spuren:  ' +
                     IntToStr(floppyDrive0.Tracks) + LineEnding + 'Sektoren:  ' + IntToStr(floppyDrive0.Sectors) + LineEnding +
-                    'Bytes/Sektor:  ' + IntToStr(floppyDrive0.SectorBytes);
+                    'Bytes/Sektor:  ' + IntToStr(SECBYTES);
             end;
             isLoaded := True;
             Close(fddData);
@@ -882,12 +876,6 @@ begin
 end;
 
 // --------------------------------------------------------------------------------
-procedure TSystemFdc.setFdd1SectorBytes(sectorbytes: integer);
-begin
-    floppyDrive1.SectorBytes := sectorbytes;
-end;
-
-// --------------------------------------------------------------------------------
 function TSystemFdc.setFdd1Image(FileName: string): boolean;
 var
     isLoaded: boolean;
@@ -911,7 +899,7 @@ begin
                 hintString := 'Image:  ' + ExtractFileName(FileName) + LineEnding + 'Größe:  ' + IntToStr(floppyDrive1.Size div 1024) +
                     'KB' + LineEnding + 'Seiten:  ' + IntToStr(floppyDrive1.Sides) + LineEnding + 'Spuren:  ' +
                     IntToStr(floppyDrive1.Tracks) + LineEnding + 'Sektoren:  ' + IntToStr(floppyDrive1.Sectors) + LineEnding +
-                    'Bytes/Sektor:  ' + IntToStr(floppyDrive1.SectorBytes);
+                    'Bytes/Sektor:  ' + IntToStr(SECBYTES);
             end;
             isLoaded := True;
             Close(fddData);

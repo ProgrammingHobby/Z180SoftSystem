@@ -12,8 +12,6 @@ type
     { TFddSettings }
 
     TFddSettings = class(TForm)
-        comboboxFdd0SectorBytes: TComboBox;
-        comboboxFdd1SectorBytes: TComboBox;
         comboboxFdd0Sectors: TComboBox;
         comboboxFdd1Sectors: TComboBox;
         comboboxFdd0Sides: TComboBox;
@@ -28,8 +26,6 @@ type
         groupboxFdd1Geometrie: TGroupBox;
         groupboxFdd1Image: TGroupBox;
         groupboxFdd1: TGroupBox;
-        labelFdd0SectorBytes: TLabel;
-        labelFdd1SectorBytes: TLabel;
         labelFdd0Sectors: TLabel;
         labelFdd1Sectors: TLabel;
         labelFdd0Sides: TLabel;
@@ -40,8 +36,6 @@ type
         groupboxFdd0Geometrie: TGroupBox;
         groupboxFdd0Image: TGroupBox;
         labelFdd1Tracks: TLabel;
-        panelFdd0SectorBytes: TPanel;
-        panelFdd1SectorBytes: TPanel;
         panelFdd0Sectors: TPanel;
         panelFdd1Sectors: TPanel;
         panelFdd0Sides: TPanel;
@@ -60,12 +54,14 @@ type
             oldSides: string;
             oldTracks: string;
             oldSectors: string;
-            oldSectorBytes: string;
             oldImageFile: string;
         end;
 
     var
         Fdd0, Fdd1: TFddData;
+
+    const
+        SECBYTES = 512;
 
         procedure calcFdd0Size;
         procedure calcFdd1Size;
@@ -102,10 +98,6 @@ begin
         SystemSettings.WriteString('Fdd0', 'Sectors', comboboxFdd0Sectors.Items[comboboxFdd0Sectors.ItemIndex]);
         SystemFdc.setFdd0Sectors(comboboxFdd0Sectors.Items[comboboxFdd0Sectors.ItemIndex].ToInteger);
     end;
-    if (Fdd0.oldSectorBytes <> comboboxFdd0SectorBytes.Items[comboboxFdd0SectorBytes.ItemIndex]) then begin
-        SystemSettings.WriteString('Fdd0', 'SectorBytes', comboboxFdd0SectorBytes.Items[comboboxFdd0SectorBytes.ItemIndex]);
-        SystemFdc.setFdd0SectorBytes(comboboxFdd0SectorBytes.Items[comboboxFdd0SectorBytes.ItemIndex].ToInteger);
-    end;
     if (Fdd0.oldImageFile <> editFdd0ImageFile.FileName) then begin
         SystemSettings.WriteString('Fdd0', 'ImageFile', editFdd0ImageFile.FileName);
         SystemFdc.setFdd0Image(editFdd0ImageFile.FileName);
@@ -122,10 +114,6 @@ begin
     if (Fdd1.oldSectors <> comboboxFdd1Sectors.Items[comboboxFdd1Sectors.ItemIndex]) then begin
         SystemSettings.WriteString('Fdd1', 'Sectors', comboboxFdd1Sectors.Items[comboboxFdd1Sectors.ItemIndex]);
         SystemFdc.setFdd1Sectors(comboboxFdd1Sectors.Items[comboboxFdd1Sectors.ItemIndex].ToInteger);
-    end;
-    if (Fdd1.oldSectorBytes <> comboboxFdd1SectorBytes.Items[comboboxFdd1SectorBytes.ItemIndex]) then begin
-        SystemSettings.WriteString('Fdd1', 'SectorBytes', comboboxFdd1SectorBytes.Items[comboboxFdd1SectorBytes.ItemIndex]);
-        SystemFdc.setFdd1SectorBytes(comboboxFdd1SectorBytes.Items[comboboxFdd1SectorBytes.ItemIndex].ToInteger);
     end;
     if (Fdd1.oldImageFile <> editFdd1ImageFile.FileName) then begin
         SystemSettings.WriteString('Fdd1', 'ImageFile', editFdd1ImageFile.FileName);
@@ -171,12 +159,6 @@ begin
         ItemIndex := 1;
     end;
     comboboxFdd0Sectors.ItemIndex := ItemIndex;
-    Fdd0.oldSectorBytes := SystemSettings.ReadString('Fdd0', 'SectorBytes', '512');
-    ItemIndex := comboboxFdd0SectorBytes.Items.IndexOf(Fdd0.oldSectorBytes);
-    if (ItemIndex = -1) then begin
-        ItemIndex := 2;
-    end;
-    comboboxFdd0SectorBytes.ItemIndex := ItemIndex;
     Fdd0.oldImageFile := SystemSettings.ReadString('Fdd0', 'ImageFile', '');
     editFdd0ImageFile.FileName := Fdd0.oldImageFile;
     calcFdd0Size;
@@ -199,12 +181,6 @@ begin
         ItemIndex := 1;
     end;
     comboboxFdd1Sectors.ItemIndex := ItemIndex;
-    Fdd1.oldSectorBytes := SystemSettings.ReadString('Fdd1', 'SectorBytes', '512');
-    ItemIndex := comboboxFdd1SectorBytes.Items.IndexOf(Fdd1.oldSectorBytes);
-    if (ItemIndex = -1) then begin
-        ItemIndex := 2;
-    end;
-    comboboxFdd1SectorBytes.ItemIndex := ItemIndex;
     Fdd1.oldImageFile := SystemSettings.ReadString('Fdd1', 'ImageFile', '');
     editFdd1ImageFile.FileName := Fdd1.oldImageFile;
     calcFdd1Size;
@@ -219,26 +195,24 @@ end;
 // --------------------------------------------------------------------------------
 procedure TFddSettings.calcFdd0Size;
 var
-    tracks, sectors, bytes, sides, size: integer;
+    tracks, sectors, sides, size: integer;
 begin
     tracks := comboboxFdd0Tracks.Items[comboboxFdd0Tracks.ItemIndex].ToInteger;
     sectors := comboboxFdd0Sectors.Items[comboboxFdd0Sectors.ItemIndex].ToInteger;
-    bytes := comboboxFdd0SectorBytes.Items[comboboxFdd0SectorBytes.ItemIndex].ToInteger;
     sides := comboboxFdd0Sides.Items[comboboxFdd0Sides.ItemIndex].ToInteger;
-    size := tracks * sectors * bytes * sides;
+    size := tracks * sectors * SECBYTES * sides;
     editFdd0Size.Text := IntToStr(size div 1024) + 'KB';
 end;
 
 // --------------------------------------------------------------------------------
 procedure TFddSettings.calcFdd1Size;
 var
-    tracks, sectors, bytes, sides, size: integer;
+    tracks, sectors, sides, size: integer;
 begin
     tracks := comboboxFdd1Tracks.Items[comboboxFdd1Tracks.ItemIndex].ToInteger;
     sectors := comboboxFdd1Sectors.Items[comboboxFdd1Sectors.ItemIndex].ToInteger;
-    bytes := comboboxFdd1SectorBytes.Items[comboboxFdd1SectorBytes.ItemIndex].ToInteger;
     sides := comboboxFdd1Sides.Items[comboboxFdd1Sides.ItemIndex].ToInteger;
-    size := tracks * sectors * bytes * sides;
+    size := tracks * sectors * SECBYTES * sides;
     editFdd1Size.Text := IntToStr(size div 1024) + 'KB';
 
 end;

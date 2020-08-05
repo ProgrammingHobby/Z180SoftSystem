@@ -35,7 +35,6 @@ type
             Heads: dword;
             Tracks: dword;
             Sectors: dword;
-            SectorBytes: dword;
             ImageFileName: string;
             Size: dword;
             ImageChanged: boolean;
@@ -116,6 +115,9 @@ type
         //            executing the Initialize Drive Parameters command, HEAD
         //            specifies the maximum head address.
 
+        // Konstante für die Anzahl an Bytes / Sektor
+        SECBYTES = 512;
+
     protected // Attribute
 
     public    // Attribute
@@ -146,7 +148,6 @@ type
         procedure setHddHeads(heads: integer);
         procedure setHddTracks(tracks: integer);
         procedure setHddSectors(sectors: integer);
-        procedure setHddSectorBytes(sectorbytes: integer);
         function setHddImage(fileName: string): boolean;
         procedure setHddStatusPanel(var panel: TPanel);
         procedure setDataLow(Value: byte);
@@ -185,6 +186,7 @@ begin
     timerHddStatus.Enabled := False;
     timerHddStatus.Interval := 50;
     timerHddStatus.OnTimer := @setHddOffState;
+    SetLength(dataBuffer, SECBYTES);
     doReset;
 end;
 
@@ -265,15 +267,15 @@ begin
     if (hdcSectorCount = 0) then begin
         hdcSectorCount := 256;
     end;
-    if (((hdcLbaValue * hardDrive.SectorBytes) > (hardDrive.Size - hardDrive.SectorBytes)) or (hardDrive.Size = 0) or
-        (hdcSector > hardDrive.Sectors) or (hdcTrack.Value >= hardDrive.Tracks) or (hdcDriveHead.bit[DRV])) then begin
+    if (((hdcLbaValue * SECBYTES) > (hardDrive.Size - SECBYTES)) or (hardDrive.Size = 0) or (hdcSector > hardDrive.Sectors) or
+        (hdcTrack.Value >= hardDrive.Tracks) or (hdcDriveHead.bit[DRV])) then begin
         hdcStatus.bit[ERR] := True;
         hdcError.bit[IDNF] := True;
         hdcStatus.bit[BSY] := False;
         exit;
     end;
     try
-        Reset(hddData, hardDrive.SectorBytes);
+        Reset(hddData, SECBYTES);
         Seek(hddData, hdcLbaValue);
         hdcStatus.bit[DSC] := True;
         BlockRead(hddData, dataBuffer[0], 1);
@@ -330,8 +332,8 @@ begin
     if (hdcSectorCount = 0) then begin
         hdcSectorCount := 256;
     end;
-    if (((hdcLbaValue * hardDrive.SectorBytes) > (hardDrive.Size - hardDrive.SectorBytes)) or (hardDrive.Size = 0) or
-        (hdcSector > hardDrive.Sectors) or (hdcTrack.Value >= hardDrive.Tracks) or (hdcDriveHead.bit[DRV])) then begin
+    if (((hdcLbaValue * SECBYTES) > (hardDrive.Size - SECBYTES)) or (hardDrive.Size = 0) or (hdcSector > hardDrive.Sectors) or
+        (hdcTrack.Value >= hardDrive.Tracks) or (hdcDriveHead.bit[DRV])) then begin
         hdcStatus.bit[ERR] := True;
         hdcError.bit[IDNF] := True;
         hdcStatus.bit[BSY] := False;
@@ -362,7 +364,7 @@ begin
         SECTOR_WRITE: begin
             hdcStatus.bit[DRQ] := False;
             try
-                Reset(hddData, hardDrive.SectorBytes);
+                Reset(hddData, SECBYTES);
                 Seek(hddData, hdcLbaValue);
                 BlockWrite(hddData, dataBuffer[0], 1);
                 CloseFile(hddData);
@@ -458,13 +460,6 @@ begin
 end;
 
 // --------------------------------------------------------------------------------
-procedure TSystemHdc.setHddSectorBytes(sectorbytes: integer);
-begin
-    hardDrive.SectorBytes := sectorbytes;
-    SetLength(dataBuffer, sectorbytes);
-end;
-
-// --------------------------------------------------------------------------------
 function TSystemHdc.setHddImage(fileName: string): boolean;
 var
     isLoaded: boolean;
@@ -484,8 +479,7 @@ begin
                 hardDrive.Size := imageFileSize;
                 hintString := 'Image:  ' + ExtractFileName(fileName) + LineEnding + 'Größe:  ' + calcHddSize + LineEnding +
                     'Köpfe:  ' + IntToStr(hardDrive.Heads) + LineEnding + 'Spuren:  ' + IntToStr(hardDrive.Tracks) +
-                    LineEnding + 'Sektoren:  ' + IntToStr(hardDrive.Sectors) + LineEnding + 'Bytes/Sektor:  ' +
-                    IntToStr(hardDrive.SectorBytes);
+                    LineEnding + 'Sektoren:  ' + IntToStr(hardDrive.Sectors) + LineEnding + 'Bytes/Sektor:  ' + IntToStr(SECBYTES);
             end;
             isLoaded := True;
             Close(hddData);
@@ -518,7 +512,7 @@ begin
         dataBuffer[dataCount] := hdcDataHigh;
         Inc(dataCount);
     end;
-    if (dataCount >= hardDrive.SectorBytes) then begin
+    if (dataCount >= SECBYTES) then begin
         finishWriteData;
     end;
 end;
@@ -589,8 +583,6 @@ begin
         else begin
             hdcStatus.bit[ERR] := True;
             hdcError.bit[ABRT] := True;
-
-
         end;
     end;
 end;
@@ -614,7 +606,7 @@ begin
         Inc(dataCount);
     end;
     Result := dataLow;
-    if (dataCount >= hardDrive.SectorBytes) then begin
+    if (dataCount >= SECBYTES) then begin
         finishReadData;
     end;
 end;
