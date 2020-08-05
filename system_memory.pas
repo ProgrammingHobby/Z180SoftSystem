@@ -95,7 +95,7 @@ begin
         end;
     end
     else begin
-        Result := sysMem[(addr and sysMemSize)];
+        Result := sysMem[(addr and (sysMemSize - 1))];
     end;
 end;
 
@@ -108,7 +108,7 @@ begin
         end;
     end
     else begin
-        sysMem[(addr and sysMemSize)] := Data;
+        sysMem[(addr and (sysMemSize - 1))] := Data;
     end;
 end;
 
