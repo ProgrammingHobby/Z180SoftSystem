@@ -19,7 +19,8 @@
       <UseVersionInfo Value="True"/>
       <AutoIncrementBuild Value="True"/>
       <MajorVersionNr Value="2"/>
-      <BuildNr Value="781"/>
+      <MinorVersionNr Value="1"/>
+      <BuildNr Value="906"/>
       <Language Value="0407"/>
       <StringTable FileDescription="Zilog Z180MPU Emulation" InternalName="Z180SoftSystem" LegalCopyright="Uwe Merker  2020" OriginalFilename="Z180SoftSystem"/>
     </VersionInfo>
