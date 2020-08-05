@@ -1,3 +1,9 @@
+========== Z180SoftSystem V2.1.0 ==========
+- in der Z180_Cpu Unit wurden die DMA Module nicht richtig aktiviert. Fehler behoben. DMA wird nun emuliert.
+- die Icon's der FDD und HDD wurden nicht immer richtig aktiviert / deaktiviert. Fehler behoben.
+- Adressierungsfehler im Modul System-Memory bei deaktivierter 'vollständiger Adress Dekodierung' behoben.
+- die FDD- und HDD-Laufwerke verwenden nun fix 512 Bytes/Sektor.
+
 ========== Z180SoftSystem V2.0.0 ==========
 - die virtuelle Taktfrequenz im CPU-Run Modus ist in 4 Schritten einstellbar (4MHz, 8MHz, 12MHz, 16MHz).
 - in der FDC-Controller Unit die Berechnung der File-Position und Zuweisung des Imagefiles an die Laufwerke geändert.
@@ -14,7 +20,7 @@
 ========== Z180SoftSystem V1.2.0 ==========
 - bei einem 'Reset' wird auch das Terminal auf Standard-Terminal funktionen zurückgesetzt
 - ANSI, VT52 und VT100 Steuerzeichen in Terminalemulation implementiert
-- in die ComboBoxen in den Disketten-Laufwerke- und Speichereinstellungen- Dialogen konnte
+- in die ComboBoxen in den Disketten-Laufwerken und Speichereinstellungen- Dialogen konnte
   Text eingegeben und somit die Dialoge zum Absturz gebracht werden.  --> Fehler behoben.
 
 
