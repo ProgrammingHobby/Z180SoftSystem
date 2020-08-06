@@ -141,7 +141,13 @@ type
         SLP, tmpSLP: boolean;   // Sleep-Mode enabled
         HALT, tmpHALT: boolean; // Halt-Mode enabled
         intMode: byte;          // Interrupt mode (IM0, IM1, IM2)
+
+        // Flags für den DMA Controller
         dmaBurstMode: boolean;  // zeigt an ob DMA-Channel 0 im Cycles-Steal oder im Burst-Mode arbeitet
+        dreq0: boolean;         // DMA Request Channel 0
+        dreq1: boolean;         // DMA Request Channel 1
+        tend0: boolean;         // Transfer End Channel 0
+        tend1: boolean;         // Transfer End Channel 1
 
         // Abbildung der moeglichen internen Interrupts. Externe Interrupts werden nicht unterstuetzt
         intTRAP: boolean;  // OP-Code Trap Prio 1
@@ -440,6 +446,10 @@ type
         procedure exec(opCount: DWord = 1);
         function getCoreData: TCoreData;
         function getIoRegData: TIoData;
+        procedure setDREQ0;
+        procedure setDREQ1;
+        function getTEND0: boolean;
+        function getTEND1: boolean;
 
     end;
 
@@ -816,8 +826,13 @@ begin
             end;
             $30: begin   //portDSTAT
                 ioDSTAT.Value := ((ioDSTAT.Value and not $FC) or (Data and $FC));
-                if ((ioDSTAT.bit[DE0]) or (ioDSTAT.bit[DE1])) then begin
-                    ioDSTAT.bit[DME] := True; // DME setzen
+                if ((ioDSTAT.bit[DE0]) and (not ioDSTAT.bit[DWE0])) then begin
+                    ioDSTAT.bit[DME] := True;
+                    ioDSTAT.bit[DWE0] := True;
+                end;
+                if ((ioDSTAT.bit[DE1]) and (not ioDSTAT.bit[DWE1])) then begin
+                    ioDSTAT.bit[DME] := True;
+                    ioDSTAT.bit[DWE1] := True;
                 end;
             end;
             $31: begin   //portDMODE
@@ -922,7 +937,6 @@ begin
     end;
     if (ioCNTLA0.bit[RE] and (not asciRSR0F) and SystemInOut.cpuCanReadRXA0()) then begin // ist Empfangen enabled, RSR leer und neue Daten verfuegbar
         receiveShiftCount0 := receiveShiftCount0 + 1; // den Bitshift-Takt
-
         if (receiveShiftCount0 >= shiftModeRatio0) then begin // entsprechend des Datenformats triggern
             RSR0 := SystemInOut.cpuRXA0(); // und nach den entsprechenden Shift-Takten die Daten einlesen
             asciRSR0F := True; // Flags und
@@ -953,7 +967,6 @@ begin
     end;
     if (ioCNTLA1.bit[RE] and (not asciRSR1F) and SystemInOut.cpuCanReadRXA1()) then begin // ist Empfangen enabled, RSR leer und neue Daten verfuegbar
         receiveShiftCount1 := receiveShiftCount1 + 1; // den Bitshift-Takt
-
         if (receiveShiftCount1 >= shiftModeRatio1) then begin // entsprechend des Datenformats triggern
             RSR1 := SystemInOut.cpuRXA1(); // und nach den entsprechenden Shift-Takten die Daten einlesen
             asciRSR1F := True; // Flags und
@@ -1013,8 +1026,7 @@ begin
     end;
     while (dmaTransferCount > 0) do begin
         if (ioBCR0.Value = 1) then begin
-            // beim letzten anstehenden DMA-Transfehr ein externes TEND0 erzeugen
-            SystemInOut.cpuTEND0();
+            tend0 := True; // beim letzten anstehenden DMA-Transfer TEND0 setzen
         end;
         case (ioDMODE.Value and (DMsel or SMsel)) of
             $00: begin // Memory SAR0++ to Memory DAR0++ transfer
@@ -1038,11 +1050,12 @@ begin
                 ioBCR0.Value := ((ioBCR0.Value - 1) and $FFFFF);
             end;
             $0C: begin // 64k-I/O SAR0 to Memory DAR0++ transfer
-                if (SystemInOut.cpuDREQ0()) then begin
+                if (dreq0) then begin
                     systemmemory.Write(ioDAR0.Value, ioRead(ioSAR0.high, ioSAR0.low));
                     ioDAR0.Value := ((ioDAR0.Value + 1) and $FFFFF);
                     clockCycles := clockCycles + memWaitCycles + ioWaitCycles;
                     ioBCR0.Value := ((ioBCR0.Value - 1) and $FFFFF);
+                    dreq0 := False;
                 end;
             end;
             $10: begin // Memory SAR0++ to Memory DAR0-- transfer
@@ -1066,11 +1079,12 @@ begin
                 ioBCR0.Value := ((ioBCR0.Value - 1) and $FFFFF);
             end;
             $1C: begin // 64k-I/O SAR0 to Memory DAR0-- transfer
-                if (SystemInOut.cpuDREQ0()) then begin
+                if (dreq0) then begin
                     systemmemory.Write(ioDAR0.Value, ioRead(ioSAR0.high, ioSAR0.low));
                     ioDAR0.Value := ((ioDAR0.Value - 1) and $FFFFF);
                     clockCycles := clockCycles + memWaitCycles + ioWaitCycles;
                     ioBCR0.Value := ((ioBCR0.Value - 1) and $FFFFF);
+                    dreq0 := False;
                 end;
             end;
             $20: begin // Memory SAR0++ to Memory DAR0 transfer
@@ -1086,19 +1100,21 @@ begin
                 ioBCR0.Value := ((ioBCR0.Value - 1) and $FFFFF);
             end;
             $30: begin // Memory SAR0++ to 64k-I/O DAR0 transfer
-                if (SystemInOut.cpuDREQ0()) then begin
+                if (dreq0) then begin
                     ioWrite(ioDAR0.high, ioDAR0.low, systemmemory.Read(ioSAR0.Value));
                     ioSAR0.Value := ((ioSAR0.Value + 1) and $FFFFF);
                     clockCycles := clockCycles + memWaitCycles + ioWaitCycles;
                     ioBCR0.Value := ((ioBCR0.Value - 1) and $FFFFF);
+                    dreq0 := False;
                 end;
             end;
             $34: begin // Memory SAR0-- to 64k-I/O DAR0 transfer
-                if (SystemInOut.cpuDREQ0()) then begin
+                if (dreq0) then begin
                     ioWrite(ioDAR0.high, ioDAR0.low, systemmemory.Read(ioSAR0.Value));
                     ioSAR0.Value := ((ioSAR0.Value - 1) and $FFFFF);
                     clockCycles := clockCycles + memWaitCycles + ioWaitCycles;
                     ioBCR0.Value := ((ioBCR0.Value - 1) and $FFFFF);
+                    dreq0 := False;
                 end;
             end;
         end;
@@ -1106,7 +1122,9 @@ begin
     end;
     if (ioBCR0.Value = 0) then begin // aktueller DMA-Transfer beendet
         ioDSTAT.bit[DE0] := False; // DMA0-Enable loeschen
-        ioDSTAT.bit[DME] := False; // DMA Main Enable loeschen
+        if (not ioDSTAT.bit[DE1]) then begin // nur wenn Channel 1 nicht (noch) aktiv
+            ioDSTAT.bit[DME] := False; // DMA Main Enable loeschen
+        end;
         if (ioDSTAT.bit[DIE0]) then begin // und falls Interrupts eingeschaltet
             intDMA0 := True; // DMA0-Interrupt generieren
         end;
@@ -1116,46 +1134,57 @@ end;
 // --------------------------------------------------------------------------------
 procedure TZ180Cpu.doDma1;
 begin
-    if (SystemInOut.cpuDREQ1()) then begin
-        if (ioBCR1.Value = 0) then begin
-            ioBCR1.Value := $10000; // Vorbelegung fuer vollen 64K Transfer
-        end;
-        if (ioBCR1.Value = 1) then begin
-            // beim letzten anstehenden DMA-Transfehr ein externes TEND0 erzeugen
-            SystemInOut.cpuTEND1();
-        end;
-        case (ioDCNTL.Value and DMsel) of
-            $00: begin // Memory MAR1++ to I/O IAR1 transfer
+    if (ioBCR1.Value = 0) then begin
+        ioBCR1.Value := $10000; // Vorbelegung fuer vollen 64K Transfer
+    end;
+    if (ioBCR1.Value = 1) then begin
+        tend1 := True; // beim letzten anstehenden DMA-Transfehr TEND1 setzen
+    end;
+    case (ioDCNTL.Value and DMsel) of
+        $00: begin // Memory MAR1++ to I/O IAR1 transfer
+            if (dreq1) then begin
                 ioWrite(ioIAR1.high, ioIAR1.low, systemmemory.Read(ioMAR1.Value));
                 ioMAR1.Value := ((ioMAR1.Value + 1) and $FFFFF);
                 clockCycles := clockCycles + memWaitCycles + ioWaitCycles;
                 ioBCR1.Value := ((ioBCR1.Value - 1) and $FFFFF);
+                dreq1 := False;
             end;
-            $01: begin // Memory MAR1-- to I/O IAR1 transfer
+        end;
+        $01: begin // Memory MAR1-- to I/O IAR1 transfer
+            if (dreq1) then begin
                 ioWrite(ioIAR1.high, ioIAR1.low, systemmemory.Read(ioMAR1.Value));
                 ioMAR1.Value := ((ioMAR1.Value - 1) and $FFFFF);
                 clockCycles := clockCycles + memWaitCycles + ioWaitCycles;
                 ioBCR1.Value := ((ioBCR1.Value - 1) and $FFFFF);
+                dreq1 := False;
             end;
-            $02: begin // I/O IAR1 to Memory MAR1++ transfer
+        end;
+        $02: begin // I/O IAR1 to Memory MAR1++ transfer
+            if (dreq1) then begin
                 systemmemory.Write(ioMAR1.Value, ioRead(ioIAR1.high, ioIAR1.low));
                 ioMAR1.Value := ((ioMAR1.Value + 1) and $FFFFF);
                 clockCycles := clockCycles + memWaitCycles + ioWaitCycles;
                 ioBCR1.Value := ((ioBCR1.Value - 1) and $FFFFF);
+                dreq1 := False;
             end;
-            $03: begin // I/O IAR1 to Memory MAR1-- transfer
+        end;
+        $03: begin // I/O IAR1 to Memory MAR1-- transfer
+            if (dreq1) then begin
                 systemmemory.Write(ioMAR1.Value, ioRead(ioIAR1.high, ioIAR1.low));
                 ioMAR1.Value := ((ioMAR1.Value - 1) and $FFFFF);
                 clockCycles := clockCycles + memWaitCycles + ioWaitCycles;
                 ioBCR1.Value := ((ioBCR1.Value - 1) and $FFFFF);
+                dreq1 := False;
             end;
         end;
-        if (ioBCR1.Value = 0) then begin // aktueller DMA-Transfer beendet
-            ioDSTAT.bit[DE1] := False; // DMA0-Enable loeschen
+    end;
+    if (ioBCR1.Value = 0) then begin // aktueller DMA-Transfer beendet
+        ioDSTAT.bit[DE1] := False; // DMA0-Enable loeschen
+        if (not ioDSTAT.bit[DE0]) then begin // nur wenn Channel 0 nicht (noch) aktiv
             ioDSTAT.bit[DME] := False; // DMA Main Enable loeschen
-            if (ioDSTAT.bit[DIE1]) then begin // und falls Interrupts eingeschaltet
-                intDMA1 := True; // DMA0-Interrupt generieren
-            end;
+        end;
+        if (ioDSTAT.bit[DIE1]) then begin // und falls Interrupts eingeschaltet
+            intDMA1 := True; // DMA0-Interrupt generieren
         end;
     end;
 end;
@@ -1174,6 +1203,10 @@ begin
     tmpHALT := False;
     tmpSLP := False;
     dmaBurstMode := False;
+    dreq0 := False;
+    dreq1 := False;
+    tend0 := False;
+    tend1 := False;
     intMode := $00;
 
     ioCNTLA0.Value := $08;
@@ -1244,7 +1277,7 @@ begin
                 if (ioDSTAT.bit[DE0]) then begin
                     doDma0;
                 end;
-                if (ioDSTAT.bit[DE1] and (not dmaBurstMode)) then begin // DMA Channel1 kann nur aktiv werden wenn DMA0 nicht im Burst-Mode laeuft
+                if (ioDSTAT.bit[DE1]) then begin
                     doDma1;
                 end;
             end;
@@ -1254,7 +1287,6 @@ begin
             Dec(ioFRC);    // FRC (Free running counter) wird bei jedem t_state um 1 heruntergezaehlt. Z8018x Family MPU User Manual Seite 172
             if (ioCNTLA0.bit[TE] or ioCNTLA0.bit[RE]) then begin // nur wenn ASCI0 Senden oder Empfangen soll
                 asciClockCount0 := asciClockCount0 + 1;    // wird der 'Takt' fuer ASCI0 gestartet
-
                 if ((not ioSTAT0.bit[TDRE]) and asciTSR0E) then begin // ist TSR leer und liegen neue Daten im TDR
                     TSR0 := ioTDR0; // werden diese ins TSR kopiert
                     asciTSR0E := False; // und die Status-Flags entsprechend setzen
@@ -1272,7 +1304,6 @@ begin
             end;
             if (ioCNTLA1.bit[TE] or ioCNTLA1.bit[RE]) then begin// nur wenn ASCI1 Senden oder Empfangen soll
                 asciClockCount1 := asciClockCount1 + 1;    // wird der 'Takt' fuer ASCI1 gestartet
-
                 if ((not ioSTAT1.bit[TDRE]) and asciTSR1E) then begin// ist TSR leer und liegen neue Daten im TDR
                     TSR1 := ioTDR1; // werden diese ins TSR kopiert
                     asciTSR1E := False; // und die Status-Flags entsprechend setzen
@@ -1483,6 +1514,38 @@ begin
     end;
 
     Result := ioRegData;
+end;
+
+// --------------------------------------------------------------------------------
+procedure TZ180Cpu.setDREQ0;
+begin
+    dreq0 := True;
+end;
+
+// --------------------------------------------------------------------------------
+procedure TZ180Cpu.setDREQ1;
+begin
+    dreq1 := True;
+end;
+
+// --------------------------------------------------------------------------------
+function TZ180Cpu.getTEND0: boolean;
+var
+    tmpTend: boolean;
+begin
+    tmpTend := tend0;
+    tend0 := False;
+    Result := tmpTend;
+end;
+
+// --------------------------------------------------------------------------------
+function TZ180Cpu.getTEND1: boolean;
+var
+    tmpTend: boolean;
+begin
+    tmpTend := tend1;
+    tend1 := False;
+    Result := tmpTend;
 end;
 
 // --------------------------------------------------------------------------------
