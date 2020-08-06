@@ -36,10 +36,6 @@ type
     public    // Methoden
         function cpuIoRead(port: word): byte;
         procedure cpuIoWrite(port: word; Data: byte);
-        procedure cpuTEND0;
-        function cpuDREQ0: boolean;
-        procedure cpuTEND1;
-        function cpuDREQ1: boolean;
         procedure cpuTXA0(Data: byte);
         function cpuCanReadRXA0: boolean;
         function cpuRXA0: byte;
@@ -186,30 +182,6 @@ begin
             SystemMemory.EnableBootRom(False);
         end;
     end;
-end;
-
-// --------------------------------------------------------------------------------
-procedure TSystemInOut.cpuTEND0;
-begin
-
-end;
-
-// --------------------------------------------------------------------------------
-function TSystemInOut.cpuDREQ0: boolean;
-begin
-    Result := False;
-end;
-
-// --------------------------------------------------------------------------------
-procedure TSystemInOut.cpuTEND1;
-begin
-
-end;
-
-// --------------------------------------------------------------------------------
-function TSystemInOut.cpuDREQ1: boolean;
-begin
-    Result := False;
 end;
 
 // --------------------------------------------------------------------------------
