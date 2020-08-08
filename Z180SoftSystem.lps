@@ -18,12 +18,9 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="Main_Window"/>
-        <EditorIndex Value="6"/>
-        <TopLine Value="361"/>
-        <CursorPos X="79" Y="307"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos Y="4"/>
         <UsageCount Value="200"/>
-        <Loaded Value="True"/>
-        <LoadedDesigner Value="True"/>
       </Unit1>
       <Unit2>
         <Filename Value="cpu_register.pas"/>
@@ -41,11 +38,10 @@
         <Filename Value="system_memory.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="System_Memory"/>
-        <EditorIndex Value="1"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="82"/>
         <CursorPos X="53" Y="111"/>
         <UsageCount Value="200"/>
-        <Loaded Value="True"/>
       </Unit3>
       <Unit4>
         <Filename Value="memory_editor.pas"/>
@@ -76,8 +72,8 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="Z180_CPU"/>
         <IsVisibleTab Value="True"/>
-        <TopLine Value="234"/>
-        <CursorPos Y="1245"/>
+        <TopLine Value="1199"/>
+        <CursorPos X="41" Y="1236"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
       </Unit6>
@@ -86,7 +82,7 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="System_Terminal"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="876"/>
+        <TopLine Value="954"/>
         <CursorPos X="109" Y="883"/>
         <UsageCount Value="200"/>
       </Unit7>
@@ -106,11 +102,10 @@
         <Filename Value="system_fdc.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="System_Fdc"/>
-        <EditorIndex Value="2"/>
-        <TopLine Value="888"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="373"/>
         <CursorPos X="105" Y="373"/>
         <UsageCount Value="200"/>
-        <Loaded Value="True"/>
       </Unit9>
       <Unit10>
         <Filename Value="memory_settings.pas"/>
@@ -129,9 +124,9 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="System_InOut"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="122"/>
-        <CursorPos X="12" Y="155"/>
-        <UsageCount Value="190"/>
+        <TopLine Value="179"/>
+        <CursorPos Y="186"/>
+        <UsageCount Value="200"/>
       </Unit11>
       <Unit12>
         <Filename Value="fdd_settings.pas"/>
@@ -140,12 +135,10 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="Fdd_Settings"/>
-        <EditorIndex Value="4"/>
-        <TopLine Value="185"/>
-        <CursorPos X="24" Y="64"/>
-        <UsageCount Value="190"/>
-        <Loaded Value="True"/>
-        <LoadedDesigner Value="True"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="125"/>
+        <CursorPos X="81" Y="127"/>
+        <UsageCount Value="200"/>
       </Unit12>
       <Unit13>
         <Filename Value="terminal_settings.pas"/>
@@ -155,9 +148,9 @@
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="Terminal_Settings"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="49"/>
+        <TopLine Value="52"/>
         <CursorPos X="28" Y="70"/>
-        <UsageCount Value="162"/>
+        <UsageCount Value="173"/>
       </Unit13>
       <Unit14>
         <Filename Value="about_window.pas"/>
@@ -169,7 +162,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="37"/>
         <CursorPos X="74" Y="75"/>
-        <UsageCount Value="159"/>
+        <UsageCount Value="170"/>
       </Unit14>
       <Unit15>
         <Filename Value="version_info.pas"/>
@@ -178,17 +171,16 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="57"/>
         <CursorPos X="20" Y="75"/>
-        <UsageCount Value="157"/>
+        <UsageCount Value="168"/>
       </Unit15>
       <Unit16>
         <Filename Value="system_hdc.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="System_Hdc"/>
-        <EditorIndex Value="3"/>
-        <TopLine Value="255"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="549"/>
         <CursorPos X="41" Y="585"/>
-        <UsageCount Value="71"/>
-        <Loaded Value="True"/>
+        <UsageCount Value="82"/>
       </Unit16>
       <Unit17>
         <Filename Value="hdd_settings.pas"/>
@@ -197,12 +189,10 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="Hdd_Settings"/>
-        <EditorIndex Value="5"/>
-        <TopLine Value="2"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="101"/>
         <CursorPos X="5" Y="137"/>
-        <UsageCount Value="70"/>
-        <Loaded Value="True"/>
-        <LoadedDesigner Value="True"/>
+        <UsageCount Value="81"/>
       </Unit17>
       <Unit18>
         <Filename Value="hardware_info.pas"/>
@@ -214,7 +204,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="21"/>
         <CursorPos X="100" Y="34"/>
-        <UsageCount Value="32"/>
+        <UsageCount Value="43"/>
       </Unit18>
       <Unit19>
         <Filename Value="system_rtc.pas"/>
@@ -223,7 +213,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="37"/>
         <CursorPos X="30" Y="74"/>
-        <UsageCount Value="25"/>
+        <UsageCount Value="36"/>
       </Unit19>
       <Unit20>
         <Filename Value="system_sio.pas"/>
@@ -231,7 +221,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="63"/>
         <CursorPos X="13" Y="89"/>
-        <UsageCount Value="192"/>
+        <UsageCount Value="191"/>
       </Unit20>
       <Unit21>
         <Filename Value="system_pio.pas"/>
@@ -239,35 +229,35 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="102"/>
         <CursorPos X="21" Y="134"/>
-        <UsageCount Value="192"/>
+        <UsageCount Value="191"/>
       </Unit21>
       <Unit22>
         <Filename Value="/usr/share/lazarus/2.0.6/lcl/include/control.inc"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="4258"/>
         <CursorPos Y="4275"/>
-        <UsageCount Value="2"/>
+        <UsageCount Value="1"/>
       </Unit22>
       <Unit23>
         <Filename Value="/usr/share/lazarus/2.0.6/lcl/include/buttoncontrol.inc"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="9"/>
         <CursorPos Y="22"/>
-        <UsageCount Value="2"/>
+        <UsageCount Value="1"/>
       </Unit23>
       <Unit24>
         <Filename Value="/usr/share/lazarus/2.0.6/lcl/include/buttons.inc"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="155"/>
         <CursorPos Y="170"/>
-        <UsageCount Value="2"/>
+        <UsageCount Value="1"/>
       </Unit24>
       <Unit25>
         <Filename Value="/usr/share/lazarus/2.0.6/lcl/include/application.inc"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="1400"/>
         <CursorPos Y="1419"/>
-        <UsageCount Value="6"/>
+        <UsageCount Value="5"/>
       </Unit25>
       <Unit26>
         <Filename Value="/usr/share/lazarus/2.0.6/lcl/lclclasses.pp"/>
@@ -275,35 +265,35 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="82"/>
         <CursorPos Y="95"/>
-        <UsageCount Value="2"/>
+        <UsageCount Value="1"/>
       </Unit26>
       <Unit27>
         <Filename Value="/usr/share/lazarus/2.0.6/lcl/include/customform.inc"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="2259"/>
         <CursorPos Y="2279"/>
-        <UsageCount Value="6"/>
+        <UsageCount Value="5"/>
       </Unit27>
       <Unit28>
         <Filename Value="/usr/share/lazarus/2.0.6/lcl/include/scrollingwincontrol.inc"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="220"/>
         <CursorPos Y="235"/>
-        <UsageCount Value="2"/>
+        <UsageCount Value="1"/>
       </Unit28>
       <Unit29>
         <Filename Value="/usr/share/lazarus/2.0.6/lcl/include/customcontrol.inc"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="68"/>
         <CursorPos Y="83"/>
-        <UsageCount Value="2"/>
+        <UsageCount Value="1"/>
       </Unit29>
       <Unit30>
         <Filename Value="/usr/share/lazarus/2.0.6/lcl/include/wincontrol.inc"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="6250"/>
         <CursorPos Y="6267"/>
-        <UsageCount Value="2"/>
+        <UsageCount Value="1"/>
       </Unit30>
       <Unit31>
         <Filename Value="/usr/share/lazarus/2.0.6/lcl/widgetset/wscontrols.pp"/>
@@ -311,7 +301,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="468"/>
         <CursorPos Y="490"/>
-        <UsageCount Value="2"/>
+        <UsageCount Value="1"/>
       </Unit31>
       <Unit32>
         <Filename Value="/usr/share/lazarus/2.0.6/lcl/lresources.pp"/>
@@ -319,21 +309,21 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="669"/>
         <CursorPos Y="684"/>
-        <UsageCount Value="2"/>
+        <UsageCount Value="1"/>
       </Unit32>
       <Unit33>
         <Filename Value="z180cpu.pas"/>
         <UnitName Value="Z180Cpu"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="11"/>
-        <UsageCount Value="2"/>
+        <UsageCount Value="1"/>
       </Unit33>
       <Unit34>
         <Filename Value="../MainForm_EMUZ80.pas"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="1285"/>
         <CursorPos X="41" Y="694"/>
-        <UsageCount Value="6"/>
+        <UsageCount Value="5"/>
       </Unit34>
       <Unit35>
         <Filename Value="/usr/share/lazarus/2.0.6/lcl/graphics.pp"/>
@@ -341,7 +331,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="49"/>
         <CursorPos X="3" Y="66"/>
-        <UsageCount Value="6"/>
+        <UsageCount Value="5"/>
       </Unit35>
       <Unit36>
         <Filename Value="/usr/share/lazarus/2.0.6/lcl/extctrls.pp"/>
@@ -349,14 +339,14 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="493"/>
         <CursorPos X="17" Y="532"/>
-        <UsageCount Value="6"/>
+        <UsageCount Value="5"/>
       </Unit36>
       <Unit37>
         <Filename Value="/usr/share/lazarus/2.0.6/lcl/include/customimage.inc"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="26"/>
         <CursorPos Y="46"/>
-        <UsageCount Value="6"/>
+        <UsageCount Value="5"/>
       </Unit37>
       <Unit38>
         <Filename Value="/usr/share/lazarus/2.0.6/lcl/customtimer.pas"/>
@@ -364,49 +354,49 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="82"/>
         <CursorPos Y="103"/>
-        <UsageCount Value="6"/>
+        <UsageCount Value="5"/>
       </Unit38>
       <Unit39>
         <Filename Value="/usr/share/lazarus/2.0.6/lcl/interfaces/gtk2/gtk2widgetset.inc"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="2682"/>
         <CursorPos Y="2703"/>
-        <UsageCount Value="6"/>
+        <UsageCount Value="5"/>
       </Unit39>
       <Unit40>
         <Filename Value="/usr/share/lazarus/2.0.6/lcl/interfaces/gtk2/gtk2devicecontext.inc"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="1324"/>
         <CursorPos Y="1358"/>
-        <UsageCount Value="7"/>
+        <UsageCount Value="6"/>
       </Unit40>
       <Unit41>
         <Filename Value="/usr/share/lazarus/2.0.6/lcl/interfaces/gtk2/gtk2winapi.inc"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="3899"/>
         <CursorPos Y="3920"/>
-        <UsageCount Value="7"/>
+        <UsageCount Value="6"/>
       </Unit41>
       <Unit42>
         <Filename Value="/usr/share/lazarus/2.0.6/lcl/interfaces/gtk2/gtk2lclintf.inc"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="165"/>
         <CursorPos Y="184"/>
-        <UsageCount Value="7"/>
+        <UsageCount Value="6"/>
       </Unit42>
       <Unit43>
         <Filename Value="/usr/share/lazarus/2.0.6/lcl/include/lclintf.inc"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="134"/>
         <CursorPos Y="153"/>
-        <UsageCount Value="7"/>
+        <UsageCount Value="6"/>
       </Unit43>
       <Unit44>
         <Filename Value="/usr/share/lazarus/2.0.6/lcl/include/canvas.inc"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="1766"/>
         <CursorPos Y="1785"/>
-        <UsageCount Value="7"/>
+        <UsageCount Value="6"/>
       </Unit44>
       <Unit45>
         <Filename Value="/usr/share/lazarus/2.0.6/lcl/controls.pp"/>
@@ -414,7 +404,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="1729"/>
         <CursorPos X="14" Y="1747"/>
-        <UsageCount Value="8"/>
+        <UsageCount Value="7"/>
       </Unit45>
       <Unit46>
         <Filename Value="/usr/share/lazarus/2.0.8/lcl/controls.pp"/>
@@ -422,14 +412,14 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="97"/>
         <CursorPos X="6" Y="19"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="8"/>
       </Unit46>
       <Unit47>
         <Filename Value="/usr/share/lazarus/2.0.8/lcl/include/customform.inc"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="16"/>
         <CursorPos Y="31"/>
-        <UsageCount Value="2"/>
+        <UsageCount Value="1"/>
       </Unit47>
       <Unit48>
         <Filename Value="/usr/share/lazarus/2.0.8/components/lazutils/laztracer.pas"/>
@@ -437,7 +427,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="36"/>
         <CursorPos Y="50"/>
-        <UsageCount Value="5"/>
+        <UsageCount Value="4"/>
       </Unit48>
       <Unit49>
         <Filename Value="Veröffentlicht/Term_Vorlage.pas"/>
@@ -445,14 +435,14 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="787"/>
         <CursorPos X="31" Y="2040"/>
-        <UsageCount Value="4"/>
+        <UsageCount Value="3"/>
       </Unit49>
       <Unit50>
         <Filename Value="/usr/share/fpcsrc/3.0.4/rtl/objpas/classes/classesh.inc"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="91"/>
         <CursorPos X="3" Y="102"/>
-        <UsageCount Value="7"/>
+        <UsageCount Value="6"/>
       </Unit50>
       <Unit51>
         <Filename Value="hdd_settings.lfm"/>
@@ -460,131 +450,115 @@
         <WindowIndex Value="-1"/>
         <TopLine Value="-1"/>
         <CursorPos X="-1" Y="-1"/>
-        <UsageCount Value="17"/>
+        <UsageCount Value="16"/>
         <DefaultSyntaxHighlighter Value="LFM"/>
       </Unit51>
     </Units>
-    <JumpHistory Count="30" HistoryIndex="29">
+    <JumpHistory Count="26" HistoryIndex="25">
       <Position1>
         <Filename Value="z180_cpu.pas"/>
-        <Caret Line="1225" Column="109" TopLine="1221"/>
+        <Caret Line="832" TopLine="826"/>
       </Position1>
       <Position2>
         <Filename Value="z180_cpu.pas"/>
-        <Caret Line="1231" TopLine="1221"/>
+        <Caret Line="833" TopLine="826"/>
       </Position2>
       <Position3>
         <Filename Value="z180_cpu.pas"/>
-        <Caret Line="1232" TopLine="1221"/>
+        <Caret Line="845" TopLine="826"/>
       </Position3>
       <Position4>
         <Filename Value="z180_cpu.pas"/>
-        <Caret Line="1233" TopLine="1221"/>
+        <Caret Line="849" TopLine="828"/>
       </Position4>
       <Position5>
         <Filename Value="z180_cpu.pas"/>
-        <Caret Line="1249" Column="21" TopLine="1221"/>
+        <Caret Line="845" Column="52" TopLine="842"/>
       </Position5>
       <Position6>
-        <Filename Value="system_fdc.pas"/>
-        <Caret Line="888" Column="7" TopLine="862"/>
+        <Filename Value="z180_cpu.pas"/>
+        <Caret Line="832" TopLine="819"/>
       </Position6>
       <Position7>
-        <Filename Value="system_fdc.pas"/>
-        <Caret Line="257" Column="120" TopLine="238"/>
+        <Filename Value="z180_cpu.pas"/>
+        <Caret Line="833" TopLine="819"/>
       </Position7>
       <Position8>
-        <Filename Value="system_fdc.pas"/>
-        <Caret Line="917" Column="34" TopLine="898"/>
+        <Filename Value="z180_cpu.pas"/>
+        <Caret Line="845" Column="56" TopLine="832"/>
       </Position8>
       <Position9>
-        <Filename Value="hdd_settings.pas"/>
-        <Caret Line="90" Column="5" TopLine="74"/>
+        <Filename Value="z180_cpu.pas"/>
+        <Caret Line="832" TopLine="819"/>
       </Position9>
       <Position10>
-        <Filename Value="system_hdc.pas"/>
-        <Caret Line="188" Column="31" TopLine="165"/>
+        <Filename Value="z180_cpu.pas"/>
+        <Caret Line="833" TopLine="819"/>
       </Position10>
       <Position11>
         <Filename Value="z180_cpu.pas"/>
-        <Caret Line="1117" Column="11" TopLine="1194"/>
+        <Caret Line="845" TopLine="832"/>
       </Position11>
       <Position12>
-        <Filename Value="system_memory.pas"/>
-        <Caret Line="111" Column="38" TopLine="205"/>
+        <Filename Value="z180_cpu.pas"/>
+        <Caret Line="1336" TopLine="1327"/>
       </Position12>
       <Position13>
-        <Filename Value="system_fdc.pas"/>
-        <Caret Line="32" Column="24" TopLine="30"/>
+        <Filename Value="z180_cpu.pas"/>
+        <Caret Line="1337" TopLine="1327"/>
       </Position13>
       <Position14>
-        <Filename Value="system_fdc.pas"/>
-        <Caret Line="186" Column="28" TopLine="165"/>
+        <Filename Value="z180_cpu.pas"/>
+        <Caret Line="1345" TopLine="1327"/>
       </Position14>
       <Position15>
-        <Filename Value="system_fdc.pas"/>
-        <Caret Line="104" Column="17" TopLine="78"/>
+        <Filename Value="z180_cpu.pas"/>
+        <Caret Line="1353" Column="53" TopLine="1340"/>
       </Position15>
       <Position16>
-        <Filename Value="system_hdc.pas"/>
-        <Caret Line="120" Column="24" TopLine="92"/>
+        <Filename Value="z180_cpu.pas"/>
+        <Caret Line="1354" TopLine="1341"/>
       </Position16>
       <Position17>
-        <Filename Value="system_hdc.pas"/>
-        <Caret Line="192" Column="35" TopLine="174"/>
+        <Filename Value="z180_cpu.pas"/>
+        <Caret Line="1336" TopLine="1331"/>
       </Position17>
       <Position18>
-        <Filename Value="system_hdc.pas"/>
-        <Caret Line="281" Column="32" TopLine="255"/>
+        <Filename Value="z180_cpu.pas"/>
+        <Caret Line="1174" Column="19" TopLine="1116"/>
       </Position18>
       <Position19>
-        <Filename Value="fdd_settings.pas"/>
-        <Caret Line="207" Column="16" TopLine="22"/>
+        <Filename Value="z180_cpu.pas"/>
+        <Caret Line="1169" Column="114" TopLine="1151"/>
       </Position19>
       <Position20>
-        <Filename Value="fdd_settings.pas"/>
-        <Caret Line="206" Column="16" TopLine="171"/>
+        <Filename Value="z180_cpu.pas"/>
+        <Caret Line="193" Column="21" TopLine="168"/>
       </Position20>
       <Position21>
-        <Filename Value="fdd_settings.pas"/>
-        <Caret Line="205" Column="16" TopLine="170"/>
+        <Filename Value="z180_cpu.pas"/>
+        <Caret Line="75" Column="85" TopLine="53"/>
       </Position21>
       <Position22>
-        <Filename Value="fdd_settings.pas"/>
-        <Caret Line="204" Column="16" TopLine="169"/>
+        <Filename Value="z180_cpu.pas"/>
+        <Caret Line="1254" Column="28" TopLine="1232"/>
       </Position22>
       <Position23>
-        <Filename Value="fdd_settings.pas"/>
-        <Caret Line="203" Column="16" TopLine="168"/>
+        <Filename Value="z180_cpu.pas"/>
+        <Caret Line="1172" Column="36" TopLine="1154"/>
       </Position23>
       <Position24>
-        <Filename Value="fdd_settings.pas"/>
-        <Caret Line="202" Column="16" TopLine="167"/>
+        <Filename Value="z180_cpu.pas"/>
+        <Caret Line="846" Column="44" TopLine="816"/>
       </Position24>
       <Position25>
-        <Filename Value="fdd_settings.pas"/>
-        <Caret Line="201" Column="16" TopLine="166"/>
+        <Filename Value="z180_cpu.pas"/>
+        <Caret Line="180" Column="9" TopLine="152"/>
       </Position25>
       <Position26>
-        <Filename Value="fdd_settings.pas"/>
-        <Caret Line="64" Column="26" TopLine="41"/>
+        <Filename Value="z180_cpu.pas"/>
+        <Caret Line="1159" Column="93" TopLine="1151"/>
       </Position26>
-      <Position27>
-        <Filename Value="hdd_settings.pas"/>
-        <Caret Line="38" Column="29" TopLine="100"/>
-      </Position27>
-      <Position28>
-        <Filename Value="hdd_settings.pas"/>
-        <Caret Line="37" Column="29" TopLine="37"/>
-      </Position28>
-      <Position29>
-        <Filename Value="hdd_settings.pas"/>
-        <Caret Line="36" Column="29" TopLine="36"/>
-      </Position29>
-      <Position30>
-        <Filename Value="hdd_settings.pas"/>
-        <Caret Line="35" Column="29" TopLine="35"/>
-      </Position30>
     </JumpHistory>
     <RunParams>
       <FormatVersion Value="2"/>
@@ -592,7 +566,7 @@
     </RunParams>
   </ProjectSession>
   <Debugging>
-    <Watches Count="5">
+    <Watches Count="11">
       <Item1>
         <Expression Value="ioDMODE.Value"/>
       </Item1>
@@ -609,6 +583,24 @@
         <Expression Value="ioDSTAT.value"/>
         <DisplayStyle Value="wdfBinary"/>
       </Item5>
+      <Item6>
+        <Expression Value="ioDAR0.low"/>
+      </Item6>
+      <Item7>
+        <Expression Value="ioDAR0.bank"/>
+      </Item7>
+      <Item8>
+        <Expression Value="ioDCNTL.value"/>
+      </Item8>
+      <Item9>
+        <Expression Value="ioDAR0.bank and $03"/>
+      </Item9>
+      <Item10>
+        <Expression Value="asciClockCount0"/>
+      </Item10>
+      <Item11>
+        <Expression Value="asciPhiDevideRatio0"/>
+      </Item11>
     </Watches>
   </Debugging>
 </CONFIG>
