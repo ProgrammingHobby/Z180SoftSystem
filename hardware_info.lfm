@@ -24,13 +24,13 @@ object HardwareInfo: THardwareInfo
     TabOrder = 0
     object tabZ180Mpu: TTabSheet
       Caption = 'Z180MPU / Boot ROM'
-      ClientHeight = 534
-      ClientWidth = 849
+      ClientHeight = 530
+      ClientWidth = 841
       object memoZ180Mpu: TMemo
         Left = 0
-        Height = 534
+        Height = 530
         Top = 0
-        Width = 849
+        Width = 841
         Align = alClient
         Font.Height = -12
         Font.Name = 'Fixedsys'
@@ -42,8 +42,10 @@ object HardwareInfo: THardwareInfo
           '- Die beiden ASCI-Kanäle sind implementiert und Interrupt fähig. Das ''OVERRUN'' Fehler-Flag wird entsprechend gesetzt.'
           '  Am ASCI-Kanal0 ist das ''Terminal'' angeschlossen.'
           '- Die beiden PRT-Kanäle sind implementiert und Interrupt fähig.'
-          '- Die beiden DMA-Kanäle sind implementiert. Memory <-> Memory funktioniert.'
-          '  DMA-I/O, insbesondere die Möglichkeit die ASCI per DMA bedienen zu können ist noch nicht vollständig angelegt.'
+          '- Die beiden DMA-Kanäle sind implementiert.'
+          '  Memory <-> Memory transfers im Burst- oder Cycle Steal Modus funktionieren.'
+          '  Memory <-> ASCI0/1 des DMA-Kanal 0 funktionieren.'
+          '  Memory <-> (Memory Mapped) I/O sind implementiert, benötigen jedoch ein DREQ-Flag welches vom I/O-Gerät generiert werden muß.'
           '- Es werden nur die Interrupts der internen I/O-Funktionen unterstützt. ''Externe'' Interrupts sind nicht möglich.'
           '- Der Z180 Undefined-Op-Code TRAP ist implementiert.'
           ''
@@ -60,8 +62,8 @@ object HardwareInfo: THardwareInfo
     end
     object tabTerminal: TTabSheet
       Caption = 'Terminal'
-      ClientHeight = 534
-      ClientWidth = 849
+      ClientHeight = 530
+      ClientWidth = 841
       object memoTerminal: TMemo
         Left = 0
         Height = 529
@@ -135,8 +137,8 @@ object HardwareInfo: THardwareInfo
     end
     object tabFddController: TTabSheet
       Caption = 'FDD-Controller'
-      ClientHeight = 534
-      ClientWidth = 849
+      ClientHeight = 530
+      ClientWidth = 841
       object memoFddController: TMemo
         Left = 0
         Height = 530
@@ -201,8 +203,8 @@ object HardwareInfo: THardwareInfo
     end
     object tabHddController: TTabSheet
       Caption = 'HDD-Controller'
-      ClientHeight = 534
-      ClientWidth = 849
+      ClientHeight = 530
+      ClientWidth = 841
       object memoHddController: TMemo
         Left = 0
         Height = 534
