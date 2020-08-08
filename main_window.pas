@@ -2,8 +2,6 @@ unit Main_Window;
 
 {$mode objfpc}{$H+}
 
-{ TODO : Im Menü 'Hilfe' Menüpunkt 'System' anlegen um Informationen über die Emulierte Hardware anzuzeigen }
-
 interface
 
 uses
