@@ -71,6 +71,9 @@ type
                     nv: byte);     // not used
         end;
 
+        TIntMode = (IM0, IM1, IM2);
+        TAcsiDmaMode = (OFF, ASCI0SEND, ASCI1SEND, ASCI0RECEIVE, ASCI1RECEIVE);
+
     var
         // Variablen fuer die Takt- und Machinen-Zyklen Verarbeitung
         machineCycles, clockCycles: DWord;
@@ -140,14 +143,7 @@ type
         IFF2: boolean;          // Interrupt-Enable Flag 2
         SLP, tmpSLP: boolean;   // Sleep-Mode enabled
         HALT, tmpHALT: boolean; // Halt-Mode enabled
-        intMode: byte;          // Interrupt mode (IM0, IM1, IM2)
-
-        // Flags für den DMA Controller
-        dmaBurstMode: boolean;  // zeigt an ob DMA-Channel 0 im Cycles-Steal oder im Burst-Mode arbeitet
-        dreq0: boolean;         // DMA Request Channel 0
-        dreq1: boolean;         // DMA Request Channel 1
-        tend0: boolean;         // Transfer End Channel 0
-        tend1: boolean;         // Transfer End Channel 1
+        intMode: TIntMode;      // Interrupt mode (IM0, IM1, IM2)
 
         // Abbildung der moeglichen internen Interrupts. Externe Interrupts werden nicht unterstuetzt
         intTRAP: boolean;  // OP-Code Trap Prio 1
@@ -175,18 +171,20 @@ type
         bufTMDR0H, bufTMDR1H: byte;        // Puffer-Variable fuer Timer Data Register High
         isBufTMDR0H, isBufTMDR1H: boolean; // Flags fuer die Daten-Pufferung
 
+        // Hilfsvariablen für den DMA Controller
+        dmaBurstMode: boolean;  // zeigt an ob DMA-Channel 0 im Cycles-Steal oder im Burst-Mode arbeitet
+        dreq0: boolean;         // DMA Request Channel 0
+        dreq1: boolean;         // DMA Request Channel 1
+        tend0: boolean;         // Transfer End Channel 0
+        tend1: boolean;         // Transfer End Channel 1
+        asciDmaMode: TAcsiDmaMode;
+
         // statische Arrays fuer ASCI- und Wait-Cycles
     const
         asciDevide: array[0..7] of byte = (1, 2, 4, 8, 16, 32, 64, 0);
         asciTransLength: array[0..7] of byte = (9, 10, 10, 11, 10, 11, 11, 12);
         memCycles: array[0..3] of byte = (0, 1, 2, 3);
         ioCycles: array[0..3] of byte = (0, 2, 3, 4);
-
-        // Konstanten fuer die moeglichen Interrupt Modi
-    const
-        IM0 = $00;
-        IM1 = $10;
-        IM2 = $20;
 
         // Konstanten fuer die Status-Flags der CPU
     const
@@ -827,6 +825,24 @@ begin
             $30: begin   //portDSTAT
                 ioDSTAT.Value := ((ioDSTAT.Value and not $FC) or (Data and $FC));
                 if ((ioDSTAT.bit[DE0]) and (not ioDSTAT.bit[DWE0])) then begin
+                    case (ioDMODE.Value and (DMsel or SMsel)) of
+                        $0C, $1C: begin // 64k-I/O SAR0 to Memory DAR0 transfer
+                            if (ioDCNTL.bit[DMS0] and (ioSAR0.low = $08) and ((ioSAR0.bank and $03) = $01)) then begin
+                                asciDmaMode := ASCI0RECEIVE;
+                            end;
+                            if (ioDCNTL.bit[DMS0] and (ioSAR0.low = $09) and ((ioSAR0.bank and $03) = $02)) then begin
+                                asciDmaMode := ASCI1RECEIVE;
+                            end;
+                        end;
+                        $30, $34: begin // Memory SAR0 to 64k-I/O DAR0 transfer
+                            if (ioDCNTL.bit[DMS0] and (ioDAR0.low = $06) and ((ioDAR0.bank and $03) = $01)) then begin
+                                asciDmaMode := ASCI0SEND;
+                            end;
+                            if (ioDCNTL.bit[DMS0] and (ioDAR0.low = $07) and ((ioDAR0.bank and $03) = $02)) then begin
+                                asciDmaMode := ASCI1SEND;
+                            end;
+                        end;
+                    end;
                     ioDSTAT.bit[DME] := True;
                     ioDSTAT.bit[DWE0] := True;
                 end;
@@ -1044,10 +1060,13 @@ begin
                 ioBCR0.Value := ((ioBCR0.Value - 1) and $FFFFF);
             end;
             $08: begin // Memory SAR0 to Memory DAR0++ transfer
-                systemmemory.Write(ioDAR0.Value, systemmemory.Read(ioSAR0.Value));
-                ioDAR0.Value := ((ioDAR0.Value + 1) and $FFFFF);
-                clockCycles := clockCycles + (2 * memWaitCycles);
-                ioBCR0.Value := ((ioBCR0.Value - 1) and $FFFFF);
+                if (dreq0) then begin
+                    systemmemory.Write(ioDAR0.Value, systemmemory.Read(ioSAR0.Value));
+                    ioDAR0.Value := ((ioDAR0.Value + 1) and $FFFFF);
+                    clockCycles := clockCycles + (2 * memWaitCycles);
+                    ioBCR0.Value := ((ioBCR0.Value - 1) and $FFFFF);
+                    dreq0 := False;
+                end;
             end;
             $0C: begin // 64k-I/O SAR0 to Memory DAR0++ transfer
                 if (dreq0) then begin
@@ -1073,10 +1092,13 @@ begin
                 ioBCR0.Value := ((ioBCR0.Value - 1) and $FFFFF);
             end;
             $18: begin // Memory SAR0 to Memory DAR0-- transfer
-                systemmemory.Write(ioDAR0.Value, systemmemory.Read(ioSAR0.Value));
-                ioDAR0.Value := ((ioDAR0.Value - 1) and $FFFFF);
-                clockCycles := clockCycles + (2 * memWaitCycles);
-                ioBCR0.Value := ((ioBCR0.Value - 1) and $FFFFF);
+                if (dreq0) then begin
+                    systemmemory.Write(ioDAR0.Value, systemmemory.Read(ioSAR0.Value));
+                    ioDAR0.Value := ((ioDAR0.Value - 1) and $FFFFF);
+                    clockCycles := clockCycles + (2 * memWaitCycles);
+                    ioBCR0.Value := ((ioBCR0.Value - 1) and $FFFFF);
+                    dreq0 := False;
+                end;
             end;
             $1C: begin // 64k-I/O SAR0 to Memory DAR0-- transfer
                 if (dreq0) then begin
@@ -1088,16 +1110,22 @@ begin
                 end;
             end;
             $20: begin // Memory SAR0++ to Memory DAR0 transfer
-                systemmemory.Write(ioDAR0.Value, systemmemory.Read(ioSAR0.Value));
-                ioSAR0.Value := ((ioSAR0.Value + 1) and $FFFFF);
-                clockCycles := clockCycles + (2 * memWaitCycles);
-                ioBCR0.Value := ((ioBCR0.Value - 1) and $FFFFF);
+                if (dreq0) then begin
+                    systemmemory.Write(ioDAR0.Value, systemmemory.Read(ioSAR0.Value));
+                    ioSAR0.Value := ((ioSAR0.Value + 1) and $FFFFF);
+                    clockCycles := clockCycles + (2 * memWaitCycles);
+                    ioBCR0.Value := ((ioBCR0.Value - 1) and $FFFFF);
+                    dreq0 := False;
+                end;
             end;
             $24: begin // Memory SAR0-- to Memory DAR0 transfer
-                systemmemory.Write(ioDAR0.Value, systemmemory.Read(ioSAR0.Value));
-                ioSAR0.Value := ((ioSAR0.Value - 1) and $FFFFF);
-                clockCycles := clockCycles + (2 * memWaitCycles);
-                ioBCR0.Value := ((ioBCR0.Value - 1) and $FFFFF);
+                if (dreq0) then begin
+                    systemmemory.Write(ioDAR0.Value, systemmemory.Read(ioSAR0.Value));
+                    ioSAR0.Value := ((ioSAR0.Value - 1) and $FFFFF);
+                    clockCycles := clockCycles + (2 * memWaitCycles);
+                    ioBCR0.Value := ((ioBCR0.Value - 1) and $FFFFF);
+                    dreq0 := False;
+                end;
             end;
             $30: begin // Memory SAR0++ to 64k-I/O DAR0 transfer
                 if (dreq0) then begin
@@ -1127,6 +1155,9 @@ begin
         end;
         if (ioDSTAT.bit[DIE0]) then begin // und falls Interrupts eingeschaltet
             intDMA0 := True; // DMA0-Interrupt generieren
+        end;
+        if (not (asciDmaMode = OFF)) then begin // wenn der Transfer ein Memory <-> ASCI war
+            asciDmaMode := OFF; // und den ASCI-DMA-MODE ausschalten
         end;
     end;
 end;
@@ -1207,7 +1238,8 @@ begin
     dreq1 := False;
     tend0 := False;
     tend1 := False;
-    intMode := $00;
+    intMode := IM0;
+    asciDmaMode := OFF;
 
     ioCNTLA0.Value := $08;
     ioCNTLA1.Value := $08;
@@ -1291,11 +1323,17 @@ begin
                     TSR0 := ioTDR0; // werden diese ins TSR kopiert
                     asciTSR0E := False; // und die Status-Flags entsprechend setzen
                     ioSTAT0.bit[TDRE] := True;
+                    if (asciDmaMode = ASCI0SEND) then begin // falls ASCI DMA-Mode aktiv
+                        dreq0 := True; // dann einen DMA-Request auslösen
+                    end;
                 end;
                 if ((not ioSTAT0.bit[RDRF]) and asciRSR0F) then begin // ist RDR leer und liegen neue Daten im RSR
                     ioRDR0 := RSR0; // werden diese ins RDR kopier
                     asciRSR0F := False; // und die Status-Flags entsprechend setzen
                     ioSTAT0.bit[RDRF] := True;
+                    if (asciDmaMode = ASCI0RECEIVE) then begin // falls ASCI DMA-Mode aktiv
+                        dreq0 := True; // dann einen DMA-Request auslösen
+                    end;
                 end;
                 if (asciClockCount0 >= asciPhiDevideRatio0) then begin // nach Ablauf der entsprechenden System-Takte
                     asciClockCount0 := 0; // wird der Baudraten-Takt getriggert
@@ -1308,11 +1346,17 @@ begin
                     TSR1 := ioTDR1; // werden diese ins TSR kopiert
                     asciTSR1E := False; // und die Status-Flags entsprechend setzen
                     ioSTAT1.bit[TDRE] := True;
+                    if (asciDmaMode = ASCI1SEND) then begin // falls ASCI DMA-Mode aktiv
+                        dreq0 := True; // dann einen DMA-Request auslösen
+                    end;
                 end;
                 if ((not ioSTAT1.bit[RDRF]) and asciRSR1F) then begin // ist RDR leer und liegen neue Daten im RSR
                     ioRDR1 := RSR1; // werden diese ins RDR kopier
                     asciRSR1F := False; // und die Status-Flags entsprechend setzen
                     ioSTAT1.bit[RDRF] := True;
+                    if (asciDmaMode = ASCI1RECEIVE) then begin // falls ASCI DMA-Mode aktiv
+                        dreq0 := True; // dann einen DMA-Request auslösen
+                    end;
                 end;
                 if (asciClockCount1 >= asciPhiDevideRatio1) then begin // nach Ablauf der entsprechenden System-Takte
                     asciClockCount1 := 0; // wird der Baudraten-Takt getriggert
