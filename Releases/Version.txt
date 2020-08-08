@@ -1,3 +1,10 @@
+========== Z180SoftSystem V2.1.1 ==========
+- DMA Emulation weiter verbessert. Es werden nun folgende Transfers emuliert.
+  - Memory <-> Memory transfers im Burst- oder Cycle Steal Modus.
+  - Memory <-> ASCI0/1 des DMA-Kanal 0.
+  - Memory <-> (Memory Mapped) I/O sind implementiert, benötigen jedoch ein DREQ-Flag
+    welches vom I/O-Gerät generiert werden muß.
+
 ========== Z180SoftSystem V2.1.0 ==========
 - in der Z180_Cpu Unit wurden die DMA Module nicht richtig aktiviert. Fehler behoben. DMA wird nun emuliert.
 - die Icon's der FDD und HDD wurden nicht immer richtig aktiviert / deaktiviert. Fehler behoben.
