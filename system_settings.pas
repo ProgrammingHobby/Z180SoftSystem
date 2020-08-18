@@ -16,6 +16,7 @@ type
         procedure DataModuleCreate(Sender: TObject);
 
     private
+        function GetPreferencesFolder: string;
 
     public
         procedure saveFormState(var Form: TForm);
@@ -40,7 +41,45 @@ uses strutils;
 // --------------------------------------------------------------------------------
 procedure TSystemSettings.DataModuleCreate(Sender: TObject);
 begin
-    xmlStore.Filename := 'Z180EMU.xml';
+    xmlStore.Filename := GetPreferencesFolder + 'settings.xml';
+end;
+
+// --------------------------------------------------------------------------------
+function TSystemSettings.GetPreferencesFolder: string;
+{$ifdef LCLCarbon}
+const
+    kMaxPath = 1024;
+var
+    theError: OSErr;
+    theRef: FSRef;
+    pathBuffer: PChar;
+  {$endif}
+begin
+  {$ifdef LCLCarbon}
+    try
+        pathBuffer := Allocmem(kMaxPath);
+    except
+        on Exception do
+            exit;
+    end;
+    try
+        Fillchar(pathBuffer^, kMaxPath, #0);
+        Fillchar(theRef, Sizeof(theRef), #0);
+        theError := FSFindFolder(kOnAppropriateDisk, kPreferencesFolderType, kDontCreateFolder, theRef);
+        if (pathBuffer <> nil) and (theError = noErr) then begin
+            theError := FSRefMakePath(theRef, pathBuffer, kMaxPath);
+            if theError = noErr then
+                Result := UTF8ToAnsi(StrPas(pathBuffer)) + '/';
+        end;
+    finally
+        Freemem(pathBuffer);
+    end;
+  {$else}
+    Result := GetAppConfigDir(False);
+    if (not DirectoryExists(Result, False)) then begin
+        MkDir(Result);
+    end;
+  {$endif}
 end;
 
 // --------------------------------------------------------------------------------

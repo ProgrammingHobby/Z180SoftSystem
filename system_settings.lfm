@@ -5,12 +5,11 @@ object SystemSettings: TSystemSettings
   HorizontalOffset = 962
   VerticalOffset = 151
   Width = 150
-  PPI = 96
   object xmlStore: TXMLConfig
     StartEmpty = False
     RootName = 'CONFIG'
     ReadOnly = False
-    left = 68
-    top = 40
+    Left = 68
+    Top = 40
   end
 end
