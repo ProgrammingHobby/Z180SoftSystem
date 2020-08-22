@@ -92,7 +92,7 @@ begin
             readValue := SystemFdc.getExtStatus;
         end;
         $7D: begin
-            readValue := SystemRtc.readData;
+            readValue := SystemRtc.read;
         end;
         $A0: begin
             readValue := SystemHdc.getDataLow;
@@ -149,7 +149,7 @@ begin
             SystemRtc.setAddress(Data);
         end;
         $7D: begin
-            SystemRtc.writeData(Data);
+            SystemRtc.write(Data);
         end;
         $A0: begin
             SystemHdc.setDataLow(Data);
