@@ -111,7 +111,7 @@ begin
     xmlStore.OpenKey('Forms/' + Form.Name);
     FormState := xmlStore.GetValue('State', '000000000000000000000000000000000000000000000000000000');
     xmlStore.CloseKey;
-    LastWindowState := TWindowState(FormState.Substring(48, 6).ToInteger);
+    LastWindowState := TWindowState(Hex2Dec(FormState.Substring(48, 6)));
     if LastWindowState = wsMaximized then begin
         Form.WindowState := wsNormal;
         Form.BoundsRect := Bounds(Hex2Dec(FormState.Substring(24, 6)), Hex2Dec(FormState.Substring(30, 6)),
