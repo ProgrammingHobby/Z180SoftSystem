@@ -23,11 +23,10 @@ type
 
     var
         clkUpdateTimer: TTimer;
-        clkDateTime, almDateTime: TDateTime;
+        clkDateTime, almDateTime, corrDateTime: TDateTime;
         rtcRam: array[0..127] of byte;
         dataAddr, year, century: byte;
         ctrlA, ctrlB, ctrlC, ctrlD: TBitReg8;
-        corrSeconds: word;
 
     const
         // Bitkonstanten für Control Register A
@@ -98,11 +97,11 @@ begin
     clkUpdateTimer.Interval := 100;
     clkUpdateTimer.OnTimer := @doClock;
     clkDateTime := now;
+    corrDateTime := clkDateTime;
     year := (FormatDateTime('yy', clkDateTime).ToInteger and $7F);
     century := ((((FormatDateTime('yyyy', clkDateTime).ToInteger) - year) div 100) and $7F);
     readRtcData;
     ctrlD.bit[VRT] := True;
-    corrSeconds := 0;
     checkUpdateTimer;
 end;
 
@@ -191,11 +190,9 @@ procedure TSystemRtc.doClock(Sender: TObject);
 begin
     if (not ctrlB.bit[SB]) then begin
         ctrlA.bit[UIP] := True;
-        clkDateTime := IncMilliSecond(clkDateTime, 100);
+        clkDateTime := IncMilliSecond(clkDateTime, Round(MilliSecondSpan(corrDateTime, now)));
+        corrDateTime := now;
         ctrlA.bit[UIP] := False;
-    end
-    else begin
-        Inc(corrSeconds);
     end;
 end;
 
@@ -333,10 +330,6 @@ begin
         end;
         $0B: begin // write Control Register B
             ctrlB.Value := ((ctrlB.Value and not $FF) or (Data and $FF));
-            if ((not ctrlB.bit[SB]) and (corrSeconds > 0)) then begin
-                clkDateTime := IncMilliSecond(clkDateTime, (100 * corrSeconds));
-                corrSeconds := 0;
-            end;
         end;
         $0C: begin // write Control Register C
             ctrlC.Value := ((ctrlC.Value and not $00) or (Data and $00));
@@ -463,6 +456,7 @@ begin
             end;
         end;
         $09: begin // read Clock Year
+            year := (FormatDateTime('yy', clkDateTime).ToInteger and $7F);
             if (ctrlB.bit[DM]) then begin  // binär
                 Result := (year and $7F);
             end
@@ -487,6 +481,7 @@ begin
             Result := rtcRam[dataAddr];
         end;
         $32: begin // read Clock Century
+            century := ((((FormatDateTime('yyyy', clkDateTime).ToInteger) - year) div 100) and $7F);
             if (not ctrlB.bit[DM]) then begin  // bcd only
                 Result := (IntegerToBcd(century) and $FF);
             end;
