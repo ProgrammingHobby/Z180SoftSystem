@@ -25,7 +25,7 @@ type
         clkUpdateTimer: TTimer;
         clkDateTime, almDateTime, corrDateTime: TDateTime;
         rtcRam: array[0..127] of byte;
-        dataAddr, year, century: byte;
+        dataAddr: byte;
         ctrlA, ctrlB, ctrlC, ctrlD: TBitReg8;
 
     const
@@ -65,6 +65,8 @@ type
         procedure checkUpdateTimer;
         function BcdToInteger(Value: byte): byte;
         function IntegerToBcd(Value: byte): byte;
+        function getActualYear: byte;
+        function getActualCentury: byte;
         procedure saveRtcData;
         procedure readRtcData;
 
@@ -98,8 +100,6 @@ begin
     clkUpdateTimer.OnTimer := @doClock;
     clkDateTime := now;
     corrDateTime := clkDateTime;
-    year := (FormatDateTime('yy', clkDateTime).ToInteger and $7F);
-    century := ((((FormatDateTime('yyyy', clkDateTime).ToInteger) - year) div 100) and $7F);
     readRtcData;
     ctrlD.bit[VRT] := True;
     checkUpdateTimer;
@@ -140,6 +140,18 @@ function TSystemRtc.IntegerToBcd(Value: byte): byte;
 begin
     Result := Value div 10 mod 10;
     Result := (Result shl 4) or Value mod 10;
+end;
+
+// --------------------------------------------------------------------------------
+function TSystemRtc.getActualYear: byte;
+begin
+    Result := (FormatDateTime('yy', clkDateTime).ToInteger and $7F);
+end;
+
+// --------------------------------------------------------------------------------
+function TSystemRtc.getActualCentury: byte;
+begin
+    Result := ((((FormatDateTime('yyyy', clkDateTime).ToInteger) - getActualYear) div 100) and $7F);
 end;
 
 // --------------------------------------------------------------------------------
@@ -317,12 +329,12 @@ begin
         end;
         $09: begin // write Clock Year
             if (ctrlB.bit[DM]) then begin  // binär
-                year := (Data and $7F);
+                Data := (Data and $7F);
             end
             else begin  // bcd
-                year := BcdToInteger(Data and $FF);
+                Data := BcdToInteger(Data and $FF);
             end;
-            clkDateTime := RecodeYear(clkDateTime, ((century * 100) + year));
+            clkDateTime := RecodeYear(clkDateTime, ((getActualCentury * 100) + Data));
         end;
         $0A: begin // write Control Register A
             ctrlA.Value := ((ctrlA.Value and not $7F) or (Data and $7F));
@@ -342,8 +354,8 @@ begin
         end;
         $32: begin // write Clock Century
             if (not ctrlB.bit[DM]) then begin  // bcd only
-                century := BcdToInteger(Data and $FF);
-                clkDateTime := RecodeYear(clkDateTime, ((century * 100) + year));
+                Data := BcdToInteger(Data and $FF);
+                clkDateTime := RecodeYear(clkDateTime, ((Data * 100) + getActualYear));
             end;
         end;
         $33..$7F: begin
@@ -456,12 +468,11 @@ begin
             end;
         end;
         $09: begin // read Clock Year
-            year := (FormatDateTime('yy', clkDateTime).ToInteger and $7F);
             if (ctrlB.bit[DM]) then begin  // binär
-                Result := (year and $7F);
+                Result := (getActualYear and $7F);
             end
             else begin  // bcd
-                Result := (IntegerToBcd(year) and $FF);
+                Result := (IntegerToBcd(getActualYear) and $FF);
             end;
         end;
         $0A: begin // read Control Register A
@@ -481,9 +492,8 @@ begin
             Result := rtcRam[dataAddr];
         end;
         $32: begin // read Clock Century
-            century := ((((FormatDateTime('yyyy', clkDateTime).ToInteger) - year) div 100) and $7F);
             if (not ctrlB.bit[DM]) then begin  // bcd only
-                Result := (IntegerToBcd(century) and $FF);
+                Result := (IntegerToBcd(getActualCentury) and $FF);
             end;
         end;
         $33..$7F: begin
