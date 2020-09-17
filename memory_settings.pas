@@ -14,13 +14,11 @@ type
     TMemorySettings = class(TForm)
         buttonReloadImage: TButton;
         checkboxReloadOnEnable: TCheckBox;
-        checkboxFullAdressDecode: TCheckBox;
         comboboxRamSize: TComboBox;
         comboboxRomSize: TComboBox;
         editBootRomImageFile: TFileNameEdit;
         groupBootRomFile: TGroupBox;
         groupBootRomSize: TGroupBox;
-        groupboxAdditionalSettings: TGroupBox;
         groupSystemRamSize: TGroupBox;
         panelBootRomFile: TPanel;
         panelMemorySettings: TPanel;
@@ -79,10 +77,6 @@ begin
     if (oldReloadOnEnable <> checkboxReloadOnEnable.Checked) then begin
         SystemSettings.WriteBoolean('Memory', 'ReloadOnEnable', checkboxReloadOnEnable.Checked);
         SystemMemory.EnableReloadImageOnEnable(checkboxReloadOnEnable.Checked);
-    end;
-    if (oldAdressDecode <> checkboxFullAdressDecode.Checked) then begin
-        SystemSettings.WriteBoolean('Memory', 'FullAdressDecode', checkboxFullAdressDecode.Checked);
-        SystemMemory.EnableFullAdressDecode(checkboxFullAdressDecode.Checked);
     end;
     if (instantlyReload) then begin
         SystemMemory.LoadRomFile;
@@ -147,7 +141,6 @@ begin
     oldReloadOnEnable := SystemSettings.ReadBoolean('Memory', 'ReloadOnEnable', False);
     checkboxReloadOnEnable.Checked := oldReloadOnEnable;
     oldAdressDecode := SystemSettings.ReadBoolean('Memory', 'FullAdressDecode', True);
-    checkboxFullAdressDecode.Checked := oldAdressDecode;
     instantlyReload := False;
     settingsLoaded := True;
 end;

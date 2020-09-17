@@ -21,7 +21,6 @@ type
         bootRom: TByteArray;
         bootRomEnabled: boolean;
         reloadOnEnable: boolean;
-        fullAdressDecode: boolean;
         sysMemSize: DWord;
         bootRomSize: DWord;
         bootRomFileName: string;
@@ -52,7 +51,6 @@ type
         function LoadRomFile: boolean;
         procedure setBootRomSize(size: string);
         procedure setSystemRamSize(size: string);
-        procedure EnableFullAdressDecode(enable: boolean);
         function isRomFileValid: boolean;
     end;
 
@@ -67,11 +65,8 @@ begin
     inherited Create;
     sysMemSize := 0;
     bootRomSize := 0;
-    //setSystemRamSize(0);
-    //setBootRomSize(0);
     bootRomEnabled := False;
     reloadOnEnable := False;
-    fullAdressDecode := True;
 end;
 
 // --------------------------------------------------------------------------------
@@ -86,29 +81,19 @@ begin
     if ((bootRomEnabled = True) and (addr < bootRomSize)) then begin
         Result := bootRom[addr];
     end
-    else if (fullAdressDecode) then begin
-        if (addr < sysMemSize) then begin
-            Result := sysMem[addr];
-        end
-        else begin
-            Result := $FF;
-        end;
+    else if (addr < sysMemSize) then begin
+        Result := sysMem[addr];
     end
     else begin
-        Result := sysMem[(addr and (sysMemSize - 1))];
+        Result := $FF;
     end;
 end;
 
 // --------------------------------------------------------------------------------
 procedure TSystemMemory.Write(addr: DWord; Data: byte);
 begin
-    if (fullAdressDecode) then begin
-        if (addr < sysMemSize) then begin
-            sysMem[addr] := Data;
-        end;
-    end
-    else begin
-        sysMem[(addr and (sysMemSize - 1))] := Data;
+    if (addr < sysMemSize) then begin
+        sysMem[addr] := Data;
     end;
 end;
 
@@ -249,12 +234,6 @@ begin
         SetLength(sysMem, ramSize);
         sysMemSize := ramSize;
     end;
-end;
-
-// --------------------------------------------------------------------------------
-procedure TSystemMemory.EnableFullAdressDecode(enable: boolean);
-begin
-    fullAdressDecode := enable;
 end;
 
 // --------------------------------------------------------------------------------

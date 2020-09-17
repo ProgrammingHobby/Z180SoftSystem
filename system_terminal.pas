@@ -1,6 +1,7 @@
 unit System_Terminal;
 
 {$mode objfpc}{$H+}
+{ TODO : ESC Sequenzen mit mehreren Numerischen Parametern überprüfen. }
 
 //***********************************************************************
 //** unit System_Terminal                                              **
