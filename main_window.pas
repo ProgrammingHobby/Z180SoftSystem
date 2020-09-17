@@ -154,51 +154,17 @@ begin
         cpuRun.Enabled := False;
         cpuRun.OnTimer := nil;
     end;
-
-    if Assigned(CpuRegister) then begin
-        CpuRegister.Destroy;
-    end;
-
-    if Assigned(MemoryEditor) then begin
-        MemoryEditor.Destroy;
-    end;
-
-    if Assigned(CpuIoRegister) then begin
-        CpuIoRegister.Destroy;
-    end;
-
-    if Assigned(HardwareInfo) then begin
-        HardwareInfo.Destroy;
-    end;
-
-    if Assigned(Z180Cpu) then begin
-        Z180Cpu.Destroy;
-    end;
-
-    if Assigned(SystemInOut) then begin
-        SystemInOut.Destroy;
-    end;
-
-    if Assigned(SystemFdc) then begin
-        SystemFdc.Destroy;
-    end;
-
-    if Assigned(SystemHdc) then begin
-        SystemHdc.Destroy;
-    end;
-
-    if Assigned(SystemRtc) then begin
-        SystemRtc.Destroy;
-    end;
-
-    if Assigned(SystemMemory) then begin
-        SystemMemory.Destroy;
-    end;
-
-    if Assigned(SystemTerminal) then begin
-        SystemTerminal.Destroy;
-    end;
-
+    FreeAndNil(CpuRegister);
+    FreeAndNil(MemoryEditor);
+    FreeAndNil(CpuIoRegister);
+    FreeAndNil(HardwareInfo);
+    FreeAndNil(Z180Cpu);
+    FreeAndNil(SystemInOut);
+    FreeAndNil(SystemFdc);
+    FreeAndNil(SystemHdc);
+    FreeAndNil(SystemRtc);
+    FreeAndNil(SystemMemory);
+    FreeAndNil(SystemTerminal);
     SystemSettings.saveFormState(TForm(self));
     CloseAction := caFree;
 end;
@@ -264,7 +230,6 @@ begin
     SystemMemory.setBootRomSize(SystemSettings.ReadString('Memory', 'RomSize', '8KB'));
     SystemMemory.setSystemRamSize(SystemSettings.ReadString('Memory', 'RamSize', '64KB'));
     SystemMemory.EnableReloadImageOnEnable(SystemSettings.ReadBoolean('Memory', 'ReloadOnEnable', False));
-    SystemMemory.EnableFullAdressDecode(SystemSettings.ReadBoolean('Memory', 'FullAdressDecode', True));
     ImageFile := SystemSettings.ReadString('Memory', 'RomImageFile', '');
     if ((ImageFile <> '') and (not FileExists(ImageFile))) then begin
         SystemSettings.WriteString('Memory', 'RomImageFile', '');
