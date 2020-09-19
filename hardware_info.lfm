@@ -15,22 +15,22 @@ object HardwareInfo: THardwareInfo
     Height = 557
     Top = 0
     Width = 851
-    ActivePage = tabZ180Mpu
+    ActivePage = tabHddController
     Align = alClient
     Font.Height = -12
     Font.Name = 'Monospace'
     ParentFont = False
-    TabIndex = 0
+    TabIndex = 3
     TabOrder = 0
     object tabZ180Mpu: TTabSheet
       Caption = 'Z180MPU / Boot ROM'
-      ClientHeight = 530
-      ClientWidth = 841
+      ClientHeight = 534
+      ClientWidth = 849
       object memoZ180Mpu: TMemo
         Left = 0
-        Height = 530
+        Height = 534
         Top = 0
-        Width = 841
+        Width = 849
         Align = alClient
         Font.Height = -12
         Font.Name = 'Fixedsys'
@@ -62,8 +62,8 @@ object HardwareInfo: THardwareInfo
     end
     object tabTerminal: TTabSheet
       Caption = 'Terminal'
-      ClientHeight = 530
-      ClientWidth = 841
+      ClientHeight = 534
+      ClientWidth = 849
       object memoTerminal: TMemo
         Left = 0
         Height = 529
@@ -137,8 +137,8 @@ object HardwareInfo: THardwareInfo
     end
     object tabFddController: TTabSheet
       Caption = 'FDD-Controller'
-      ClientHeight = 530
-      ClientWidth = 841
+      ClientHeight = 534
+      ClientWidth = 849
       object memoFddController: TMemo
         Left = 0
         Height = 530
@@ -203,13 +203,13 @@ object HardwareInfo: THardwareInfo
     end
     object tabHddController: TTabSheet
       Caption = 'HDD-Controller'
-      ClientHeight = 530
-      ClientWidth = 841
+      ClientHeight = 534
+      ClientWidth = 849
       object memoHddController: TMemo
         Left = 0
         Height = 534
         Top = 0
-        Width = 638
+        Width = 849
         Align = alClient
         Font.Height = -12
         Font.Name = 'Fixedsys'
@@ -220,6 +220,7 @@ object HardwareInfo: THardwareInfo
           '    - 0x30 : Write Sectors'
           '    - 0xE4 : Read Buffer'
           '    - 0xE8 : Write Buffer'
+          '    - 0xEC : Identify Drive'
           '    - 0xEF : Set Feature'
           '    '
           '- Die Belegung der entsprechenden Register entspricht dem ATA-1 Standart.'
@@ -243,6 +244,7 @@ object HardwareInfo: THardwareInfo
           '- Im Drive/Head-Register werden folgende Bits ausgewertet:'
           '    - 0..3 : Head number'
           '    - DRV : Drive (muß 0 sein, für Drive 0);'
+          '    - LBA : 0 = CHS-Mode , 1 = LBA-Mode'
           '    '
           '- Folgende Port-Adressen sind belegt:'
           '    - 0xA0h:'#9'Daten Register low Byte'
