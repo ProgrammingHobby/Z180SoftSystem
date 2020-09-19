@@ -360,6 +360,8 @@ begin
     idword.Value := 1; //  Buffer size in 512 byte increments
     dataBuffer[42] := idword.low;
     dataBuffer[43] := idword.high;
+    dataBuffer[49]:=%00000000; // Vendor unique
+    dataBuffer[50]:=%00000010; // LBA supported
     idword.Value := hardDrive.Tracks; // Number of current cylinders
     dataBuffer[108] := idword.low;
     dataBuffer[109] := idword.high;
