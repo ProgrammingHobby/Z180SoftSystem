@@ -15,9 +15,11 @@ type
         checkboxEnableLogging: TCheckBox;
         checkboxEnableLocalEcho: TCheckBox;
         checkboxEnableCrLf: TCheckBox;
+        groupboxTerminalColor: TGroupBox;
         groupboxLogging: TGroupBox;
         groupboxLocalEcho: TGroupBox;
         groupboxCrLf: TGroupBox;
+        checkboxInverseTerminalScreen: TCheckBox;
         procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
         procedure FormShow(Sender: TObject);
     private
@@ -25,6 +27,7 @@ type
         oldEnableCrLf: boolean;
         oldEnableLocalEcho: boolean;
         oldEnableLogging: boolean;
+        oldInverseTerminal: boolean;
 
     public
         function getResult: integer;
@@ -59,6 +62,10 @@ begin
         SystemSettings.WriteBoolean('Terminal', 'Loggin', checkboxEnableLogging.Checked);
         dialogChanges := dialogChanges + $0004;
     end;
+    if(checkboxInverseTerminalScreen.Checked <> oldInverseTerminal) then begin
+        SystemSettings.WriteBoolean('Terminal', 'InverseScreen', checkboxInverseTerminalScreen.Checked);
+        dialogChanges := dialogChanges + $0008;
+    end;
     CloseAction := caFree;
 end;
 
@@ -78,6 +85,8 @@ begin
     checkboxEnableLocalEcho.Checked := oldEnableLocalEcho;
     oldEnableLogging := SystemSettings.ReadBoolean('Terminal', 'Loggin', False);
     checkboxEnableLogging.Checked := oldEnableLogging;
+    oldInverseTerminal := SystemSettings.ReadBoolean('Terminal', 'InverseScreen', False);
+    checkboxInverseTerminalScreen.Checked:=oldInverseTerminal;
 end;
 
 // --------------------------------------------------------------------------------

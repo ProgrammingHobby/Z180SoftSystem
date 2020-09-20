@@ -241,6 +241,7 @@ begin
     SystemTerminal.setCrLF(SystemSettings.ReadBoolean('Terminal', 'UseCRLF', False));
     SystemTerminal.setLocalEcho(SystemSettings.ReadBoolean('Terminal', 'LocalEcho', False));
     SystemTerminal.setTerminalLogging(SystemSettings.ReadBoolean('Terminal', 'Loggin', False));
+    SystemTerminal.setInverseScreen(SystemSettings.ReadBoolean('Terminal', 'InverseScreen', False));
 
     SystemFdc.setFdd0StatusPanel(panelFdd0);
     SystemFdc.setFdd0Sides(SystemSettings.ReadInteger('Fdd0', 'Sides', 2));
@@ -595,6 +596,9 @@ begin
     end;
     if ((dialogResult and $0004) <> 0) then begin
         SystemTerminal.setTerminalLogging(SystemSettings.ReadBoolean('Terminal', 'Loggin', False));
+    end;
+    if ((dialogResult and $0008) <> 0) then begin
+        SystemTerminal.setInverseScreen(SystemSettings.ReadBoolean('Terminal', 'InverseScreen', False));
     end;
 end;
 
