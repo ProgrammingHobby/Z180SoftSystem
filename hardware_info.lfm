@@ -15,12 +15,12 @@ object HardwareInfo: THardwareInfo
     Height = 557
     Top = 0
     Width = 851
-    ActivePage = tabHddController
+    ActivePage = tabTerminal
     Align = alClient
     Font.Height = -12
     Font.Name = 'Monospace'
     ParentFont = False
-    TabIndex = 3
+    TabIndex = 1
     TabOrder = 0
     object tabZ180Mpu: TTabSheet
       Caption = 'Z180MPU / Boot ROM'
@@ -66,9 +66,9 @@ object HardwareInfo: THardwareInfo
       ClientWidth = 849
       object memoTerminal: TMemo
         Left = 0
-        Height = 529
+        Height = 534
         Top = 0
-        Width = 632
+        Width = 849
         Align = alClient
         Font.Height = -12
         Font.Name = 'Fixedsys'
@@ -79,7 +79,7 @@ object HardwareInfo: THardwareInfo
           '    - 0x01 : Cursor home            - 0x04 : Cursor right'
           '    - 0x05 : Cursor up              - 0x08 : Backspace'
           '    - 0x09 : Tabulator              - 0x0A : Line Feed'
-          '    - 0x0C : Clear Screen           - 0x0D : Carriage Return ( optional mit Linefeed)'
+          '    - 0x0C : Clear Screen           - 0x0D : Carriage Return (optional mit Linefeed)'
           '    - 0x13 : Cursor left            - 0x16 : Delete End of Line'
           '    - 0x18 : Cursor down            - 0x1B : VT52-Mode einschalten'
           '    - 0x7F : Backspace'
@@ -111,11 +111,15 @@ object HardwareInfo: THardwareInfo
           ''
           '    - ESC [ n L : Insert n Lines            - ESC [ n M : Delete n Lines'
           ''
-          '    - ESC [ 0 m : Reset Attributes          - ESC [ 1 m : Bold enable'
-          '    - ESC [ 4 m : Underline enable          - ESC [ 5 m : Italic enable'
-          '    - ESC [ 7 m : Bold + Font Color grey    - ESC [ 22 m : Bold disable'
-          '    - ESC [ 24 m : Underline disable        - ESC [ 25 m : Italic disbale'
-          '    - ESC [ 27 m : Bold + Font Color grey disable'
+          '    - ESC [ row ; col H : Move cursor to line ''row'' and column ''col'''
+          '    - ESC [ row ; col f : Move cursor to line ''row'' and column ''col'''
+          ''
+          '    - ESC [ 0 m : Reset all Attributes'
+          ''
+          '    - ESC [ 1 m : Bold enable                     - ESC [ 22 m : Bold disable'
+          '    - ESC [ 4 m : Underline enable                - ESC [ 24 m : Underline disable'
+          '    - ESC [ 5 m : Italic enable                   - ESC [ 25 m : Italic disable'
+          '    - ESC [ 7 m : Bold + Font Color grey enable   - ESC [ 27 m : Bold + Font Color grey disable   '
           ''
           '    - ESC [ 30 m : Font Color black         - ESC [ 31 m : Font Color red'
           '    - ESC [ 32 m : Font Color green         - ESC [ 33 m : Font Color yellow'
