@@ -70,6 +70,7 @@ type
         dcaRow: word;
         csiPar: array[0..15] of word;
         parCount: word;
+        defaultCharColor, defaultBackColor: TColor;
 
     protected // Attribute
         procedure timerCursorFlashTimer(Sender: TObject);
@@ -112,6 +113,7 @@ type
         procedure setCrLF(enable: boolean);
         procedure setLocalEcho(enable: boolean);
         procedure setTerminalLogging(enable: boolean);
+        procedure setInverseScreen(enable: boolean);
         procedure writeCharacter(character: byte);
         function readCharacter(getStatus: boolean): byte;
         procedure getKeyBoardInput(key: word; shift: TShiftState);
@@ -202,7 +204,7 @@ begin
     terminalPanel.Font.Size := 12;
     pageWidth := (charWidth * terminalColumns) + charWidth;
     {$endif}
-    terminalPanel.Font.Color := clBlack;
+    //terminalPanel.Font.Color := clBlack;
     pageHeight := (charHeight * terminalRows) + charHeight;
 
     imagePage1 := TImage.Create(terminalPanel);
@@ -212,10 +214,7 @@ begin
         Left := 0;
         Width := pageWidth;
         Height := pageHeight;
-        Canvas.Brush.Color := clWhite;
-        Canvas.Pen.Color := clWhite;
         Canvas.Font := terminalPanel.Font;
-        Canvas.Rectangle(0, 0, imagePage1.Width, imagePage1.Height);
     end;
 
     imagePage2 := TImage.Create(terminalPanel);
@@ -225,10 +224,7 @@ begin
         Left := 0;
         Width := pageWidth;
         Height := pageHeight;
-        Canvas.Brush.Color := clWhite;
-        Canvas.Pen.Color := clWhite;
         Canvas.Font := terminalPanel.Font;
-        Canvas.Rectangle(0, 0, imagePage2.Width, imagePage2.Height);
     end;
 
     timerCursorFlash := TTimer.Create(terminalPanel);
@@ -268,8 +264,8 @@ begin
     for row := 1 to terminalRows do begin
         for column := 1 to terminalColumns do begin
             charData[row, column] := ' ';
-            charColor[row, column] := clBlack;
-            backColor[row, column] := clWhite;
+            charColor[row, column] := defaultCharColor;
+            backColor[row, column] := defaultBackColor;
             charStyle[row, column] := [];
         end;
     end;
@@ -282,8 +278,8 @@ begin
     timerCursorFlash.Enabled := True;
     timerTerminalPageRefresh.Enabled := True;
     fontStyle := [];
-    fontColor := clBlack;
-    backgroundColor := clWhite;
+    fontColor := defaultCharColor;
+    backgroundColor := defaultBackColor;
     termMode := STANDARD;
     keyboardBuffer := '';
 end;
@@ -316,7 +312,8 @@ begin
     end;
     for column := 1 to terminalColumns do begin
         charData[terminalRows, column] := ' ';
-        charColor[terminalRows, column] := clBlack;
+        charColor[terminalRows, column] := defaultCharColor;
+        backColor[terminalRows, column] := defaultBackColor;
         charStyle[terminalRows, column] := [];
     end;
     terminalCursor.column := 1;
@@ -368,7 +365,8 @@ begin
     if (terminalCursor.column > 1) then begin
         Dec(terminalCursor.column);
         charData[terminalCursor.row, terminalCursor.column] := ' ';
-        charColor[terminalCursor.row, terminalCursor.column] := clBlack;
+        charColor[terminalCursor.row, terminalCursor.column] := defaultCharColor;
+        backColor[terminalCursor.row, terminalCursor.column] := defaultBackColor;
         charStyle[terminalCursor.row, terminalCursor.column] := [];
     end;
 end;
@@ -399,7 +397,8 @@ begin
     for row := 1 to terminalRows do begin
         for column := 1 to terminalColumns do begin
             charData[row, column] := ' ';
-            charColor[row, column] := clBlack;
+            charColor[row, column] := defaultCharColor;
+            backColor[row, column] := defaultBackColor;
             charStyle[row, column] := [];
         end;
     end;
@@ -416,7 +415,8 @@ begin
     for row := 1 to terminalRows do begin
         for column := 1 to terminalColumns do begin
             charData[row, column] := ' ';
-            charColor[row, column] := clBlack;
+            charColor[row, column] := defaultCharColor;
+            backColor[row, column] := defaultBackColor;
             charStyle[row, column] := [];
         end;
     end;
@@ -435,7 +435,8 @@ var
 begin
     for column := terminalCursor.column to terminalColumns do begin
         charData[terminalCursor.row, column] := ' ';
-        charColor[terminalCursor.row, column] := clBlack;
+        charColor[terminalCursor.row, column] := defaultCharColor;
+        backColor[terminalCursor.row, column] := defaultBackColor;
         charStyle[terminalCursor.row, column] := [];
     end;
 end;
@@ -450,7 +451,8 @@ begin
         for row := terminalCursor.row + 1 to terminalRows do begin
             for column := 1 to terminalColumns do begin
                 charData[row, column] := ' ';
-                charColor[row, column] := clBlack;
+                charColor[row, column] := defaultCharColor;
+                backColor[row, column] := defaultBackColor;
                 charStyle[row, column] := [];
             end;
         end;
@@ -464,7 +466,8 @@ var
 begin
     for column := 1 to terminalCursor.column - 1 do begin
         charData[terminalCursor.row, column] := ' ';
-        charColor[terminalCursor.row, column] := clBlack;
+        charColor[terminalCursor.row, column] := defaultCharColor;
+        backColor[terminalCursor.row, column] := defaultBackColor;
         charStyle[terminalCursor.row, column] := [];
     end;
 end;
@@ -479,7 +482,8 @@ begin
         for row := 1 to terminalCursor.row - 1 do begin
             for column := 1 to terminalColumns do begin
                 charData[row, column] := ' ';
-                charColor[row, column] := clBlack;
+                charColor[row, column] := defaultCharColor;
+                backColor[row, column] := defaultBackColor;
                 charStyle[row, column] := [];
             end;
         end;
@@ -493,7 +497,8 @@ var
 begin
     for column := 1 to terminalColumns do begin
         charData[terminalCursor.row, column] := ' ';
-        charColor[terminalCursor.row, column] := clBlack;
+        charColor[terminalCursor.row, column] := defaultCharColor;
+        backColor[terminalCursor.row, column] := defaultBackColor;
         charStyle[terminalCursor.row, column] := [];
     end;
     terminalCursor.column := 1;
@@ -511,7 +516,8 @@ begin
     end;
     for column := 1 to terminalColumns do begin
         charData[terminalRows, column] := ' ';
-        charColor[terminalRows, column] := clBlack;
+        charColor[terminalRows, column] := defaultCharColor;
+        backColor[terminalRows, column] := defaultBackColor;
         charStyle[terminalRows, column] := [];
     end;
     terminalCursor.column := 1;
@@ -529,7 +535,8 @@ begin
     end;
     for column := 1 to terminalColumns do begin
         charData[terminalCursor.row, column] := ' ';
-        charColor[terminalCursor.row, column] := clBlack;
+        charColor[terminalCursor.row, column] := defaultCharColor;
+        backColor[terminalCursor.row, column] := defaultBackColor;
         charStyle[terminalCursor.row, column] := [];
     end;
 end;
@@ -588,6 +595,41 @@ begin
             enableTerminalLogging := False;
         end;
     end;
+end;
+
+// --------------------------------------------------------------------------------
+procedure TSystemTerminal.setInverseScreen(enable: boolean);
+var
+    row, column: integer;
+begin
+    if (enable) then begin
+        defaultCharColor := clWhite;
+        defaultBackColor := clBlack;
+    end
+    else begin
+        defaultCharColor := clBlack;
+        defaultBackColor := clWhite;
+    end;
+    with (imagePage1) do begin
+        Canvas.Font.Color := defaultCharColor;
+        Canvas.Brush.Color := defaultBackColor;
+        Canvas.Pen.Color := defaultBackColor;
+        Canvas.Rectangle(0, 0, imagePage1.Width, imagePage1.Height);
+    end;
+    with (imagePage2) do begin
+        Canvas.Font.Color := defaultCharColor;
+        Canvas.Brush.Color := defaultBackColor;
+        Canvas.Pen.Color := defaultBackColor;
+        Canvas.Rectangle(0, 0, imagePage2.Width, imagePage2.Height);
+    end;
+    for row := 1 to terminalRows do begin
+        for column := 1 to terminalColumns do begin
+            charColor[row, column] := defaultCharColor;
+            backColor[row, column] := defaultBackColor;
+        end;
+    end;
+    fontColor := defaultCharColor;
+    backgroundColor := defaultBackColor;
 end;
 
 // --------------------------------------------------------------------------------
@@ -761,8 +803,8 @@ procedure TSystemTerminal.writeCharacter(character: byte);
             end;
             $6D: begin  // ESC [ m (Clear all character attributes)
                 fontStyle := [];
-                fontColor := clBlack;
-                backgroundColor := clWhite;
+                fontColor := defaultCharColor;
+                backgroundColor := defaultBackColor;
                 termMode := STANDARD;
             end;
             $66: begin  // ESC [ f (Cursor home)
@@ -874,8 +916,8 @@ procedure TSystemTerminal.writeCharacter(character: byte);
                     case csiPar[csiCounter] of
                         0: begin
                             fontStyle := [];
-                            fontColor := clBlack;
-                            backgroundColor := clWhite;
+                            fontColor := defaultCharColor;
+                            backgroundColor := defaultBackColor;
                         end;
                         1: begin
                             fontStyle := fontStyle + [fsBold];
