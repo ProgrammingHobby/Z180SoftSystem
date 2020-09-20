@@ -1,7 +1,6 @@
 unit System_Terminal;
 
 {$mode objfpc}{$H+}
-{ TODO : ESC Sequenzen mit mehreren Numerischen Parametern überprüfen. }
 
 //***********************************************************************
 //** unit System_Terminal                                              **
@@ -30,7 +29,7 @@ type
     private   // Attribute
 
         type
-        TTermMode = (STANDARD, VT52_ESC, ANSI_ESC, ANSI_ESC_1PAR, ANSI_ESC_2PAR, DCA_ROW, DCA_COLUMN);
+        TTermMode = (STANDARD, VT52_ESC, ANSI_ESC, ANSI_ESC_PAR, DCA_ROW, DCA_COLUMN);
 
     const
         terminalColumns = 80;
@@ -68,7 +67,9 @@ type
         fontColor, tmpFontColor, backgroundColor: TColor;
         fontStyle: TFontStyles;
         termMode: TTermMode;
-        csiPar1, csiPar2, dcaRow: integer;
+        dcaRow: word;
+        csiPar: array[0..15] of word;
+        parCount: word;
 
     protected // Attribute
         procedure timerCursorFlashTimer(Sender: TObject);
@@ -404,8 +405,6 @@ begin
     end;
     terminalCursor.column := 1;
     terminalCursor.row := 1;
-    csiPar1 := 0;
-    csiPar2 := 0;
     dcaRow := 0;
 end;
 
@@ -712,11 +711,17 @@ procedure TSystemTerminal.writeCharacter(character: byte);
 
     // ----------------------------------------
     procedure ansiEscapeMode;
+    var
+        parIndex: word;
     begin
+        for parIndex := 0 to 15 do begin
+            csiPar[parIndex] := 0;
+        end;
+        parCount := 0;
         case (character) of
             $30..$39: begin
-                csiPar1 := character - $30;
-                termMode := ANSI_ESC_1PAR;
+                csiPar[parCount] := (character - $30);
+                termMode := ANSI_ESC_PAR;
             end;
             $41: begin  // ESC [ A (Cursor up one line)
                 cursorUp;
@@ -736,39 +741,32 @@ procedure TSystemTerminal.writeCharacter(character: byte);
             end;
             $48: begin  // ESC [ H (Cursor home)
                 cursorHome;
-                csiPar1 := 0;
                 termMode := STANDARD;
             end;
             $4A: begin  // ESC [ J (Erase Screen from cursor to end)
                 deleteEndOfScreen;
-                csiPar1 := 0;
                 termMode := STANDARD;
             end;
             $4B: begin  // ESC [ K (Erase line from cursor to end)
                 deleteEndOfLine;
-                csiPar1 := 0;
                 termMode := STANDARD;
             end;
             $4C: begin  // ESC [ L (Insert one line from cursor position)
                 insertLineAndScroll;
-                csiPar1 := 0;
                 termMode := STANDARD;
             end;
             $4D: begin  // ESC [ M (Delete one line from cursor position)
                 deleteLineAndScroll;
-                csiPar1 := 0;
                 termMode := STANDARD;
             end;
             $6D: begin  // ESC [ m (Clear all character attributes)
                 fontStyle := [];
                 fontColor := clBlack;
                 backgroundColor := clWhite;
-                csiPar1 := 0;
                 termMode := STANDARD;
             end;
             $66: begin  // ESC [ f (Cursor home)
                 cursorHome;
-                csiPar1 := 0;
                 termMode := STANDARD;
             end;
             else begin
@@ -778,201 +776,185 @@ procedure TSystemTerminal.writeCharacter(character: byte);
     end;
 
     // ----------------------------------------
-    procedure ansiEscapeMode1Parameter;
+    procedure ansiEscapeModeParameter;
     var
         csiCounter: integer;
     begin
         case (character) of
             $30..$39: begin
-                csiPar1 := (csiPar1 * 10) + character - $30;
-                termMode := ANSI_ESC_1PAR;
+                if (parCount < 16) then begin // maximal 16 numerische Parameter möglich
+                    csiPar[parCount] := (csiPar[parCount] * 10) + (character - $30);
+                end;
             end;
-            $3B: begin // ESC [ Pn1 ; (zweiten Parameter abfragen)
-                termMode := ANSI_ESC_2PAR;
+            $3B: begin // ESC [ Pn1 ; (weiteren Parameter abfragen)
+                Inc(parCount);
             end;
 
             $41: begin // ESC [ Pn A (Cursor up Pn lines)
-                if terminalCursor.row > csiPar1 then begin
-                    terminalCursor.row := terminalCursor.row - csiPar1;
+                if terminalCursor.row > csiPar[0] then begin
+                    terminalCursor.row := terminalCursor.row - csiPar[0];
                 end
                 else begin
                     terminalCursor.row := 1;
                 end;
-                csiPar1 := 0;
+                parCount := 0;
                 termMode := STANDARD;
             end;
             $42: begin // ESC [ Pn B (Cursor down Pn lines)
-                if (terminalCursor.row + csiPar1) < terminalRows then begin
-                    terminalCursor.row := terminalCursor.row + csiPar1;
+                if (terminalCursor.row + csiPar[0]) < terminalRows then begin
+                    terminalCursor.row := terminalCursor.row + csiPar[0];
                 end
                 else begin
                     terminalCursor.row := terminalRows;
                 end;
-                csiPar1 := 0;
+                parCount := 0;
                 termMode := STANDARD;
             end;
             $43: begin // ESC [ Pn C (Cursor right Pn columns)
-                if (terminalCursor.column + csiPar1) < terminalColumns then begin
-                    terminalCursor.column := terminalCursor.column + csiPar1;
+                if (terminalCursor.column + csiPar[0]) < terminalColumns then begin
+                    terminalCursor.column := terminalCursor.column + csiPar[0];
                 end
                 else begin
                     terminalCursor.column := terminalColumns;
                 end;
-                csiPar1 := 0;
+                parCount := 0;
                 termMode := STANDARD;
             end;
             $44: begin // ESC [ Pn D (Cursor left Pn columns)
-                if terminalCursor.column > csiPar1 then begin
-                    terminalCursor.column := terminalCursor.column - csiPar1;
+                if terminalCursor.column > csiPar[0] then begin
+                    terminalCursor.column := terminalCursor.column - csiPar[0];
                 end
                 else begin
                     terminalCursor.column := 1;
                 end;
-                csiPar1 := 0;
+                parCount := 0;
                 termMode := STANDARD;
             end;
+            $48, $66: begin // ESC [ Pn1 ; Pn2 H , ESC [ Pn1 ; Pn2 f (Move cursor to line Pn1 and column Pn2)
+                if (parCount = 1) then begin
+                    setCursorPosition(csiPar[0], csiPar[1]);
+                    parCount := 0;
+                    termMode := STANDARD;
+                end;
+            end;
             $4B: begin // ESC [ Pn K
-                case csiPar1 of
+                case csiPar[0] of
                     0: deleteEndOfLine;  // Erase line from cursor to end
                     1: deleteBeginningOfLine;  // Erase from beginning of line to cursor
                     2: deleteLine;  // Erase entire line but do not move cursor
                 end;
-                csiPar1 := 0;
+                parCount := 0;
                 termMode := STANDARD;
             end;
             $4A: begin // ESC [ Pn J
-                case csiPar1 of
+                case csiPar[0] of
                     0: deleteEndOfScreen;  // Erase screen from cursor to end
                     1: deleteBeginningOfScreen;  // Erase beginning of screen to cursor
                     2: eraseScreen;  // Erase entire screenbut do not move cursor
                 end;
-                csiPar1 := 0;
+                parCount := 0;
                 termMode := STANDARD;
             end;
             $4C: begin // ESC [ Pn L (Insert Pn lines from cursor position)
-                for csiCounter := 0 to csiPar1 - 1 do begin
+                for csiCounter := 0 to csiPar[0] - 1 do begin
                     insertLineAndScroll;
                 end;
-                csiPar1 := 0;
+                parCount := 0;
                 termMode := STANDARD;
             end;
             $4D: begin // ESC [ Pn M (Delete Pn lines from cursor position)
-                for csiCounter := 0 to csiPar1 - 1 do begin
+                for csiCounter := 0 to csiPar[0] - 1 do begin
                     deleteLineAndScroll;
                 end;
-                csiPar1 := 0;
+                parCount := 0;
                 termMode := STANDARD;
             end;
-            $6D: begin // ESC [ Pn m
-                case csiPar1 of
-                    0: begin
-                        fontStyle := [];
-                        fontColor := clBlack;
-                        backgroundColor := clWhite;
-                    end;
-                    1: begin
-                        fontStyle := fontStyle + [fsBold];
-                    end;
-                    4: begin
-                        fontStyle := fontStyle + [fsUnderline];
-                    end;
-                    5: begin
-                        fontStyle := fontStyle + [fsItalic];
-                    end;
-                    7: begin
-                        fontStyle := fontStyle + [fsBold];
-                        tmpFontColor:=fontColor;
-                        fontColor := clGray;
-                    end;
-                    22: begin
-                        fontStyle := fontStyle - [fsBold];
-                    end;
-                    24: begin
-                        fontStyle := fontStyle - [fsUnderline];
-                    end;
-                    25: begin
-                        fontStyle := fontStyle - [fsItalic];
-                    end;
-                    27: begin
-                        fontStyle := fontStyle - [fsBold];
-                        fontColor := tmpFontColor;
-                    end;
-                    30: begin
-                        fontColor := clBlack;
-                    end;
-                    31: begin
-                        fontColor := clRed;
-                    end;
-                    32: begin
-                        fontColor := clLime;
-                    end;
-                    33: begin
-                        fontColor := clYellow;
-                    end;
-                    34: begin
-                        fontColor := clBlue;
-                    end;
-                    35: begin
-                        fontColor := $FF00FF;
-                    end;
-                    36: begin
-                        fontColor := $00FFFF;
-                    end;
-                    37: begin
-                        fontColor := clWhite;
-                    end;
-                    40: begin
-                        backgroundColor := clBlack;
-                    end;
-                    41: begin
-                        backgroundColor := clRed;
-                    end;
-                    42: begin
-                        backgroundColor := clLime;
-                    end;
-                    43: begin
-                        backgroundColor := clYellow;
-                    end;
-                    44: begin
-                        backgroundColor := clBlue;
-                    end;
-                    45: begin
-                        backgroundColor := $FF00FF;
-                    end;
-                    46: begin
-                        backgroundColor := $00FFFF;
-                    end;
-                    47: begin
-                        backgroundColor := clWhite;
+            $6D: begin // ESC [ Pn (; Pn ...) m
+                for csiCounter := 0 to parCount do begin
+                    case csiPar[csiCounter] of
+                        0: begin
+                            fontStyle := [];
+                            fontColor := clBlack;
+                            backgroundColor := clWhite;
+                        end;
+                        1: begin
+                            fontStyle := fontStyle + [fsBold];
+                        end;
+                        4: begin
+                            fontStyle := fontStyle + [fsUnderline];
+                        end;
+                        5: begin
+                            fontStyle := fontStyle + [fsItalic];
+                        end;
+                        7: begin
+                            fontStyle := fontStyle + [fsBold];
+                            tmpFontColor := fontColor;
+                            fontColor := clGray;
+                        end;
+                        22: begin
+                            fontStyle := fontStyle - [fsBold];
+                        end;
+                        24: begin
+                            fontStyle := fontStyle - [fsUnderline];
+                        end;
+                        25: begin
+                            fontStyle := fontStyle - [fsItalic];
+                        end;
+                        27: begin
+                            fontStyle := fontStyle - [fsBold];
+                            fontColor := tmpFontColor;
+                        end;
+                        30: begin
+                            fontColor := clBlack;
+                        end;
+                        31: begin
+                            fontColor := clRed;
+                        end;
+                        32: begin
+                            fontColor := clLime;
+                        end;
+                        33: begin
+                            fontColor := clYellow;
+                        end;
+                        34: begin
+                            fontColor := clBlue;
+                        end;
+                        35: begin
+                            fontColor := $FF00FF;
+                        end;
+                        36: begin
+                            fontColor := $00FFFF;
+                        end;
+                        37: begin
+                            fontColor := clWhite;
+                        end;
+                        40: begin
+                            backgroundColor := clBlack;
+                        end;
+                        41: begin
+                            backgroundColor := clRed;
+                        end;
+                        42: begin
+                            backgroundColor := clLime;
+                        end;
+                        43: begin
+                            backgroundColor := clYellow;
+                        end;
+                        44: begin
+                            backgroundColor := clBlue;
+                        end;
+                        45: begin
+                            backgroundColor := $FF00FF;
+                        end;
+                        46: begin
+                            backgroundColor := $00FFFF;
+                        end;
+                        47: begin
+                            backgroundColor := clWhite;
+                        end;
                     end;
                 end;
-                csiPar1 := 0;
-                termMode := STANDARD;
-            end;
-            else begin
-                csiPar1 := 0;
-                termMode := STANDARD;
-            end;
-        end;
-    end;
-
-    // ----------------------------------------
-    procedure ansiEscapeMode2Parameter;
-    begin
-        case (character) of
-            $30..$39: begin
-                csiPar2 := (csiPar2 * 10) + character - $30;
-                termMode := ANSI_ESC_2PAR;
-            end;
-            $48, $66: begin // ESC [ Pn1 ; Pn2 H , ESC [ Pn1 ; Pn2 f (Move cursor to line Pn1 and column Pn2)
-                setCursorPosition(csiPar1, csiPar2);
-                csiPar1 := 0;
-                csiPar2 := 0;
-                termMode := STANDARD;
-            end;
-            else begin
-                csiPar1 := 0;
-                csiPar2 := 0;
+                parCount := 0;
                 termMode := STANDARD;
             end;
         end;
@@ -984,8 +966,7 @@ begin
         STANDARD: normalTerminalMode;
         VT52_ESC: vt52EscapeMode;
         ANSI_ESC: ansiEscapeMode;
-        ANSI_ESC_1PAR: ansiEscapeMode1Parameter;
-        ANSI_ESC_2PAR: ansiEscapeMode2Parameter;
+        ANSI_ESC_PAR: ansiEscapeModeParameter;
         DCA_ROW: begin
             if (character >= $20) then begin
                 dcaRow := character - $20;
