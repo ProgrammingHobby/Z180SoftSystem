@@ -68,7 +68,7 @@ type
         fontStyle: TFontStyles;
         termMode: TTermMode;
         dcaRow: word;
-        csiPar: array[0..15] of word;
+        csiPar: array[0..7] of word;
         parCount: word;
         defaultCharColor, defaultBackColor: TColor;
 
@@ -105,6 +105,7 @@ type
         procedure insertLineAndScroll;
         procedure reverseLineFeed;
         procedure setCursorPosition(row, column: integer);
+        procedure resetEscParameter;
 
     protected // Methoden
 
@@ -282,6 +283,7 @@ begin
     backgroundColor := defaultBackColor;
     termMode := STANDARD;
     keyboardBuffer := '';
+    resetEscParameter;
 end;
 
 // --------------------------------------------------------------------------------
@@ -312,8 +314,8 @@ begin
     end;
     for column := 1 to terminalColumns do begin
         charData[terminalRows, column] := ' ';
-        charColor[terminalRows, column] := defaultCharColor;
-        backColor[terminalRows, column] := defaultBackColor;
+        //charColor[terminalRows, column] := defaultCharColor;
+        //backColor[terminalRows, column] := defaultBackColor;
         charStyle[terminalRows, column] := [];
     end;
     terminalCursor.column := 1;
@@ -365,8 +367,8 @@ begin
     if (terminalCursor.column > 1) then begin
         Dec(terminalCursor.column);
         charData[terminalCursor.row, terminalCursor.column] := ' ';
-        charColor[terminalCursor.row, terminalCursor.column] := defaultCharColor;
-        backColor[terminalCursor.row, terminalCursor.column] := defaultBackColor;
+        //charColor[terminalCursor.row, terminalCursor.column] := defaultCharColor;
+        //backColor[terminalCursor.row, terminalCursor.column] := defaultBackColor;
         charStyle[terminalCursor.row, terminalCursor.column] := [];
     end;
 end;
@@ -397,8 +399,8 @@ begin
     for row := 1 to terminalRows do begin
         for column := 1 to terminalColumns do begin
             charData[row, column] := ' ';
-            charColor[row, column] := defaultCharColor;
-            backColor[row, column] := defaultBackColor;
+            //charColor[row, column] := defaultCharColor;
+            //backColor[row, column] := defaultBackColor;
             charStyle[row, column] := [];
         end;
     end;
@@ -415,8 +417,8 @@ begin
     for row := 1 to terminalRows do begin
         for column := 1 to terminalColumns do begin
             charData[row, column] := ' ';
-            charColor[row, column] := defaultCharColor;
-            backColor[row, column] := defaultBackColor;
+            //charColor[row, column] := defaultCharColor;
+            //backColor[row, column] := defaultBackColor;
             charStyle[row, column] := [];
         end;
     end;
@@ -435,8 +437,8 @@ var
 begin
     for column := terminalCursor.column to terminalColumns do begin
         charData[terminalCursor.row, column] := ' ';
-        charColor[terminalCursor.row, column] := defaultCharColor;
-        backColor[terminalCursor.row, column] := defaultBackColor;
+        //charColor[terminalCursor.row, column] := defaultCharColor;
+        //backColor[terminalCursor.row, column] := defaultBackColor;
         charStyle[terminalCursor.row, column] := [];
     end;
 end;
@@ -451,8 +453,8 @@ begin
         for row := terminalCursor.row + 1 to terminalRows do begin
             for column := 1 to terminalColumns do begin
                 charData[row, column] := ' ';
-                charColor[row, column] := defaultCharColor;
-                backColor[row, column] := defaultBackColor;
+                //charColor[row, column] := defaultCharColor;
+                //backColor[row, column] := defaultBackColor;
                 charStyle[row, column] := [];
             end;
         end;
@@ -466,8 +468,8 @@ var
 begin
     for column := 1 to terminalCursor.column - 1 do begin
         charData[terminalCursor.row, column] := ' ';
-        charColor[terminalCursor.row, column] := defaultCharColor;
-        backColor[terminalCursor.row, column] := defaultBackColor;
+        //charColor[terminalCursor.row, column] := defaultCharColor;
+        //backColor[terminalCursor.row, column] := defaultBackColor;
         charStyle[terminalCursor.row, column] := [];
     end;
 end;
@@ -482,8 +484,8 @@ begin
         for row := 1 to terminalCursor.row - 1 do begin
             for column := 1 to terminalColumns do begin
                 charData[row, column] := ' ';
-                charColor[row, column] := defaultCharColor;
-                backColor[row, column] := defaultBackColor;
+                //charColor[row, column] := defaultCharColor;
+                //backColor[row, column] := defaultBackColor;
                 charStyle[row, column] := [];
             end;
         end;
@@ -497,8 +499,8 @@ var
 begin
     for column := 1 to terminalColumns do begin
         charData[terminalCursor.row, column] := ' ';
-        charColor[terminalCursor.row, column] := defaultCharColor;
-        backColor[terminalCursor.row, column] := defaultBackColor;
+        //charColor[terminalCursor.row, column] := defaultCharColor;
+        //backColor[terminalCursor.row, column] := defaultBackColor;
         charStyle[terminalCursor.row, column] := [];
     end;
     terminalCursor.column := 1;
@@ -516,8 +518,8 @@ begin
     end;
     for column := 1 to terminalColumns do begin
         charData[terminalRows, column] := ' ';
-        charColor[terminalRows, column] := defaultCharColor;
-        backColor[terminalRows, column] := defaultBackColor;
+        //charColor[terminalRows, column] := defaultCharColor;
+        //backColor[terminalRows, column] := defaultBackColor;
         charStyle[terminalRows, column] := [];
     end;
     terminalCursor.column := 1;
@@ -535,8 +537,8 @@ begin
     end;
     for column := 1 to terminalColumns do begin
         charData[terminalCursor.row, column] := ' ';
-        charColor[terminalCursor.row, column] := defaultCharColor;
-        backColor[terminalCursor.row, column] := defaultBackColor;
+        //charColor[terminalCursor.row, column] := defaultCharColor;
+        //backColor[terminalCursor.row, column] := defaultBackColor;
         charStyle[terminalCursor.row, column] := [];
     end;
 end;
@@ -569,6 +571,17 @@ begin
     if (terminalCursor.column < 1) then begin
         terminalCursor.column := 1;
     end;
+end;
+
+// --------------------------------------------------------------------------------
+procedure TSystemTerminal.resetEscParameter;
+var
+    parIndex: integer;
+begin
+    for parIndex := 0 to 7 do begin
+        csiPar[parIndex] := 0;
+    end;
+    parCount := 0;
 end;
 
 // --------------------------------------------------------------------------------
@@ -744,76 +757,10 @@ procedure TSystemTerminal.writeCharacter(character: byte);
                 keyboardBuffer := keyboardBuffer + char($1B) + char($2F) + char($5A);
                 termMode := STANDARD;
             end;
-            $5B: begin  // ESC [ (VT52_ESC Control Sequenz)
+            $5B: begin  // ESC [ (ESC Control Sequenz)
                 termMode := ANSI_ESC;
             end;
             else termMode := STANDARD;
-        end;
-    end;
-
-    // ----------------------------------------
-    procedure ansiEscapeMode;
-    var
-        parIndex: word;
-    begin
-        for parIndex := 0 to 15 do begin
-            csiPar[parIndex] := 0;
-        end;
-        parCount := 0;
-        case (character) of
-            $30..$39: begin
-                csiPar[parCount] := (character - $30);
-                termMode := ANSI_ESC_PAR;
-            end;
-            $41: begin  // ESC [ A (Cursor up one line)
-                cursorUp;
-                termMode := STANDARD;
-            end;
-            $42: begin  // ESC [ B (Cursor down one line)
-                cursorDown;
-                termMode := STANDARD;
-            end;
-            $43: begin  // ESC [ C (Cursor right one column)
-                cursorRight;
-                termMode := STANDARD;
-            end;
-            $44: begin  // ESC [ D (Cursor left one column)
-                cursorLeft;
-                termMode := STANDARD;
-            end;
-            $48: begin  // ESC [ H (Cursor home)
-                cursorHome;
-                termMode := STANDARD;
-            end;
-            $4A: begin  // ESC [ J (Erase Screen from cursor to end)
-                deleteEndOfScreen;
-                termMode := STANDARD;
-            end;
-            $4B: begin  // ESC [ K (Erase line from cursor to end)
-                deleteEndOfLine;
-                termMode := STANDARD;
-            end;
-            $4C: begin  // ESC [ L (Insert one line from cursor position)
-                insertLineAndScroll;
-                termMode := STANDARD;
-            end;
-            $4D: begin  // ESC [ M (Delete one line from cursor position)
-                deleteLineAndScroll;
-                termMode := STANDARD;
-            end;
-            $6D: begin  // ESC [ m (Clear all character attributes)
-                fontStyle := [];
-                fontColor := defaultCharColor;
-                backgroundColor := defaultBackColor;
-                termMode := STANDARD;
-            end;
-            $66: begin  // ESC [ f (Cursor home)
-                cursorHome;
-                termMode := STANDARD;
-            end;
-            else begin
-                termMode := STANDARD;
-            end;
         end;
     end;
 
@@ -824,14 +771,13 @@ procedure TSystemTerminal.writeCharacter(character: byte);
     begin
         case (character) of
             $30..$39: begin
-                if (parCount < 16) then begin // maximal 16 numerische Parameter möglich
+                if (parCount < 8) then begin // maximal 8 numerische Parameter möglich
                     csiPar[parCount] := (csiPar[parCount] * 10) + (character - $30);
                 end;
             end;
             $3B: begin // ESC [ Pn1 ; (weiteren Parameter abfragen)
                 Inc(parCount);
             end;
-
             $41: begin // ESC [ Pn A (Cursor up Pn lines)
                 if terminalCursor.row > csiPar[0] then begin
                     terminalCursor.row := terminalCursor.row - csiPar[0];
@@ -839,7 +785,7 @@ procedure TSystemTerminal.writeCharacter(character: byte);
                 else begin
                     terminalCursor.row := 1;
                 end;
-                parCount := 0;
+                resetEscParameter;
                 termMode := STANDARD;
             end;
             $42: begin // ESC [ Pn B (Cursor down Pn lines)
@@ -849,7 +795,7 @@ procedure TSystemTerminal.writeCharacter(character: byte);
                 else begin
                     terminalCursor.row := terminalRows;
                 end;
-                parCount := 0;
+                resetEscParameter;
                 termMode := STANDARD;
             end;
             $43: begin // ESC [ Pn C (Cursor right Pn columns)
@@ -859,7 +805,7 @@ procedure TSystemTerminal.writeCharacter(character: byte);
                 else begin
                     terminalCursor.column := terminalColumns;
                 end;
-                parCount := 0;
+                resetEscParameter;
                 termMode := STANDARD;
             end;
             $44: begin // ESC [ Pn D (Cursor left Pn columns)
@@ -869,13 +815,13 @@ procedure TSystemTerminal.writeCharacter(character: byte);
                 else begin
                     terminalCursor.column := 1;
                 end;
-                parCount := 0;
+                resetEscParameter;
                 termMode := STANDARD;
             end;
             $48, $66: begin // ESC [ Pn1 ; Pn2 H , ESC [ Pn1 ; Pn2 f (Move cursor to line Pn1 and column Pn2)
                 if (parCount = 1) then begin
                     setCursorPosition(csiPar[0], csiPar[1]);
-                    parCount := 0;
+                    resetEscParameter;
                     termMode := STANDARD;
                 end;
             end;
@@ -885,7 +831,7 @@ procedure TSystemTerminal.writeCharacter(character: byte);
                     1: deleteBeginningOfLine;  // Erase from beginning of line to cursor
                     2: deleteLine;  // Erase entire line but do not move cursor
                 end;
-                parCount := 0;
+                resetEscParameter;
                 termMode := STANDARD;
             end;
             $4A: begin // ESC [ Pn J
@@ -894,21 +840,21 @@ procedure TSystemTerminal.writeCharacter(character: byte);
                     1: deleteBeginningOfScreen;  // Erase beginning of screen to cursor
                     2: eraseScreen;  // Erase entire screenbut do not move cursor
                 end;
-                parCount := 0;
+                resetEscParameter;
                 termMode := STANDARD;
             end;
             $4C: begin // ESC [ Pn L (Insert Pn lines from cursor position)
                 for csiCounter := 0 to csiPar[0] - 1 do begin
                     insertLineAndScroll;
                 end;
-                parCount := 0;
+                resetEscParameter;
                 termMode := STANDARD;
             end;
             $4D: begin // ESC [ Pn M (Delete Pn lines from cursor position)
                 for csiCounter := 0 to csiPar[0] - 1 do begin
                     deleteLineAndScroll;
                 end;
-                parCount := 0;
+                resetEscParameter;
                 termMode := STANDARD;
             end;
             $6D: begin // ESC [ Pn (; Pn ...) m
@@ -996,7 +942,67 @@ procedure TSystemTerminal.writeCharacter(character: byte);
                         end;
                     end;
                 end;
-                parCount := 0;
+                resetEscParameter;
+                termMode := STANDARD;
+            end;
+        end;
+    end;
+
+    // ----------------------------------------
+    procedure ansiEscapeMode;
+    begin
+        case (character) of
+            $30..$39: begin
+                ansiEscapeModeParameter;
+                termMode := ANSI_ESC_PAR;
+            end;
+            $41: begin  // ESC [ A (Cursor up one line)
+                cursorUp;
+                termMode := STANDARD;
+            end;
+            $42: begin  // ESC [ B (Cursor down one line)
+                cursorDown;
+                termMode := STANDARD;
+            end;
+            $43: begin  // ESC [ C (Cursor right one column)
+                cursorRight;
+                termMode := STANDARD;
+            end;
+            $44: begin  // ESC [ D (Cursor left one column)
+                cursorLeft;
+                termMode := STANDARD;
+            end;
+            $48: begin  // ESC [ H (Cursor home)
+                cursorHome;
+                termMode := STANDARD;
+            end;
+            $4A: begin  // ESC [ J (Erase Screen from cursor to end)
+                deleteEndOfScreen;
+                termMode := STANDARD;
+            end;
+            $4B: begin  // ESC [ K (Erase line from cursor to end)
+                deleteEndOfLine;
+                termMode := STANDARD;
+            end;
+            $4C: begin  // ESC [ L (Insert one line from cursor position)
+                insertLineAndScroll;
+                termMode := STANDARD;
+            end;
+            $4D: begin  // ESC [ M (Delete one line from cursor position)
+                deleteLineAndScroll;
+                termMode := STANDARD;
+            end;
+            $6D: begin  // ESC [ m (Clear all character attributes)
+                fontStyle := [];
+                fontColor := defaultCharColor;
+                backgroundColor := defaultBackColor;
+                termMode := STANDARD;
+            end;
+            $66: begin  // ESC [ f (Cursor home)
+                cursorHome;
+                termMode := STANDARD;
+            end;
+            else begin
                 termMode := STANDARD;
             end;
         end;
