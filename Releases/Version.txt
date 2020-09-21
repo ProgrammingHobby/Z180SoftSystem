@@ -1,3 +1,14 @@
+========== Z180SoftSystem V2.2.0 ==========
+- Emulation eines DS12887 kompatiblem RTC-Chips fertig. Uhrzeit und Datum können gelesen und gesetzt werden.
+- In den Speichereinstellungen wurde die Auswahl zwischen unvollständiger(gespiegelter) und vollständiger
+  Adressierung entfernt. Es wird immer eine vollständige Adressierung verwendet.
+- Die Freigabe der einzelnen Module beim Beenden wurde verbessert.
+- Unit HDC-Controller um das Kommando 'Identify Drive' erweitert. Ebenso kann nun der LBA-Mode (Bit6 im
+  Drive/Head-Register) verwendet werden.
+- Die Terminal-Eumlation kann nun bis zu 8 numerische Parameter pro ESC-Sequenz verarbeiten.
+- Die Darstellung des Terminals kann nun auch auf Invers (weisse Schrift auf schwarzem Hintergrund) eingestellt werden.
+
+
 ========== Z180SoftSystem V2.1.1 ==========
 - DMA Emulation weiter verbessert. Es werden nun folgende Transfers emuliert.
   - Memory <-> Memory transfers im Burst- oder Cycle Steal Modus.
