@@ -15,12 +15,12 @@ object HardwareInfo: THardwareInfo
     Height = 557
     Top = 0
     Width = 851
-    ActivePage = tabTerminal
+    ActivePage = TabSheet1
     Align = alClient
     Font.Height = -12
     Font.Name = 'Monospace'
     ParentFont = False
-    TabIndex = 1
+    TabIndex = 4
     TabOrder = 0
     object tabZ180Mpu: TTabSheet
       Caption = 'Z180MPU / Boot ROM'
@@ -145,9 +145,9 @@ object HardwareInfo: THardwareInfo
       ClientWidth = 849
       object memoFddController: TMemo
         Left = 0
-        Height = 530
+        Height = 534
         Top = 0
-        Width = 630
+        Width = 849
         Align = alClient
         Font.Height = -12
         Font.Name = 'Fixedsys'
@@ -180,22 +180,22 @@ object HardwareInfo: THardwareInfo
           '    +-------------------------------------------+'
           ''
           '- die Port-Adressen sind wie folgt verteilt:'
-          #9'70h:'#9'read: Fdc-Status   write: Fdc-Command'
-          #9'71h:'#9'read/write: Fdc-Track Register'
-          #9'72h:'#9'read/write: Fdc-Sector Register'
-          #9'73h:'#9'read/write: Fdc-Data Register'
-          #9'74h:'#9'read: Externes Status Register   write: Externes Control Register'
+          '        0x70h :'#9'read: Fdc-Status   write: Fdc-Command'
+          '        0x71h :'#9'read/write: Fdc-Track Register'
+          '        0x72h :'#9'read/write: Fdc-Sector Register'
+          '        0x73h :'#9'read/write: Fdc-Data Register'
+          '        0x74h :'#9'read: Externes Status Register   write: Externes Control Register'
           ''
           '- das Externe Status Register ist wie folgt belegt:'
-          #9'Bit0:'#9'INTRQ-Signal des Fdc-Controllers'
-          #9'Bit1:'#9'DRQ-Signal des Fdc-Controllers'
-          #9'Bit3:'#9'Disk-Change Signal der Disketten Laufwerke'
+          '        Bit0 : INTRQ-Signal des Fdc-Controllers'
+          '        Bit1 : DRQ-Signal des Fdc-Controllers'
+          '        Bit3 : Disk-Change Signal der Disketten Laufwerke'
           ''
           '- das Externe Control Register ist wie folgt belegt:'
-          #9'Bit0:'#9'Master-Reset des Fdc-Controllers'
-          #9'Bit2:'#9'Disk-Drive 1 enable'
-          #9'Bit3:'#9'Disk-Drive 0 enable'
-          #9'Bit4:'#9'Side-Select (false = Seite 0 , true = Seite 1)'
+          '        Bit0 : Master-Reset des Fdc-Controllers'
+          '        Bit2 : Disk-Drive 1 enable'
+          '        Bit3 : Disk-Drive 0 enable'
+          '        Bit4 : Side-Select (false = Seite 0 , true = Seite 1)'
         )
         ParentFont = False
         ReadOnly = True
@@ -219,47 +219,47 @@ object HardwareInfo: THardwareInfo
         Font.Name = 'Fixedsys'
         Lines.Strings = (
           '- Der Festplatten Kontroller ATA-1 kompatibel. Es werden folgende Befehle ausgeführt:'
-          '    - 0x10 : Recalibrate'
-          '    - 0x20 : Read Sectors'
-          '    - 0x30 : Write Sectors'
-          '    - 0xE4 : Read Buffer'
-          '    - 0xE8 : Write Buffer'
-          '    - 0xEC : Identify Drive'
-          '    - 0xEF : Set Feature'
+          '        0x10 : Recalibrate'
+          '        0x20 : Read Sectors'
+          '        0x30 : Write Sectors'
+          '        0xE4 : Read Buffer'
+          '        0xE8 : Write Buffer'
+          '        0xEC : Identify Drive'
+          '        0xEF : Set Feature'
           '    '
           '- Die Belegung der entsprechenden Register entspricht dem ATA-1 Standart.'
           ''
           '- Das Feature Register kann mit 2 Werten geladen werden:'
-          '    - 0x01h : Enable 8-bit data transfers'
-          '    - 0x81h : Disable 8-bit data transfers'
+          '        0x01h : Enable 8-bit data transfers'
+          '        0x81h : Disable 8-bit data transfers'
           '    '
           '- Im Status-Register werden folgende Bits von der Emulation benutzt:'
-          '    - ERR  : Error'
-          '    - DRQ  : Data request'
-          '    - DSC  : Drive seek complete'
-          '    - DRDY : Drive ready'
-          '    - BSY  : Busy'
+          '        ERR  : Error'
+          '        DRQ  : Data request'
+          '        DSC  : Drive seek complete'
+          '        DRDY : Drive ready'
+          '        BSY  : Busy'
           '    '
           '- Im Error-Register werden folgende Bits von der Emulation benutzt:'
-          '    - AMNF : Address Mark not found'
-          '    - ABRT : Command Aborted'
-          '    - IDNF : ID-Field not found'
+          '        AMNF : Address Mark not found'
+          '        ABRT : Command Aborted'
+          '        IDNF : ID-Field not found'
           '    '
           '- Im Drive/Head-Register werden folgende Bits ausgewertet:'
-          '    - 0..3 : Head number'
-          '    - DRV : Drive (muß 0 sein, für Drive 0);'
-          '    - LBA : 0 = CHS-Mode , 1 = LBA-Mode'
+          '        0..3 : Head number'
+          '        DRV : Drive (muß 0 sein, für Drive 0);'
+          '        LBA : 0 = CHS-Mode , 1 = LBA-Mode'
           '    '
           '- Folgende Port-Adressen sind belegt:'
-          '    - 0xA0h:'#9'Daten Register low Byte'
-          '    - 0xA1h:'#9'read: Error Register   ;   write: Features Register'
-          '    - 0xA2h:'#9'Sector-Count Register'
-          '    - 0xA3h:'#9'Sector Nummer Register'
-          '    - 0xA4h:'#9'Cylinder Register untere 8Bit'
-          '    - 0xA5h:'#9'Cylinder Register obere 8Bit'
-          '    - 0xA6h:'#9'Drive Head Register'
-          '    - 0xA7h:'#9'read: Status Register  ;  write: Command Register'
-          '    - 0xA8h:'#9'Daten Register high Byte'
+          '        0xA0h :'#9'Daten Register low Byte'
+          '        0xA1h :'#9'read: Error Register   ;   write: Features Register'
+          '        0xA2h :'#9'Sector-Count Register'
+          '        0xA3h :'#9'Sector Nummer Register'
+          '        0xA4h :'#9'Cylinder Register untere 8Bit'
+          '        0xA5h :'#9'Cylinder Register obere 8Bit'
+          '        0xA6h :'#9'Drive Head Register'
+          '        0xA7h :'#9'read: Status Register  ;  write: Command Register'
+          '        0xA8h :'#9'Daten Register high Byte'
           '    '
           '- Beim Lesen und Schreiben von 16-Bit Daten ist folgende Reihenfolge einzuhalten:'
           '    - Lesen: zuerst das Daten low Byte dann das Daten high Byte'
@@ -273,6 +273,60 @@ object HardwareInfo: THardwareInfo
         TabOrder = 0
         WantReturns = False
         WordWrap = False
+      end
+    end
+    object TabSheet1: TTabSheet
+      Caption = 'RTC-Modul'
+      ClientHeight = 534
+      ClientWidth = 849
+      object memoRtcChip: TMemo
+        Left = 0
+        Height = 534
+        Top = 0
+        Width = 849
+        Align = alClient
+        Font.Height = -12
+        Font.Name = 'Fixedsys'
+        Lines.Strings = (
+          '- Emuliert wird ein DS12C887 kompatibler RTC-Cip.'
+          '- Es kann die aktuelle Uhrzeit und Datum gelesen werden.'
+          '- Die Uhrzeit und das Datum können auch gestellt werden. Diese wird jedoch nicht gespeichert.'
+          '  Nach einem Neustart des Z180SoftSystem wird wieder die aktuelle Uhrzeit/Datum gelesen.'
+          '- Die Alarm Register können gelesen und beschrieben werden, werden bis jetzt aber nicht abgefragt.'
+          ''
+          '- Der RTC-Chip belegt folgende Port-Adressen:'
+          '        0x7Ch : Adress Register (nur schreiben)'
+          '        0x7Dh : Daten Register (lesen und schreiben)'
+          ''
+          '- Im Control-Register A werden folgende Bits ausgewertet:'
+          '        UIP :       Update in Progress'
+          '        DV2 - DV0 : Oszillator Control'
+          ''
+          '- Im Control-Register B werden folgende Bits ausgewertet:'
+          '        SET:    Set'
+          '        DM :    Data Mode (0 = BCD-Mode , 1 = Binary-Mode)'
+          '        24/12 : 24Hour Mode (0 = 12Hour-Mode , 1 = 24Hour-Mode)'
+          ''
+          '- Im Control-Register D werden folgende Bits ausgewertet:'
+          '        VRT: Valid RAM and Time'
+          ''
+          '- Folgende interne Register sind vorhanden:'
+          '        0x00h : Seconds     0x01h : Seconds Alarm '
+          '        0x02h : Minutes     0x03h : Minutes Alarm'
+          '        0x04h : Hours       0x05h : Hours Alarm'
+          '        0x06h : Day         0x07h : Date'
+          '        0x08h : Month       0x09h : Year'
+          '        0x0Ah : Control Register A'
+          '        0x0Bh : Control Register B'
+          '        0x0Ch : Control Register C'
+          '        0x0DH : Control Register D'
+          '        0x0Eh-0x31h : RAM'
+          '        0x32h : Century (nur im BCD-Modus)'
+          '        0x33h-0x7Fh : RAM'
+        )
+        ParentFont = False
+        ScrollBars = ssAutoBoth
+        TabOrder = 0
       end
     end
   end

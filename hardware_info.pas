@@ -13,11 +13,13 @@ type
     { THardwareInfo }
 
     THardwareInfo = class(TForm)
+      memoRtcChip: TMemo;
         memoHddController: TMemo;
         memoFddController: TMemo;
         memoTerminal: TMemo;
         memoZ180Mpu: TMemo;
         pagecontrolHardwareInfo: TPageControl;
+        TabSheet1: TTabSheet;
         tabZ180Mpu: TTabSheet;
         tabTerminal: TTabSheet;
         tabFddController: TTabSheet;
