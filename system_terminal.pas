@@ -68,7 +68,7 @@ type
         fontStyle: TFontStyles;
         termMode: TTermMode;
         dcaRow: word;
-        csiPar: array[0..7] of word;
+        csiPar: array[1..8] of word;
         parCount: word;
         defaultCharColor, defaultBackColor: TColor;
 
@@ -578,7 +578,7 @@ procedure TSystemTerminal.resetEscParameter;
 var
     parIndex: integer;
 begin
-    for parIndex := 0 to 7 do begin
+    for parIndex := 1 to 8 do begin
         csiPar[parIndex] := 0;
     end;
     parCount := 0;
@@ -771,94 +771,112 @@ procedure TSystemTerminal.writeCharacter(character: byte);
     begin
         case (character) of
             $30..$39: begin
-                if (parCount < 8) then begin // maximal 8 numerische Parameter möglich
+                if (parCount < 9) then begin // maximal 8 numerische Parameter möglich
                     csiPar[parCount] := (csiPar[parCount] * 10) + (character - $30);
                 end;
             end;
             $3B: begin // ESC [ Pn1 ; (weiteren Parameter abfragen)
-                Inc(parCount);
+                if (parCount < 9) then begin // maximal 8 numerische Parameter möglich
+                    Inc(parCount);
+                end;
             end;
             $41: begin // ESC [ Pn A (Cursor up Pn lines)
-                if terminalCursor.row > csiPar[0] then begin
-                    terminalCursor.row := terminalCursor.row - csiPar[0];
-                end
-                else begin
-                    terminalCursor.row := 1;
+                if (parCount = 1) then begin
+                    if terminalCursor.row > csiPar[1] then begin
+                        terminalCursor.row := terminalCursor.row - csiPar[1];
+                    end
+                    else begin
+                        terminalCursor.row := 1;
+                    end;
                 end;
                 resetEscParameter;
                 termMode := STANDARD;
             end;
             $42: begin // ESC [ Pn B (Cursor down Pn lines)
-                if (terminalCursor.row + csiPar[0]) < terminalRows then begin
-                    terminalCursor.row := terminalCursor.row + csiPar[0];
-                end
-                else begin
-                    terminalCursor.row := terminalRows;
+                if (parCount = 1) then begin
+                    if (terminalCursor.row + csiPar[1]) < terminalRows then begin
+                        terminalCursor.row := terminalCursor.row + csiPar[1];
+                    end
+                    else begin
+                        terminalCursor.row := terminalRows;
+                    end;
                 end;
                 resetEscParameter;
                 termMode := STANDARD;
             end;
             $43: begin // ESC [ Pn C (Cursor right Pn columns)
-                if (terminalCursor.column + csiPar[0]) < terminalColumns then begin
-                    terminalCursor.column := terminalCursor.column + csiPar[0];
-                end
-                else begin
-                    terminalCursor.column := terminalColumns;
+                if (parCount = 1) then begin
+                    if (terminalCursor.column + csiPar[1]) < terminalColumns then begin
+                        terminalCursor.column := terminalCursor.column + csiPar[1];
+                    end
+                    else begin
+                        terminalCursor.column := terminalColumns;
+                    end;
                 end;
                 resetEscParameter;
                 termMode := STANDARD;
             end;
             $44: begin // ESC [ Pn D (Cursor left Pn columns)
-                if terminalCursor.column > csiPar[0] then begin
-                    terminalCursor.column := terminalCursor.column - csiPar[0];
-                end
-                else begin
-                    terminalCursor.column := 1;
+                if (parCount = 1) then begin
+                    if terminalCursor.column > csiPar[1] then begin
+                        terminalCursor.column := terminalCursor.column - csiPar[1];
+                    end
+                    else begin
+                        terminalCursor.column := 1;
+                    end;
                 end;
                 resetEscParameter;
                 termMode := STANDARD;
             end;
             $48, $66: begin // ESC [ Pn1 ; Pn2 H , ESC [ Pn1 ; Pn2 f (Move cursor to line Pn1 and column Pn2)
-                if (parCount = 1) then begin
-                    setCursorPosition(csiPar[0], csiPar[1]);
+                if (parCount = 2) then begin
+                    setCursorPosition(csiPar[1], csiPar[2]);
                     resetEscParameter;
                     termMode := STANDARD;
                 end;
             end;
             $4B: begin // ESC [ Pn K
-                case csiPar[0] of
-                    0: deleteEndOfLine;  // Erase line from cursor to end
-                    1: deleteBeginningOfLine;  // Erase from beginning of line to cursor
-                    2: deleteLine;  // Erase entire line but do not move cursor
+                if (parCount = 1) then begin
+                    case csiPar[1] of
+                        0: deleteEndOfLine;  // Erase line from cursor to end
+                        1: deleteBeginningOfLine;  // Erase from beginning of line to cursor
+                        2: deleteLine;  // Erase entire line but do not move cursor
+                    end;
                 end;
                 resetEscParameter;
                 termMode := STANDARD;
             end;
             $4A: begin // ESC [ Pn J
-                case csiPar[0] of
-                    0: deleteEndOfScreen;  // Erase screen from cursor to end
-                    1: deleteBeginningOfScreen;  // Erase beginning of screen to cursor
-                    2: eraseScreen;  // Erase entire screenbut do not move cursor
+                if (parCount = 1) then begin
+                    case csiPar[1] of
+                        0: deleteEndOfScreen;  // Erase screen from cursor to end
+                        1: deleteBeginningOfScreen;  // Erase beginning of screen to cursor
+                        2: eraseScreen;  // Erase entire screenbut do not move cursor
+                    end;
                 end;
                 resetEscParameter;
                 termMode := STANDARD;
             end;
             $4C: begin // ESC [ Pn L (Insert Pn lines from cursor position)
-                for csiCounter := 0 to csiPar[0] - 1 do begin
-                    insertLineAndScroll;
+                if (parCount = 1) then begin
+                    for csiCounter := 0 to csiPar[1] - 1 do begin
+                        insertLineAndScroll;
+                    end;
                 end;
                 resetEscParameter;
                 termMode := STANDARD;
             end;
             $4D: begin // ESC [ Pn M (Delete Pn lines from cursor position)
-                for csiCounter := 0 to csiPar[0] - 1 do begin
-                    deleteLineAndScroll;
+                if (parCount = 1) then begin
+                    for csiCounter := 0 to csiPar[1] - 1 do begin
+                        deleteLineAndScroll;
+                    end;
                 end;
                 resetEscParameter;
                 termMode := STANDARD;
             end;
             $6D: begin // ESC [ Pn (; Pn ...) m
-                for csiCounter := 0 to parCount do begin
+                for csiCounter := 1 to parCount do begin
                     case csiPar[csiCounter] of
                         0: begin
                             fontStyle := [];
@@ -953,6 +971,7 @@ procedure TSystemTerminal.writeCharacter(character: byte);
     begin
         case (character) of
             $30..$39: begin
+                Inc(parCount);
                 ansiEscapeModeParameter;
                 termMode := ANSI_ESC_PAR;
             end;
