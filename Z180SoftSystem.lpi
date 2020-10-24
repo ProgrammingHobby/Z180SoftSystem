@@ -20,7 +20,8 @@
       <AutoIncrementBuild Value="True"/>
       <MajorVersionNr Value="2"/>
       <MinorVersionNr Value="2"/>
-      <BuildNr Value="1067"/>
+      <RevisionNr Value="1"/>
+      <BuildNr Value="1069"/>
       <Language Value="0407"/>
       <StringTable FileDescription="Zilog Z180MPU Emulation" InternalName="Z180SoftSystem" LegalCopyright="Uwe Merker  2020" OriginalFilename="Z180SoftSystem"/>
     </VersionInfo>
@@ -56,9 +57,10 @@
           </Linking>
         </CompilerOptions>
       </Item2>
-      <SharedMatrixOptions Count="2">
+      <SharedMatrixOptions Count="3">
         <Item1 ID="289143453399" Modes="Release" Value="-d_RELEASE_"/>
         <Item2 ID="284912166222" Modes="Debug" Value="-d_DEBUG_"/>
+        <Item3 ID="391425398548" Modes="Debug,Release" Value="-dUseCThreads"/>
       </SharedMatrixOptions>
     </BuildModes>
     <PublishOptions>

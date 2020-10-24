@@ -4,13 +4,10 @@ program Z180SoftSystem;
 
 uses
   {$IFDEF UNIX}{$IFDEF UseCThreads}
-  cthreads,
+  cthreads, cmem,
   {$ENDIF}{$ENDIF}
   Interfaces, // this includes the LCL widgetset
-  Forms, lazcontrols, Main_Window, Cpu_Register, System_Memory, Memory_Editor,
-  System_Settings, Z180_CPU, System_Terminal, Cpu_Io_Register, System_Fdc,
-  Memory_Settings, System_InOut, Fdd_Settings, Terminal_Settings, About_Window,
-  Version_Info, Hdd_Settings, System_Hdc, Hardware_Info, System_Rtc;
+  Forms, lazcontrols, System_Settings, Main_Window;
 
 {$R *.res}
 

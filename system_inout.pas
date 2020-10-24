@@ -187,19 +187,19 @@ end;
 // --------------------------------------------------------------------------------
 procedure TSystemInOut.cpuTXA0(Data: byte);
 begin
-    SystemTerminal.writeCharacter(Data);
+    writeTerminalCharacter(Data);
 end;
 
 // --------------------------------------------------------------------------------
 function TSystemInOut.cpuCanReadRXA0: boolean;
 begin
-    Result := boolean(SystemTerminal.readCharacter(True));
+    Result := terminalReadable;
 end;
 
 // --------------------------------------------------------------------------------
 function TSystemInOut.cpuRXA0: byte;
 begin
-    Result := SystemTerminal.readCharacter(False);
+    Result := readTerminalCharacter;
 end;
 
 // --------------------------------------------------------------------------------

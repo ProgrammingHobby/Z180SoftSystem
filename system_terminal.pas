@@ -17,282 +17,318 @@ unit System_Terminal;
 
 interface
 
-uses
-    Classes, SysUtils, Controls, ExtCtrls, Graphics;
+uses SysUtils, Graphics, Classes;
 
-type
-
-    { TSystemTerminal }
-
-    TSystemTerminal = class
-
-    private   // Attribute
-
-        type
-        TTermMode = (STANDARD, VT52_ESC, ANSI_ESC, ANSI_ESC_PAR, DCA_ROW, DCA_COLUMN);
-
-    const
-        terminalColumns = 80;
-        terminalRows = 24;
+const
+    terminalColumns = 80;
+    terminalRows = 24;
         {$ifdef Windows}
-        charHeight = 22;
-        charWidth = 10;
+    terminalCharHeight = 22;
+    terminalCharWidth = 10;
         {$else}
-        charHeight = 22;
-        charWidth = 11;
+    terminalCharHeight = 22;
+    terminalCharWidth = 11;
         {$endif}
-        startLeft = -6;
-        startTop = -18;
-
-    var
-        newCharAvailable: boolean;
-        imagePage1, imagePage2: TImage;
-        timerTerminalPageRefresh: TTimer;
-        timerCursorFlash: TTimer;
-        charData: array[1..terminalRows, 1..terminalColumns] of char;
-        charStyle: array[1..terminalRows, 1..terminalColumns] of TFontStyles;
-        charColor: array[1..terminalRows, 1..terminalColumns] of TColor;
-        backColor: array[1..terminalRows, 1..terminalColumns] of TColor;
-        terminalCursor: record
-            column: integer;
-            row: integer;
-            cursorChar: char;
-            Visible: boolean;
-        end;
-        keyboardBuffer: string;
-        enableCrLf: boolean;
-        enableLocalEcho: boolean;
-        enableTerminalLogging: boolean;
-        loggingFile: file of char;
-        fontColor, tmpFontColor, backgroundColor: TColor;
-        fontStyle: TFontStyles;
-        termMode: TTermMode;
-        dcaRow: word;
-        csiPar: array[1..8] of word;
-        parCount: word;
-        defaultCharColor, defaultBackColor: TColor;
-
-    protected // Attribute
-        procedure timerCursorFlashTimer(Sender: TObject);
-        procedure timerTerminalPageRefreshTimer(Sender: TObject);
-
-    public    // Attribute
-
-    public  // Konstruktor/Destruktor
-        constructor Create(terminalPanel: TPanel); overload;
-        destructor Destroy; override;
-
-    private   // Methoden
-        procedure writeCharOnScreen(character: char);
-        procedure scrollTerminalContentUp;
-        procedure cursorHome;
-        procedure cursorLeft;
-        procedure cursorRight;
-        procedure cursorUp;
-        procedure cursorDown;
-        procedure backspace;
-        procedure setTabulator;
-        procedure lineFeed;
-        procedure clearScreen;
-        procedure eraseScreen;
-        procedure carriageReturn;
-        procedure deleteEndOfLine;
-        procedure deleteEndOfScreen;
-        procedure deleteBeginningOfLine;
-        procedure deleteBeginningOfScreen;
-        procedure deleteLine;
-        procedure deleteLineAndScroll;
-        procedure insertLineAndScroll;
-        procedure reverseLineFeed;
-        procedure setCursorPosition(row, column: integer);
-        procedure resetEscParameter;
-
-    protected // Methoden
-
-    public    // Methoden
-        procedure terminalReset;
-        procedure setCrLF(enable: boolean);
-        procedure setLocalEcho(enable: boolean);
-        procedure setTerminalLogging(enable: boolean);
-        procedure setInverseScreen(enable: boolean);
-        procedure writeCharacter(character: byte);
-        function readCharacter(getStatus: boolean): byte;
-        procedure getKeyBoardInput(key: word; shift: TShiftState);
-
-    end;
+    terminalStartLeft = -6;
+    terminalStartTop = -18;
 
 var
-    SystemTerminal: TSystemTerminal;
+    terminalCharData: array[1..terminalRows, 1..terminalColumns] of char;
+    terminalCharStyle: array[1..terminalRows, 1..terminalColumns] of TFontStyles;
+    terminalCharColor: array[1..terminalRows, 1..terminalColumns] of TColor;
+    terminalBackColor: array[1..terminalRows, 1..terminalColumns] of TColor;
+    terminalDefaultCharColor, terminalDefaultBackColor: TColor;
+    terminalFontColor, terminalBackgroundColor: TColor;
+    terminalCursor: record
+        column: integer;
+        row: integer;
+        cursorChar: char;
+        Visible: boolean;
+    end;
+
+procedure terminalReset;
+procedure setTerminalCrLF(enable: boolean);
+procedure setTerminalLocalEcho(enable: boolean);
+procedure setTerminalLogging(enable: boolean);
+procedure writeTerminalCharacter(character: byte);
+function readTerminalCharacter: byte;
+function terminalReadable: boolean;
+procedure getKeyBoardInput(key: word; shift: TShiftState);
 
 implementation
 
-{ TSystemTerminal }
+type
+    TTermMode = (STANDARD, VT52_ESC, ANSI_ESC, ANSI_ESC_PAR, DCA_ROW, DCA_COLUMN);
 
-// --------------------------------------------------------------------------------
-procedure TSystemTerminal.timerCursorFlashTimer(Sender: TObject);
-begin
-    timerCursorFlash.Enabled := False;
-    if (terminalCursor.Visible) then begin
-        terminalCursor.Visible := False;
-    end
-    else begin
-        terminalCursor.Visible := True;
+    TTerminalEmulation = class(TThread)
+    private
+
+    protected
+        procedure Execute; override;
+
+    public
+        constructor Create(CreateSuspended: boolean);
+
     end;
-    timerCursorFlash.Enabled := True;
-end;
 
-// --------------------------------------------------------------------------------
-procedure TSystemTerminal.timerTerminalPageRefreshTimer(Sender: TObject);
 var
-    row, column, posX, posY: integer;
-    viewChar: char;
-begin
-    timerTerminalPageRefresh.Enabled := False;
-    for row := 1 to terminalRows do begin
-        posY := startTop + (charHeight * row);
-        for column := 1 to terminalColumns do begin
-            if (terminalCursor.Visible and (row = terminalCursor.row) and (column = terminalCursor.column)) then begin
-                viewchar := terminalCursor.cursorChar;
-            end
-            else begin
-                viewchar := charData[row, column];
-            end;
-            {$ifdef Windows}
-            posX := startLeft + ((charWidth + 2) * column);
-            {$else}
-            posX := startLeft + (charWidth * column);
-            {$endif}
-            if (imagePage1.Visible) then begin
-                imagePage2.Canvas.Brush.Color := backColor[row, column];
-                imagePage2.Canvas.Font.Color := charColor[row, column];
-                imagePage2.Canvas.Font.Style := charStyle[row, column];
-                {$ifdef Windows}
-                imagePage2.Canvas.Rectangle(posX - 2, posY, posX + charWidth + 1, posY + charHeight);
-                {$else}
-                imagePage2.Canvas.Rectangle(posX - 1, posY, posX + charWidth + 1, posY + charHeight);
-                {$endif}
-                imagePage2.Canvas.TextOut(posX, posY, viewChar);
-            end
-            else begin
-                imagePage1.Canvas.Brush.Color := backColor[row, column];
-                imagePage1.Canvas.Font.Color := charColor[row, column];
-                imagePage1.Canvas.Font.Style := charStyle[row, column];
-                 {$ifdef Windows}
-                imagePage1.Canvas.Rectangle(posX - 2, posY, posX + charWidth + 1, posY + charHeight);
-                {$else}
-                imagePage1.Canvas.Rectangle(posX - 1, posY, posX + charWidth + 1, posY + charHeight);
-                {$endif}
-                imagePage1.Canvas.TextOut(posX, posY, viewChar);
-            end;
-        end;
-    end;
-    imagePage1.Visible := imagePage2.Visible;
-    imagePage2.Visible := not imagePage1.Visible;
-    timerTerminalPageRefresh.Enabled := True;
-end;
+    termMode: TTermMode;
+    TerminalEmulation: TTerminalEmulation;
+    enableCrLf: boolean;
+    enableLocalEcho: boolean;
+    keyboardBuffer: array[0..1023] of byte;
+    keyboardReadIndex, keyboardWriteIndex: integer;
+    characterBuffer: array[0..1023] of byte;
+    characterReadIndex, characterWriteIndex: integer;
+    fontStyle: TFontStyles;
+    csiPar: array[1..8] of word;
+    parCount: word;
+    enableTerminalLogging: boolean;
+    loggingFile: file of char;
+    dcaRow: word;
+    tmpFontColor: TColor;
 
 // --------------------------------------------------------------------------------
-constructor TSystemTerminal.Create(terminalPanel: TPanel);
+procedure resetEscParameter;
 var
-    pageWidth, pageHeight: integer;
+    parIndex: integer;
 begin
-    {$ifdef Windows}
-    terminalPanel.Font.Name := 'Consolas';
-    terminalPanel.Font.Size := 12;
-    pageWidth := ((charWidth + 2) * terminalColumns) + charWidth;
-    {$else}
-    terminalPanel.Font.Name := 'Courier New';
-    terminalPanel.Font.Size := 12;
-    pageWidth := (charWidth * terminalColumns) + charWidth;
-    {$endif}
-    //terminalPanel.Font.Color := clBlack;
-    pageHeight := (charHeight * terminalRows) + charHeight;
-
-    imagePage1 := TImage.Create(terminalPanel);
-    imagePage1.Parent := terminalPanel;
-    with (imagePage1) do begin
-        Top := 0;
-        Left := 0;
-        Width := pageWidth;
-        Height := pageHeight;
-        Canvas.Font := terminalPanel.Font;
+    for parIndex := 1 to 8 do begin
+        csiPar[parIndex] := 0;
     end;
-
-    imagePage2 := TImage.Create(terminalPanel);
-    imagePage2.Parent := terminalPanel;
-    with (imagePage2) do begin
-        Top := 0;
-        Left := 0;
-        Width := pageWidth;
-        Height := pageHeight;
-        Canvas.Font := terminalPanel.Font;
-    end;
-
-    timerCursorFlash := TTimer.Create(terminalPanel);
-    timerCursorFlash.Interval := 600;
-    timerCursorFlash.OnTimer := @timerCursorFlashTimer;
-    timerCursorFlash.Enabled := False;
-
-    timerTerminalPageRefresh := TTimer.Create(terminalPanel);
-    timerTerminalPageRefresh.Interval := 50;
-    timerTerminalPageRefresh.OnTimer := @timerTerminalPageRefreshTimer;
-    timerTerminalPageRefresh.Enabled := False;
-
-    newCharAvailable := False;
-    enableCrLf := False;
-    enableLocalEcho := False;
-    setTerminalLogging(False);
-    terminalReset;
-end;
-// --------------------------------------------------------------------------------
-destructor TSystemTerminal.Destroy;
-begin
-    timerCursorFlash.Enabled := False;
-    timerCursorFlash.OnTimer := nil;
-    timerTerminalPageRefresh.Enabled := False;
-    timerTerminalPageRefresh.OnTimer := nil;
-    if (enableTerminalLogging) then begin
-        CloseFile(loggingFile);
-    end;
-    inherited Destroy;
+    parCount := 0;
 end;
 
 // --------------------------------------------------------------------------------
-procedure TSystemTerminal.terminalReset;
+procedure terminalReset;
 var
     row, column: integer;
 begin
     for row := 1 to terminalRows do begin
         for column := 1 to terminalColumns do begin
-            charData[row, column] := ' ';
-            charColor[row, column] := defaultCharColor;
-            backColor[row, column] := defaultBackColor;
-            charStyle[row, column] := [];
+            terminalCharData[row, column] := ' ';
+            terminalCharColor[row, column] := terminalDefaultCharColor;
+            terminalBackColor[row, column] := terminalDefaultBackColor;
+            terminalCharStyle[row, column] := [];
         end;
     end;
     terminalCursor.column := 1;
     terminalCursor.row := 1;
     terminalCursor.cursorChar := '_';
     terminalCursor.Visible := True;
-    imagePage1.Visible := True;
-    imagePage2.Visible := False;
-    timerCursorFlash.Enabled := True;
-    timerTerminalPageRefresh.Enabled := True;
     fontStyle := [];
-    fontColor := defaultCharColor;
-    backgroundColor := defaultBackColor;
+    terminalFontColor := terminalDefaultCharColor;
+    terminalBackgroundColor := terminalDefaultBackColor;
     termMode := STANDARD;
-    keyboardBuffer := '';
     resetEscParameter;
 end;
 
 // --------------------------------------------------------------------------------
-procedure TSystemTerminal.writeCharOnScreen(character: char);
+procedure setTerminalCrLF(enable: boolean);
 begin
-    charData[terminalCursor.row, terminalCursor.column] := character;
-    charColor[terminalCursor.row, terminalCursor.column] := fontColor;
-    backColor[terminalCursor.row, terminalCursor.column] := backgroundColor;
-    charStyle[terminalCursor.row, terminalCursor.column] := fontStyle;
+    enableCrLf := enable;
+end;
+
+// --------------------------------------------------------------------------------
+procedure setTerminalLocalEcho(enable: boolean);
+begin
+    enableLocalEcho := enable;
+end;
+
+// --------------------------------------------------------------------------------
+procedure setTerminalLogging(enable: boolean);
+begin
+    enableTerminalLogging := enable;
+    if (enableTerminalLogging) then begin
+        try
+            Assign(loggingFile, 'Terminal.log');
+            Rewrite(loggingFile);
+        except
+            enableTerminalLogging := False;
+        end;
+    end;
+end;
+
+// --------------------------------------------------------------------------------
+procedure writeTerminalCharacter(character: byte);
+begin
+    if (character > $00) then begin
+        characterBuffer[characterWriteIndex] := character;
+        Inc(characterWriteIndex);
+        if (characterWriteIndex > 1023) then
+            characterWriteIndex := 0;
+    end;
+end;
+
+// --------------------------------------------------------------------------------
+function readTerminalCharacter: byte;
+begin
+    Result := keyboardBuffer[keyboardReadIndex];
+    Inc(keyboardReadIndex);
+    if (keyboardReadIndex > 1023) then
+        keyboardReadIndex := 0;
+end;
+
+// --------------------------------------------------------------------------------
+function terminalReadable: boolean;
+begin
+    if (keyboardReadIndex = keyboardWriteIndex) then begin
+        Result := False;
+    end
+    else begin
+        Result := True;
+    end;
+end;
+
+// --------------------------------------------------------------------------------
+procedure getKeyBoardInput(key: word; shift: TShiftState);
+var
+    character: byte;
+begin
+    character := $00;
+    if (Shift = []) then begin
+        case key of
+            08: character := $7F;
+            09: character := key; // TAB
+            13: character := key; // ENTER
+            27: character := $1B; // ESC
+            32: character := $20; // SPACE
+            33: character := $12; // Ctrl R
+            34: character := $03; // Ctrl C
+            37: character := $13; // links
+            38: character := $05; // oben
+            39: character := $04; // rechts
+            40: character := $18; // unten
+            45: character := $16; // Einfg = Ctrl V
+            46: character := $07; // Entf = Ctrl G
+            48..57: character := key; // 0..9
+            65..90: character := key + 32; // a..z
+            187: character := $2B; // +
+            188: character := $2C; // ,
+            189: character := $2D; // -
+            190: character := $2E; // .
+            111: character := $3A; // NUM :
+            106: character := $2A; // NUM *
+            109: character := $2D; // NUM -
+            107: character := $2B; // NUM +
+            96..105: character := key - 48; // NUM 0..9
+            {$ifdef Windows}
+            110: character := $2E; // NUM .
+            191: character := $23; // #
+            219: character := $73; // s
+            220: character := $5E; // ^
+            221: character := $27; // `
+            226: character := $3C; // <
+            {$else}
+            108: character := $2E; // NUM .
+            222: character := $23; // #
+            220: character := $73; // s
+            150: character := $5E; // ^
+            146: character := $27; // `
+            225: character := $3C; // <
+            {$endif}
+            else character := $00;
+        end;
+    end;
+
+    if ((Shift = [ssShift]) and (key <> 16)) then begin
+        case key of
+            00: character := key;
+            48: character := $3D; // =
+            49: character := $21; // !
+            50: character := $22; // "
+            51: character := $23; // §
+            52: character := $24; // $
+            53: character := $25; // %
+            54: character := $26; // &
+            55: character := $2F; // /
+            56: character := $28; // (
+            57: character := $29; // )
+            65..90: character := key; // A..Z
+            187: character := $2A; // *
+            188: character := $3B; // ;
+            189: character := $5F; // _
+            190: character := $3A; // :
+            {$ifdef Windows}
+            191: character := $27; // '
+            219: character := $3F; // ?
+            220: character := $7E; // ° -> ~
+            221: character := $60; // `
+            226: character := $3E; // >
+            {$else}
+            222: character := $27; // '
+            220: character := $3F; // ?
+            150: character := $7E; // ° -> ~
+            146: character := $60; // `
+            225: character := $3E; // >
+            {$endif}
+            else character := $00;
+        end;
+    end;
+
+    if ((Shift = [ssCtrl]) and (key <> 17)) then begin
+        if (key > 64) and (key < 91) then begin
+            character := key - 64;
+        end;
+    end;
+
+    if ((Shift = [ssAlt..ssCtrl]) and (key <> 18)) then begin
+        case key of
+            48: character := $7D; // }
+            55: character := $7B; // {
+            56: character := $5B; // [
+            57: character := $5D; // ]
+            81: character := $40; // @
+            187: character := $7E; // ~
+            {$ifdef Windows}
+            219: character := $5C; // \
+            226: character := $7C; // |
+            {$else}
+            220: character := $5C; // \
+            225: character := $7C; // |
+            {$endif}
+            else character := $00;
+        end;
+    end;
+
+    if character > $00 then begin
+        keyboardBuffer[keyboardWriteIndex] := character;
+        Inc(keyboardWriteIndex);
+        if (keyboardWriteIndex > 1023) then
+            keyboardWriteIndex := 0;
+        if (enableLocalEcho) then begin
+            writeTerminalCharacter(character);
+        end;
+    end;
+end;
+
+// --------------------------------------------------------------------------------
+procedure scrollTerminalContentUp;
+var
+    column, row: integer;
+begin
+    for row := 1 to terminalRows - 1 do begin
+        terminalCharData[row] := terminalCharData[row + 1];
+        terminalCharColor[row] := terminalCharColor[row + 1];
+        terminalCharStyle[row] := terminalCharStyle[row + 1];
+    end;
+    for column := 1 to terminalColumns do begin
+        terminalCharData[terminalRows, column] := ' ';
+        //terminalCharColor[terminalRows, column] := terminalDefaultCharColor;
+        //terminalBackColor[terminalRows, column] := terminalDefaultBackColor;
+        terminalCharStyle[terminalRows, column] := [];
+    end;
+    terminalCursor.column := 1;
+    terminalCursor.row := terminalRows;
+end;
+
+// --------------------------------------------------------------------------------
+procedure writeCharOnScreen(character: char);
+begin
+    terminalCharData[terminalCursor.row, terminalCursor.column] := character;
+    terminalCharColor[terminalCursor.row, terminalCursor.column] := terminalFontColor;
+    terminalBackColor[terminalCursor.row, terminalCursor.column] := terminalBackgroundColor;
+    terminalCharStyle[terminalCursor.row, terminalCursor.column] := fontStyle;
     Inc(terminalCursor.column);
     if (terminalCursor.column > terminalColumns) then begin
         terminalCursor.column := 1;
@@ -302,35 +338,16 @@ begin
         end;
     end;
 end;
-// --------------------------------------------------------------------------------
-procedure TSystemTerminal.scrollTerminalContentUp;
-var
-    column, row: integer;
-begin
-    for row := 1 to terminalRows - 1 do begin
-        charData[row] := charData[row + 1];
-        charColor[row] := charColor[row + 1];
-        charStyle[row] := charStyle[row + 1];
-    end;
-    for column := 1 to terminalColumns do begin
-        charData[terminalRows, column] := ' ';
-        //charColor[terminalRows, column] := defaultCharColor;
-        //backColor[terminalRows, column] := defaultBackColor;
-        charStyle[terminalRows, column] := [];
-    end;
-    terminalCursor.column := 1;
-    terminalCursor.row := terminalRows;
-end;
 
 // --------------------------------------------------------------------------------
-procedure TSystemTerminal.cursorHome;
+procedure cursorHome;
 begin
     terminalCursor.column := 1;
     terminalCursor.row := 1;
 end;
 
 // --------------------------------------------------------------------------------
-procedure TSystemTerminal.cursorLeft;
+procedure cursorLeft;
 begin
     if (terminalCursor.column > 1) then begin
         Dec(terminalCursor.column);
@@ -338,7 +355,7 @@ begin
 end;
 
 // --------------------------------------------------------------------------------
-procedure TSystemTerminal.cursorRight;
+procedure cursorRight;
 begin
     if (terminalCursor.column < terminalColumns) then begin
         Inc(terminalCursor.column);
@@ -346,7 +363,7 @@ begin
 end;
 
 // --------------------------------------------------------------------------------
-procedure TSystemTerminal.cursorUp;
+procedure cursorUp;
 begin
     if (terminalCursor.row > 1) then begin
         Dec(terminalCursor.row);
@@ -354,7 +371,7 @@ begin
 end;
 
 // --------------------------------------------------------------------------------
-procedure TSystemTerminal.cursorDown;
+procedure cursorDown;
 begin
     if (terminalCursor.row < terminalRows) then begin
         Inc(terminalCursor.row);
@@ -362,19 +379,19 @@ begin
 end;
 
 // --------------------------------------------------------------------------------
-procedure TSystemTerminal.backspace;
+procedure backspace;
 begin
     if (terminalCursor.column > 1) then begin
         Dec(terminalCursor.column);
-        charData[terminalCursor.row, terminalCursor.column] := ' ';
-        //charColor[terminalCursor.row, terminalCursor.column] := defaultCharColor;
-        //backColor[terminalCursor.row, terminalCursor.column] := defaultBackColor;
-        charStyle[terminalCursor.row, terminalCursor.column] := [];
+        terminalCharData[terminalCursor.row, terminalCursor.column] := ' ';
+        //terminalCharColor[terminalCursor.row, terminalCursor.column] := terminalDefaultCharColor;
+        //terminalBackColor[terminalCursor.row, terminalCursor.column] := terminalDefaultBackColor;
+        terminalCharStyle[terminalCursor.row, terminalCursor.column] := [];
     end;
 end;
 
 // --------------------------------------------------------------------------------
-procedure TSystemTerminal.setTabulator;
+procedure setTabulator;
 begin
     terminalCursor.column := (8 * ((terminalCursor.column div 8) + 1));
     if (terminalCursor.column > terminalColumns) then begin
@@ -383,7 +400,7 @@ begin
 end;
 
 // --------------------------------------------------------------------------------
-procedure TSystemTerminal.lineFeed;
+procedure lineFeed;
 begin
     Inc(terminalCursor.row);
     if (terminalCursor.row > terminalRows) then begin
@@ -392,16 +409,16 @@ begin
 end;
 
 // --------------------------------------------------------------------------------
-procedure TSystemTerminal.clearScreen;
+procedure clearScreen;
 var
     row, column: integer;
 begin
     for row := 1 to terminalRows do begin
         for column := 1 to terminalColumns do begin
-            charData[row, column] := ' ';
-            //charColor[row, column] := defaultCharColor;
-            //backColor[row, column] := defaultBackColor;
-            charStyle[row, column] := [];
+            terminalCharData[row, column] := ' ';
+            //terminalCharColor[row, column] := terminalDefaultCharColor;
+            //terminalBackColor[row, column] := terminalDefaultBackColor;
+            terminalCharStyle[row, column] := [];
         end;
     end;
     terminalCursor.column := 1;
@@ -410,141 +427,44 @@ begin
 end;
 
 // --------------------------------------------------------------------------------
-procedure TSystemTerminal.eraseScreen;
-var
-    row, column: integer;
-begin
-    for row := 1 to terminalRows do begin
-        for column := 1 to terminalColumns do begin
-            charData[row, column] := ' ';
-            //charColor[row, column] := defaultCharColor;
-            //backColor[row, column] := defaultBackColor;
-            charStyle[row, column] := [];
-        end;
-    end;
-end;
-
-// --------------------------------------------------------------------------------
-procedure TSystemTerminal.carriageReturn;
+procedure carriageReturn;
 begin
     terminalCursor.column := 1;
 end;
 
 // --------------------------------------------------------------------------------
-procedure TSystemTerminal.deleteEndOfLine;
+procedure deleteEndOfLine;
 var
     column: integer;
 begin
     for column := terminalCursor.column to terminalColumns do begin
-        charData[terminalCursor.row, column] := ' ';
-        //charColor[terminalCursor.row, column] := defaultCharColor;
-        //backColor[terminalCursor.row, column] := defaultBackColor;
-        charStyle[terminalCursor.row, column] := [];
+        terminalCharData[terminalCursor.row, column] := ' ';
+        //terminalCharColor[terminalCursor.row, column] := terminalDefaultCharColor;
+        //terminalBackColor[terminalCursor.row, column] := terminalDefaultBackColor;
+        terminalCharStyle[terminalCursor.row, column] := [];
     end;
 end;
 
 // --------------------------------------------------------------------------------
-procedure TSystemTerminal.deleteEndOfScreen;
-var
-    row, column: integer;
-begin
-    deleteEndOfLine;
-    if terminalCursor.row < terminalRows then begin
-        for row := terminalCursor.row + 1 to terminalRows do begin
-            for column := 1 to terminalColumns do begin
-                charData[row, column] := ' ';
-                //charColor[row, column] := defaultCharColor;
-                //backColor[row, column] := defaultBackColor;
-                charStyle[row, column] := [];
-            end;
-        end;
-    end;
-end;
-
-// --------------------------------------------------------------------------------
-procedure TSystemTerminal.deleteBeginningOfLine;
-var
-    column: integer;
-begin
-    for column := 1 to terminalCursor.column - 1 do begin
-        charData[terminalCursor.row, column] := ' ';
-        //charColor[terminalCursor.row, column] := defaultCharColor;
-        //backColor[terminalCursor.row, column] := defaultBackColor;
-        charStyle[terminalCursor.row, column] := [];
-    end;
-end;
-
-// --------------------------------------------------------------------------------
-procedure TSystemTerminal.deleteBeginningOfScreen;
-var
-    row, column: integer;
-begin
-    deleteBeginningOfLine;
-    if terminalCursor.row > 1 then begin
-        for row := 1 to terminalCursor.row - 1 do begin
-            for column := 1 to terminalColumns do begin
-                charData[row, column] := ' ';
-                //charColor[row, column] := defaultCharColor;
-                //backColor[row, column] := defaultBackColor;
-                charStyle[row, column] := [];
-            end;
-        end;
-    end;
-end;
-
-// --------------------------------------------------------------------------------
-procedure TSystemTerminal.deleteLine;
-var
-    column: integer;
-begin
-    for column := 1 to terminalColumns do begin
-        charData[terminalCursor.row, column] := ' ';
-        //charColor[terminalCursor.row, column] := defaultCharColor;
-        //backColor[terminalCursor.row, column] := defaultBackColor;
-        charStyle[terminalCursor.row, column] := [];
-    end;
-    terminalCursor.column := 1;
-end;
-
-// --------------------------------------------------------------------------------
-procedure TSystemTerminal.deleteLineAndScroll;
-var
-    column, row: integer;
-begin
-    for row := terminalCursor.row to terminalRows - 1 do begin
-        charData[row] := charData[row + 1];
-        charColor[row] := charColor[row + 1];
-        charStyle[row] := charStyle[row + 1];
-    end;
-    for column := 1 to terminalColumns do begin
-        charData[terminalRows, column] := ' ';
-        //charColor[terminalRows, column] := defaultCharColor;
-        //backColor[terminalRows, column] := defaultBackColor;
-        charStyle[terminalRows, column] := [];
-    end;
-    terminalCursor.column := 1;
-end;
-
-// --------------------------------------------------------------------------------
-procedure TSystemTerminal.insertLineAndScroll;
+procedure insertLineAndScroll;
 var
     column, row: integer;
 begin
     for row := terminalRows downto terminalCursor.row + 1 do begin
-        charData[row] := charData[row - 1];
-        charColor[row] := charColor[row - 1];
-        charStyle[row] := charStyle[row - 1];
+        terminalCharData[row] := terminalCharData[row - 1];
+        terminalCharColor[row] := terminalCharColor[row - 1];
+        terminalCharStyle[row] := terminalCharStyle[row - 1];
     end;
     for column := 1 to terminalColumns do begin
-        charData[terminalCursor.row, column] := ' ';
-        //charColor[terminalCursor.row, column] := defaultCharColor;
-        //backColor[terminalCursor.row, column] := defaultBackColor;
-        charStyle[terminalCursor.row, column] := [];
+        terminalCharData[terminalCursor.row, column] := ' ';
+        //terminalCharColor[terminalCursor.row, column] := terminalDefaultCharColor;
+        //terminalBackColor[terminalCursor.row, column] := terminalDefaultBackColor;
+        terminalCharStyle[terminalCursor.row, column] := [];
     end;
 end;
 
 // --------------------------------------------------------------------------------
-procedure TSystemTerminal.reverseLineFeed;
+procedure reverseLineFeed;
 begin
     if (terminalCursor.row > 1) then begin
         Dec(terminalCursor.row);
@@ -555,7 +475,44 @@ begin
 end;
 
 // --------------------------------------------------------------------------------
-procedure TSystemTerminal.setCursorPosition(row, column: integer);
+procedure deleteEndOfScreen;
+var
+    row, column: integer;
+begin
+    deleteEndOfLine;
+    if terminalCursor.row < terminalRows then begin
+        for row := terminalCursor.row + 1 to terminalRows do begin
+            for column := 1 to terminalColumns do begin
+                terminalCharData[row, column] := ' ';
+                //terminalCharColor[row, column] := terminalDefaultCharColor;
+                //terminalBackColor[row, column] := terminalDefaultBackColor;
+                terminalCharStyle[row, column] := [];
+            end;
+        end;
+    end;
+end;
+
+// --------------------------------------------------------------------------------
+procedure deleteLineAndScroll;
+var
+    column, row: integer;
+begin
+    for row := terminalCursor.row to terminalRows - 1 do begin
+        terminalCharData[row] := terminalCharData[row + 1];
+        terminalCharColor[row] := terminalCharColor[row + 1];
+        terminalCharStyle[row] := terminalCharStyle[row + 1];
+    end;
+    for column := 1 to terminalColumns do begin
+        terminalCharData[terminalRows, column] := ' ';
+        //terminalCharColor[terminalRows, column] := terminalDefaultCharColor;
+        //terminalBackColor[terminalRows, column] := terminalDefaultBackColor;
+        terminalCharStyle[terminalRows, column] := [];
+    end;
+    terminalCursor.column := 1;
+end;
+
+// --------------------------------------------------------------------------------
+procedure setCursorPosition(row, column: integer);
 begin
     terminalCursor.row := row;
     terminalCursor.column := column;
@@ -574,81 +531,71 @@ begin
 end;
 
 // --------------------------------------------------------------------------------
-procedure TSystemTerminal.resetEscParameter;
+procedure deleteBeginningOfLine;
 var
-    parIndex: integer;
+    column: integer;
 begin
-    for parIndex := 1 to 8 do begin
-        csiPar[parIndex] := 0;
-    end;
-    parCount := 0;
-end;
-
-// --------------------------------------------------------------------------------
-procedure TSystemTerminal.setCrLF(enable: boolean);
-begin
-    enableCrLf := enable;
-end;
-
-// --------------------------------------------------------------------------------
-procedure TSystemTerminal.setLocalEcho(enable: boolean);
-begin
-    enableLocalEcho := enable;
-end;
-
-// --------------------------------------------------------------------------------
-procedure TSystemTerminal.setTerminalLogging(enable: boolean);
-begin
-    enableTerminalLogging := enable;
-    if (enableTerminalLogging) then begin
-        try
-            Assign(loggingFile, 'Terminal.log');
-            Rewrite(loggingFile);
-        except
-            enableTerminalLogging := False;
-        end;
+    for column := 1 to terminalCursor.column - 1 do begin
+        terminalCharData[terminalCursor.row, column] := ' ';
+        //terminalCharColor[terminalCursor.row, column] := terminalDefaultCharColor;
+        //terminalBackColor[terminalCursor.row, column] := terminalDefaultBackColor;
+        terminalCharStyle[terminalCursor.row, column] := [];
     end;
 end;
 
 // --------------------------------------------------------------------------------
-procedure TSystemTerminal.setInverseScreen(enable: boolean);
+procedure deleteLine;
+var
+    column: integer;
+begin
+    for column := 1 to terminalColumns do begin
+        terminalCharData[terminalCursor.row, column] := ' ';
+        //terminalCharColor[terminalCursor.row, column] := terminalDefaultCharColor;
+        //terminalBackColor[terminalCursor.row, column] := terminalDefaultBackColor;
+        terminalCharStyle[terminalCursor.row, column] := [];
+    end;
+    terminalCursor.column := 1;
+end;
+
+// --------------------------------------------------------------------------------
+procedure deleteBeginningOfScreen;
 var
     row, column: integer;
 begin
-    if (enable) then begin
-        defaultCharColor := clWhite;
-        defaultBackColor := clBlack;
-    end
-    else begin
-        defaultCharColor := clBlack;
-        defaultBackColor := clWhite;
-    end;
-    with (imagePage1) do begin
-        Canvas.Font.Color := defaultCharColor;
-        Canvas.Brush.Color := defaultBackColor;
-        Canvas.Pen.Color := defaultBackColor;
-        Canvas.Rectangle(0, 0, imagePage1.Width, imagePage1.Height);
-    end;
-    with (imagePage2) do begin
-        Canvas.Font.Color := defaultCharColor;
-        Canvas.Brush.Color := defaultBackColor;
-        Canvas.Pen.Color := defaultBackColor;
-        Canvas.Rectangle(0, 0, imagePage2.Width, imagePage2.Height);
-    end;
-    for row := 1 to terminalRows do begin
-        for column := 1 to terminalColumns do begin
-            charColor[row, column] := defaultCharColor;
-            backColor[row, column] := defaultBackColor;
+    deleteBeginningOfLine;
+    if terminalCursor.row > 1 then begin
+        for row := 1 to terminalCursor.row - 1 do begin
+            for column := 1 to terminalColumns do begin
+                terminalCharData[row, column] := ' ';
+                //terminalCharColor[row, column] := terminalDefaultCharColor;
+                //terminalBackColor[row, column] := terminalDefaultBackColor;
+                terminalCharStyle[row, column] := [];
+            end;
         end;
     end;
-    fontColor := defaultCharColor;
-    backgroundColor := defaultBackColor;
 end;
 
 // --------------------------------------------------------------------------------
-procedure TSystemTerminal.writeCharacter(character: byte);
+procedure eraseScreen;
+var
+    row, column: integer;
+begin
+    for row := 1 to terminalRows do begin
+        for column := 1 to terminalColumns do begin
+            terminalCharData[row, column] := ' ';
+            //terminalCharColor[row, column] := terminalDefaultCharColor;
+            //terminalBackColor[row, column] := terminalDefaultBackColor;
+            terminalCharStyle[row, column] := [];
+        end;
+    end;
+end;
 
-// ----------------------------------------
+// --------------------------------------------------------------------------------
+procedure TTerminalEmulation.Execute;
+var
+    character: byte;
+
+    // ----------------------------------------
     procedure normalTerminalMode;
     begin
         case (character) of
@@ -754,7 +701,18 @@ procedure TSystemTerminal.writeCharacter(character: byte);
                 termMode := DCA_ROW;
             end;
             $5A: begin  // ESC Z (Identify VT52 Mode)
-                keyboardBuffer := keyboardBuffer + char($1B) + char($2F) + char($5A);
+                keyboardBuffer[keyboardWriteIndex] := $1B;
+                Inc(keyboardWriteIndex);
+                if (keyboardWriteIndex > 1023) then
+                    keyboardWriteIndex := 0;
+                keyboardBuffer[keyboardWriteIndex] := $2F;
+                Inc(keyboardWriteIndex);
+                if (keyboardWriteIndex > 1023) then
+                    keyboardWriteIndex := 0;
+                keyboardBuffer[keyboardWriteIndex] := $5A;
+                Inc(keyboardWriteIndex);
+                if (keyboardWriteIndex > 1023) then
+                    keyboardWriteIndex := 0;
                 termMode := STANDARD;
             end;
             $5B: begin  // ESC [ (ESC Control Sequenz)
@@ -880,8 +838,8 @@ procedure TSystemTerminal.writeCharacter(character: byte);
                     case csiPar[csiCounter] of
                         0: begin
                             fontStyle := [];
-                            fontColor := defaultCharColor;
-                            backgroundColor := defaultBackColor;
+                            terminalFontColor := terminalDefaultCharColor;
+                            terminalBackgroundColor := terminalDefaultBackColor;
                         end;
                         1: begin
                             fontStyle := fontStyle + [fsBold];
@@ -894,8 +852,8 @@ procedure TSystemTerminal.writeCharacter(character: byte);
                         end;
                         7: begin
                             fontStyle := fontStyle + [fsBold];
-                            tmpFontColor := fontColor;
-                            fontColor := clGray;
+                            tmpFontColor := terminalFontColor;
+                            terminalFontColor := clGray;
                         end;
                         22: begin
                             fontStyle := fontStyle - [fsBold];
@@ -908,55 +866,55 @@ procedure TSystemTerminal.writeCharacter(character: byte);
                         end;
                         27: begin
                             fontStyle := fontStyle - [fsBold];
-                            fontColor := tmpFontColor;
+                            terminalFontColor := tmpFontColor;
                         end;
                         30: begin
-                            fontColor := clBlack;
+                            terminalFontColor := clBlack;
                         end;
                         31: begin
-                            fontColor := clRed;
+                            terminalFontColor := clRed;
                         end;
                         32: begin
-                            fontColor := clLime;
+                            terminalFontColor := clLime;
                         end;
                         33: begin
-                            fontColor := clYellow;
+                            terminalFontColor := clYellow;
                         end;
                         34: begin
-                            fontColor := clBlue;
+                            terminalFontColor := clBlue;
                         end;
                         35: begin
-                            fontColor := $FF00FF;
+                            terminalFontColor := $FF00FF;
                         end;
                         36: begin
-                            fontColor := $00FFFF;
+                            terminalFontColor := $00FFFF;
                         end;
                         37: begin
-                            fontColor := clWhite;
+                            terminalFontColor := clWhite;
                         end;
                         40: begin
-                            backgroundColor := clBlack;
+                            terminalBackgroundColor := clBlack;
                         end;
                         41: begin
-                            backgroundColor := clRed;
+                            terminalBackgroundColor := clRed;
                         end;
                         42: begin
-                            backgroundColor := clLime;
+                            terminalBackgroundColor := clLime;
                         end;
                         43: begin
-                            backgroundColor := clYellow;
+                            terminalBackgroundColor := clYellow;
                         end;
                         44: begin
-                            backgroundColor := clBlue;
+                            terminalBackgroundColor := clBlue;
                         end;
                         45: begin
-                            backgroundColor := $FF00FF;
+                            terminalBackgroundColor := $FF00FF;
                         end;
                         46: begin
-                            backgroundColor := $00FFFF;
+                            terminalBackgroundColor := $00FFFF;
                         end;
                         47: begin
-                            backgroundColor := clWhite;
+                            terminalBackgroundColor := clWhite;
                         end;
                     end;
                 end;
@@ -1013,8 +971,8 @@ procedure TSystemTerminal.writeCharacter(character: byte);
             end;
             $6D: begin  // ESC [ m (Clear all character attributes)
                 fontStyle := [];
-                fontColor := defaultCharColor;
-                backgroundColor := defaultBackColor;
+                terminalFontColor := terminalDefaultCharColor;
+                terminalBackgroundColor := terminalDefaultBackColor;
                 termMode := STANDARD;
             end;
             $66: begin  // ESC [ f (Cursor home)
@@ -1029,179 +987,78 @@ procedure TSystemTerminal.writeCharacter(character: byte);
 
     // ----------------------------------------
 begin
-    case termMode of
-        STANDARD: normalTerminalMode;
-        VT52_ESC: vt52EscapeMode;
-        ANSI_ESC: ansiEscapeMode;
-        ANSI_ESC_PAR: ansiEscapeModeParameter;
-        DCA_ROW: begin
-            if (character >= $20) then begin
-                dcaRow := character - $20;
-                termMode := DCA_COLUMN;
-            end
-            else begin
-                termMode := STANDARD;
-            end;
-        end;
-        DCA_COLUMN: begin
-            if (character >= $20) then begin
-                setCursorPosition(dcaRow, character - $20);
-            end;
-            termMode := STANDARD;
-        end;
-    end;
-    if (enableTerminalLogging) then begin
-        Write(loggingFile, chr(character));
-    end;
-end;
+    repeat
 
-// --------------------------------------------------------------------------------
-function TSystemTerminal.readCharacter(getStatus: boolean): byte;
-var
-    Data: byte;
-begin
-    if (getStatus) then begin
-        if (keyboardBuffer.Length = 0) then begin
-            Data := $00;
+        if (characterReadIndex = characterWriteIndex) then begin
+            Sleep(50);
         end
         else begin
-            Data := $FF;
+            character := characterBuffer[characterReadIndex];
+            Inc(characterReadIndex);
+            if (characterReadIndex > 1023) then
+                characterReadIndex := 0;
+
+            case termMode of
+                STANDARD: normalTerminalMode;
+                VT52_ESC: vt52EscapeMode;
+                ANSI_ESC: ansiEscapeMode;
+                ANSI_ESC_PAR: ansiEscapeModeParameter;
+                DCA_ROW: begin
+                    if (character >= $20) then begin
+                        dcaRow := character - $20;
+                        termMode := DCA_COLUMN;
+                    end
+                    else begin
+                        termMode := STANDARD;
+                    end;
+                end;
+                DCA_COLUMN: begin
+                    if (character >= $20) then begin
+                        setCursorPosition(dcaRow, character - $20);
+                    end;
+                    termMode := STANDARD;
+                end;
+            end;
+
+            if (enableTerminalLogging) then begin
+                Write(loggingFile, chr(character));
+            end;
+
         end;
-    end
-    else begin
-        Data := byte(keyboardBuffer[1]);
-        Delete(keyboardBuffer, 1, 1);
-    end;
-    Result := Data;
+
+    until (Terminated);
+
 end;
 
 // --------------------------------------------------------------------------------
-procedure TSystemTerminal.getKeyBoardInput(key: word; shift: TShiftState);
-var
-    character: byte;
+constructor TTerminalEmulation.Create(CreateSuspended: boolean);
 begin
-    character := $00;
-    if (Shift = []) then begin
-        case key of
-            08: character := $7F;
-            09: character := key; // TAB
-            13: character := key; // ENTER
-            27: character := $1B; // ESC
-            32: character := $20; // SPACE
-            33: character := $12; // Ctrl R
-            34: character := $03; // Ctrl C
-            37: character := $13; // links
-            38: character := $05; // oben
-            39: character := $04; // rechts
-            40: character := $18; // unten
-            45: character := $16; // Einfg = Ctrl V
-            46: character := $07; // Entf = Ctrl G
-            48..57: character := key; // 0..9
-            65..90: character := key + 32; // a..z
-            187: character := $2B; // +
-            188: character := $2C; // ,
-            189: character := $2D; // -
-            190: character := $2E; // .
-            111: character := $3A; // NUM :
-            106: character := $2A; // NUM *
-            109: character := $2D; // NUM -
-            107: character := $2B; // NUM +
-            96..105: character := key - 48; // NUM 0..9
-            {$ifdef Windows}
-            110: character := $2E; // NUM .
-            191: character := $23; // #
-            219: character := $73; // s
-            220: character := $5E; // ^
-            221: character := $27; // `
-            226: character := $3C; // <
-            {$else}
-            108: character := $2E; // NUM .
-            222: character := $23; // #
-            220: character := $73; // s
-            150: character := $5E; // ^
-            146: character := $27; // `
-            225: character := $3C; // <
-            {$endif}
-            else character := $00;
-        end;
-    end;
-
-    if ((Shift = [ssShift]) and (key <> 16)) then begin
-        case key of
-            00: character := key;
-            48: character := $3D; // =
-            49: character := $21; // !
-            50: character := $22; // "
-            51: character := $23; // §
-            52: character := $24; // $
-            53: character := $25; // %
-            54: character := $26; // &
-            55: character := $2F; // /
-            56: character := $28; // (
-            57: character := $29; // )
-            65..90: character := key; // A..Z
-            187: character := $2A; // *
-            188: character := $3B; // ;
-            189: character := $5F; // _
-            190: character := $3A; // :
-            {$ifdef Windows}
-            191: character := $27; // '
-            219: character := $3F; // ?
-            220: character := $7E; // ° -> ~
-            221: character := $60; // `
-            226: character := $3E; // >
-            {$else}
-            222: character := $27; // '
-            220: character := $3F; // ?
-            150: character := $7E; // ° -> ~
-            146: character := $60; // `
-            225: character := $3E; // >
-            {$endif}
-            else character := $00;
-        end;
-    end;
-
-    if ((Shift = [ssCtrl]) and (key <> 17)) then begin
-        if (key > 64) and (key < 91) then begin
-            character := key - 64;
-        end;
-    end;
-
-    if ((Shift = [ssAlt..ssCtrl]) and (key <> 18)) then begin
-        case key of
-            48: character := $7D; // }
-            55: character := $7B; // {
-            56: character := $5B; // [
-            57: character := $5D; // ]
-            81: character := $40; // @
-            187: character := $7E; // ~
-            {$ifdef Windows}
-            219: character := $5C; // \
-            226: character := $7C; // |
-            {$else}
-            220: character := $5C; // \
-            225: character := $7C; // |
-            {$endif}
-            else character := $00;
-        end;
-    end;
-
-    if character > $00 then begin
-        keyboardBuffer := keyboardBuffer + char(character);
-        if (enableLocalEcho) then begin
-            writeCharacter(character);
-        end;
-    end;
+    FreeOnTerminate := False;
+    inherited Create(CreateSuspended);
 end;
 
 // --------------------------------------------------------------------------------
+initialization
+    begin
+        enableCrLf := False;
+        enableLocalEcho := False;
+        setTerminalLogging(False);
+        terminalReset;
+        characterReadIndex := 0;
+        characterWriteIndex := 0;
+        keyboardReadIndex := 0;
+        keyboardWriteIndex := 0;
+        TerminalEmulation := TTerminalEmulation.Create(False);
+    end;
+
+    // --------------------------------------------------------------------------------
+finalization
+    begin
+        TerminalEmulation.Terminate;
+        TerminalEmulation.Free;
+    end;
+
+    // --------------------------------------------------------------------------------
 end.
-
-
-
-
-
-
-
 
 
