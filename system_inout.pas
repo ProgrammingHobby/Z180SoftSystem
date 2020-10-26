@@ -92,7 +92,7 @@ begin
             readValue := SystemFdc.getExtStatus;
         end;
         $7D: begin
-            readValue := SystemRtc.read;
+            readValue := SystemRtc.Read;
         end;
         $A0: begin
             readValue := SystemHdc.getDataLow;
@@ -149,7 +149,7 @@ begin
             SystemRtc.setAddress(Data);
         end;
         $7D: begin
-            SystemRtc.write(Data);
+            SystemRtc.Write(Data);
         end;
         $A0: begin
             SystemHdc.setDataLow(Data);
@@ -187,19 +187,19 @@ end;
 // --------------------------------------------------------------------------------
 procedure TSystemInOut.cpuTXA0(Data: byte);
 begin
-    writeTerminalCharacter(Data);
+    SystemTerminal.writeCharacter(Data);
 end;
 
 // --------------------------------------------------------------------------------
 function TSystemInOut.cpuCanReadRXA0: boolean;
 begin
-    Result := terminalReadable;
+    Result := SystemTerminal.terminalReadable;
 end;
 
 // --------------------------------------------------------------------------------
 function TSystemInOut.cpuRXA0: byte;
 begin
-    Result := readTerminalCharacter;
+    Result := SystemTerminal.readCharacter;
 end;
 
 // --------------------------------------------------------------------------------

@@ -32,8 +32,6 @@ type
         actionClose: TAction;
         actionLoadFileToRam: TAction;
         actionlistMainWindow: TActionList;
-        imagePage1: TImage;
-        imagePage2: TImage;
         imagelistMainWindow: TImageList;
         menuCpuCoreRegister: TMenuItem;
         menuCpuIoRegister: TMenuItem;
@@ -79,8 +77,6 @@ type
         popupmenuRunSpeed: TPopupMenu;
         popupmenuSlowRunSpeed: TPopupMenu;
         statusbarMainWindow: TPanel;
-        cursorFlash: TTimer;
-        terminalPageRefresh: TTimer;
         toolbarMainWindow: TToolBar;
         toolbuttonTerminal: TToolButton;
         toolbuttonSeparator5: TToolButton;
@@ -116,9 +112,7 @@ type
         procedure actionTerminalSettingsExecute(Sender: TObject);
         procedure cpuRunTimer(Sender: TObject);
         procedure cpuSlowRunTimer(Sender: TObject);
-        procedure cursorFlashTimer(Sender: TObject);
         procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
-        procedure FormCreate(Sender: TObject);
         procedure FormKeyDown(Sender: TObject; var Key: word; Shift: TShiftState);
         procedure FormKeyUp(Sender: TObject; var Key: word; Shift: TShiftState);
         procedure FormShow(Sender: TObject);
@@ -127,7 +121,6 @@ type
         procedure panelHddPaint(Sender: TObject);
         procedure popupRunSpeedClick(Sender: TObject);
         procedure popupSlowRunSpeedClick(Sender: TObject);
-        procedure terminalPageRefreshTimer(Sender: TObject);
 
     private
         bootRomEnabled: boolean;
@@ -135,7 +128,6 @@ type
         {$ifndef Windows}
         isKeyAltGr: boolean;
         {$endif}
-        procedure setInverseScreen(enable: boolean);
         procedure setSlowRunSpeed;
         procedure setRunSpeed;
     public
@@ -162,7 +154,6 @@ begin
         cpuRun.Enabled := False;
         cpuRun.OnTimer := nil;
     end;
-
     FreeAndNil(CpuRegister);
     FreeAndNil(MemoryEditor);
     FreeAndNil(CpuIoRegister);
@@ -173,42 +164,9 @@ begin
     FreeAndNil(SystemHdc);
     FreeAndNil(SystemRtc);
     FreeAndNil(SystemMemory);
+    FreeAndNil(SystemTerminal);
     SystemSettings.saveFormState(TForm(self));
     CloseAction := caFree;
-end;
-
-procedure TMainWindow.FormCreate(Sender: TObject);
-var
-    pageWidth, pageHeight: integer;
-begin
-  {$ifdef Windows}
-    panelSystemTerminal.Font.Name := 'Consolas';
-    panelSystemTerminal.Font.Size := 12;
-    pageWidth := ((terminalCharWidth + 2) * terminalColumns) + terminalCharWidth;
-    {$else}
-    panelSystemTerminal.Font.Name := 'Courier New';
-    panelSystemTerminal.Font.Size := 12;
-    pageWidth := (terminalCharWidth * terminalColumns) + terminalCharWidth;
-    {$endif}
-    pageHeight := (terminalCharHeight * terminalRows) + terminalCharHeight;
-
-    imagePage1.Parent := panelSystemTerminal;
-    with (imagePage1) do begin
-        Top := 0;
-        Left := 0;
-        Width := pageWidth;
-        Height := pageHeight;
-        Canvas.Font := panelSystemTerminal.Font;
-    end;
-
-    imagePage2.Parent := panelSystemTerminal;
-    with (imagePage2) do begin
-        Top := 0;
-        Left := 0;
-        Width := pageWidth;
-        Height := pageHeight;
-        Canvas.Font := panelSystemTerminal.Font;
-    end;
 end;
 
 // --------------------------------------------------------------------------------
@@ -228,9 +186,9 @@ begin
     else begin
         termShift := Shift;
     end;
-    getKeyBoardInput(Key, termShift);
+    SystemTerminal.getKeyBoardInput(Key, termShift);
     {$else}
-    getKeyBoardInput(Key, Shift);
+    SystemTerminal.getKeyBoardInput(Key, Shift);
     {$endif}
 end;
 
@@ -268,7 +226,7 @@ begin
     SystemRtc := TSystemRtc.Create;
     SystemInOut := TSystemInOut.Create;
     Z180Cpu := TZ180Cpu.Create;
-
+    SystemTerminal := TSystemTerminal.Create(panelSystemTerminal, False);
     SystemMemory.setBootRomSize(SystemSettings.ReadString('Memory', 'RomSize', '8KB'));
     SystemMemory.setSystemRamSize(SystemSettings.ReadString('Memory', 'RamSize', '64KB'));
     SystemMemory.EnableReloadImageOnEnable(SystemSettings.ReadBoolean('Memory', 'ReloadOnEnable', False));
@@ -280,10 +238,10 @@ begin
     SystemMemory.SetRomImageFile(ImageFile);
     bootRomEnabled := SystemMemory.isRomFileValid;
 
-    setTerminalCrLF(SystemSettings.ReadBoolean('Terminal', 'UseCRLF', False));
-    setTerminalLocalEcho(SystemSettings.ReadBoolean('Terminal', 'LocalEcho', False));
-    setTerminalLogging(SystemSettings.ReadBoolean('Terminal', 'Loggin', False));
-    setInverseScreen(SystemSettings.ReadBoolean('Terminal', 'InverseScreen', False));
+    SystemTerminal.setCrLF(SystemSettings.ReadBoolean('Terminal', 'UseCRLF', False));
+    SystemTerminal.setLocalEcho(SystemSettings.ReadBoolean('Terminal', 'LocalEcho', False));
+    SystemTerminal.setTerminalLogging(SystemSettings.ReadBoolean('Terminal', 'Loggin', False));
+    SystemTerminal.setInverseScreen(SystemSettings.ReadBoolean('Terminal', 'InverseScreen', False));
 
     SystemFdc.setFdd0StatusPanel(panelFdd0);
     SystemFdc.setFdd0Sides(SystemSettings.ReadInteger('Fdd0', 'Sides', 2));
@@ -363,23 +321,23 @@ end;
 procedure TMainWindow.popupRunSpeedClick(Sender: TObject);
 begin
     if (Sender = popup4Mhz) then begin
-        runSpeedValue := 2000;
+        runSpeedValue := 2500;
         SystemSettings.WriteInteger('Emulation', 'RunSpeed', 0);
     end
     else if (Sender = popup8Mhz) then begin
-        runSpeedValue := 4000;
+        runSpeedValue := 4500;
         SystemSettings.WriteInteger('Emulation', 'RunSpeed', 1);
     end
     else if (Sender = popup12Mhz) then begin
-        runSpeedValue := 6000;
+        runSpeedValue := 6500;
         SystemSettings.WriteInteger('Emulation', 'RunSpeed', 2);
     end
     else if (Sender = popup16Mhz) then begin
-        runSpeedValue := 8000;
+        runSpeedValue := 8500;
         SystemSettings.WriteInteger('Emulation', 'RunSpeed', 3);
     end
     else begin
-        runSpeedValue := 2000;
+        runSpeedValue := 2500;
         SystemSettings.WriteInteger('Emulation', 'RunSpeed', 0);
     end;
 end;
@@ -407,91 +365,6 @@ begin
         cpuRun.Interval := 1000;
         SystemSettings.WriteInteger('Emulation', 'SlowRunSpeed', 0);
     end;
-end;
-
-// --------------------------------------------------------------------------------
-procedure TMainWindow.terminalPageRefreshTimer(Sender: TObject);
-var
-    row, column, posX, posY: integer;
-    viewChar: char;
-begin
-    terminalPageRefresh.Enabled := False;
-    for row := 1 to terminalRows do begin
-        posY := terminalStartTop + (terminalCharHeight * row);
-        for column := 1 to terminalColumns do begin
-            if (terminalCursor.Visible and (row = terminalCursor.row) and (column = terminalCursor.column)) then begin
-                viewchar := terminalCursor.cursorChar;
-            end
-            else begin
-                viewchar := terminalCharData[row, column];
-            end;
-            {$ifdef Windows}
-            posX := terminalStartLeft + ((terminalCharWidth + 2) * column);
-            {$else}
-            posX := terminalStartLeft + (terminalCharWidth * column);
-            {$endif}
-            if (imagePage1.Visible) then begin
-                imagePage2.Canvas.Brush.Color := terminalBackColor[row, column];
-                imagePage2.Canvas.Font.Color := terminalCharColor[row, column];
-                imagePage2.Canvas.Font.Style := terminalCharStyle[row, column];
-                {$ifdef Windows}
-                imagePage2.Canvas.Rectangle(posX - 2, posY, posX + terminalCharWidth + 1, posY + terminalCharHeight);
-                {$else}
-                imagePage2.Canvas.Rectangle(posX - 1, posY, posX + terminalCharWidth + 1, posY + terminalCharHeight);
-                {$endif}
-                imagePage2.Canvas.TextOut(posX, posY, viewChar);
-            end
-            else begin
-                imagePage1.Canvas.Brush.Color := terminalBackColor[row, column];
-                imagePage1.Canvas.Font.Color := terminalCharColor[row, column];
-                imagePage1.Canvas.Font.Style := terminalCharStyle[row, column];
-                 {$ifdef Windows}
-                imagePage1.Canvas.Rectangle(posX - 2, posY, posX + terminalCharWidth + 1, posY + terminalCharHeight);
-                {$else}
-                imagePage1.Canvas.Rectangle(posX - 1, posY, posX + terminalCharWidth + 1, posY + terminalCharHeight);
-                {$endif}
-                imagePage1.Canvas.TextOut(posX, posY, viewChar);
-            end;
-        end;
-    end;
-    imagePage1.Visible := imagePage2.Visible;
-    imagePage2.Visible := not imagePage1.Visible;
-    terminalPageRefresh.Enabled := True;
-end;
-
-// --------------------------------------------------------------------------------
-procedure TMainWindow.setInverseScreen(enable: boolean);
-var
-    row, column: integer;
-begin
-    if (enable) then begin
-        terminalDefaultCharColor := clWhite;
-        terminalDefaultBackColor := clBlack;
-    end
-    else begin
-        terminalDefaultCharColor := clBlack;
-        terminalDefaultBackColor := clWhite;
-    end;
-    with (imagePage1) do begin
-        Canvas.Font.Color := terminalDefaultCharColor;
-        Canvas.Brush.Color := terminalDefaultBackColor;
-        Canvas.Pen.Color := terminalDefaultBackColor;
-        Canvas.Rectangle(0, 0, imagePage1.Width, imagePage1.Height);
-    end;
-    with (imagePage2) do begin
-        Canvas.Font.Color := terminalDefaultCharColor;
-        Canvas.Brush.Color := terminalDefaultBackColor;
-        Canvas.Pen.Color := terminalDefaultBackColor;
-        Canvas.Rectangle(0, 0, imagePage2.Width, imagePage2.Height);
-    end;
-    for row := 1 to terminalRows do begin
-        for column := 1 to terminalColumns do begin
-            terminalCharColor[row, column] := terminalDefaultCharColor;
-            terminalBackColor[row, column] := terminalDefaultBackColor;
-        end;
-    end;
-    terminalFontColor := terminalDefaultCharColor;
-    terminalBackgroundColor := terminalDefaultBackColor;
 end;
 
 // --------------------------------------------------------------------------------
@@ -527,23 +400,23 @@ begin
     case (SystemSettings.ReadInteger('Emulation', 'RunSpeed', 0)) of
         0: begin
             popup4Mhz.Checked := True;
-            runSpeedValue := 2000;
+            runSpeedValue := 2500;
         end;
         1: begin
             popup8Mhz.Checked := True;
-            runSpeedValue := 4000;
+            runSpeedValue := 4500;
         end;
         2: begin
             popup12Mhz.Checked := True;
-            runSpeedValue := 6000;
+            runSpeedValue := 6500;
         end;
         3: begin
             popup16Mhz.Checked := True;
-            runSpeedValue := 8000;
+            runSpeedValue := 8500;
         end;
         else begin
             popup4Mhz.Checked := True;
-            runSpeedValue := 2000;
+            runSpeedValue := 2500;
         end;
     end;
 end;
@@ -569,19 +442,6 @@ begin
     if Assigned(CpuIoRegister) then begin
         CpuIoRegister.showRegisterData;
     end;
-end;
-
-// --------------------------------------------------------------------------------
-procedure TMainWindow.cursorFlashTimer(Sender: TObject);
-begin
-  cursorFlash.Enabled := False;
-    if (terminalCursor.Visible) then begin
-        terminalCursor.Visible := False;
-    end
-    else begin
-        terminalCursor.Visible := True;
-    end;
-    cursorFlash.Enabled := True;
 end;
 
 // --------------------------------------------------------------------------------
@@ -628,7 +488,7 @@ end;
 procedure TMainWindow.actionResetExecute(Sender: TObject);
 begin
     Z180Cpu.reset;
-    terminalReset;
+    //SystemTerminal.terminalReset;
     SystemMemory.EnableBootRom(bootRomEnabled);
     if Assigned(MemoryEditor) then begin
         MemoryEditor.showMemoryData;
@@ -729,16 +589,16 @@ begin
     dialog.ShowModal;
     dialogResult := dialog.getResult;
     if ((dialogResult and $0001) <> 0) then begin
-        setTerminalCrLF(SystemSettings.ReadBoolean('Terminal', 'UseCRLF', False));
+        SystemTerminal.setCrLF(SystemSettings.ReadBoolean('Terminal', 'UseCRLF', False));
     end;
     if ((dialogResult and $0002) <> 0) then begin
-        setTerminalLocalEcho(SystemSettings.ReadBoolean('Terminal', 'LocalEcho', False));
+        SystemTerminal.setLocalEcho(SystemSettings.ReadBoolean('Terminal', 'LocalEcho', False));
     end;
     if ((dialogResult and $0004) <> 0) then begin
-        setTerminalLogging(SystemSettings.ReadBoolean('Terminal', 'Loggin', False));
+        SystemTerminal.setTerminalLogging(SystemSettings.ReadBoolean('Terminal', 'Loggin', False));
     end;
     if ((dialogResult and $0008) <> 0) then begin
-        setInverseScreen(SystemSettings.ReadBoolean('Terminal', 'InverseScreen', False));
+        SystemTerminal.setInverseScreen(SystemSettings.ReadBoolean('Terminal', 'InverseScreen', False));
     end;
 end;
 

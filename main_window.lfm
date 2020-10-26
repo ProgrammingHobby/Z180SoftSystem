@@ -8,12 +8,11 @@ object MainWindow: TMainWindow
   VertScrollBar.Page = 108
   VertScrollBar.Range = 108
   Caption = 'Z180SoftSystem   (c) Uwe Merker 2020'
-  ClientHeight = 460
+  ClientHeight = 480
   ClientWidth = 778
   KeyPreview = True
   Menu = menuMainWindow
   OnClose = FormClose
-  OnCreate = FormCreate
   OnKeyDown = FormKeyDown
   OnKeyUp = FormKeyUp
   OnShow = FormShow
@@ -175,8 +174,6 @@ object MainWindow: TMainWindow
     Width = 778
     Align = alClient
     BevelOuter = bvNone
-    ClientHeight = 420
-    ClientWidth = 778
     Font.CharSet = ANSI_CHARSET
     Font.Color = clBlack
     Font.Height = -13
@@ -186,18 +183,6 @@ object MainWindow: TMainWindow
     ParentColor = False
     ParentFont = False
     TabOrder = 1
-    object imagePage1: TImage
-      Left = 111
-      Height = 90
-      Top = 107
-      Width = 90
-    end
-    object imagePage2: TImage
-      Left = 343
-      Height = 90
-      Top = 125
-      Width = 90
-    end
   end
   object statusbarMainWindow: TPanel
     Left = 0
@@ -347,8 +332,8 @@ object MainWindow: TMainWindow
     Top = 288
   end
   object cpuRun: TTimer
-    Left = 16
-    Top = 416
+    Left = 376
+    Top = 288
   end
   object imagelistMainWindow: TImageList
     Height = 24
@@ -2331,17 +2316,5 @@ object MainWindow: TMainWindow
       RadioItem = True
       OnClick = popupRunSpeedClick
     end
-  end
-  object cursorFlash: TTimer
-    Interval = 600
-    OnTimer = cursorFlashTimer
-    Left = 88
-    Top = 416
-  end
-  object terminalPageRefresh: TTimer
-    Interval = 20
-    OnTimer = terminalPageRefreshTimer
-    Left = 208
-    Top = 416
   end
 end
