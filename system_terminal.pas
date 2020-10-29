@@ -243,7 +243,7 @@ begin
     setTerminalLogging(False);
     terminalReset;
 
-    FreeOnTerminate := True;
+    FreeOnTerminate := False;
     inherited Create(CreateSuspended);
 end;
 // --------------------------------------------------------------------------------
@@ -256,6 +256,7 @@ begin
     if (enableTerminalLogging) then begin
         CloseFile(loggingFile);
     end;
+    Terminate;
     inherited Destroy;
 end;
 
