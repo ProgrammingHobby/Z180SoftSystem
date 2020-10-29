@@ -14,59 +14,11 @@ type
     TSystemHdc = class
 
     private   // Attribute
-        type
-        TByteArray = array of byte;
-        TBitReg8 = bitpacked record
-            case byte of
-                0: (Value: byte); // 8Bit Register Value
-                2: (bit: bitpacked array[0..7] of boolean); // Bit Data
-        end;
-
-        Treg16 = packed record
-            case byte of
-                0: (Value: word); // 16Bit Register
-                1: (low: byte;    // lower 8Bit
-                    high: byte);  // upper 8Bit
-        end;
-
-        Treg32 = packed record
-            case byte of
-                0: (Value: dword); // 32Bit Register
-                1: (low: Treg16;   // lower 16Bit
-                    high: Treg16); // upper 16Bit
-        end;
-
-        TDataMode = (SECTOR_READ, SECTOR_WRITE, BUFFER_READ, BUFFER_WRITE, ID_READ);
-
-        THardDriveData = record
-            Heads: byte;
-            Tracks: word;
-            Sectors: byte;
-            ImageFileName: string;
-            Size: dword;
-            ImageChanged: boolean;
-            HddStatus: TPanel;
-        end;
-
-    var
-        dataBuffer: TByteArray;
-        dataCount: dword;
-        dataMode: TDataMode;
-        timerHddStatus: TTimer;
-        hardDrive: THardDriveData;
-        hddData: file;
-        hdcDataHigh: byte;
-        hdcTrack: Treg16;
-        hdcSector: byte;
-        hdcSectorCount: word;
-        hdcDriveHead: TBitReg8;
-        hdcFeatures: byte;
-        hdcStatus: TBitReg8;
-        hdcError: TBitReg8;
-        hdcLba: Treg32;
-        enable8BitDataTransfer: boolean;
 
     const
+        // Konstante für die Anzahl an Bytes / Sektor
+        SECBYTES = 512;
+
         // Konstanten der Bit-Adressen im HDC-Error Register
         AMNF = 0;  // indicates the data address mark has not been found after finding the correct ID field.
         TK0NF = 1; // indicates track 0 has not been found during the command.
@@ -122,8 +74,56 @@ type
         //            executing the Initialize Drive Parameters command, HEAD
         //            specifies the maximum head address.
 
-        // Konstante für die Anzahl an Bytes / Sektor
-        SECBYTES = 512;
+        type
+        TBitReg8 = bitpacked record
+            case byte of
+                0: (Value: byte); // 8Bit Register Value
+                2: (bit: bitpacked array[0..7] of boolean); // Bit Data
+        end;
+
+        Treg16 = packed record
+            case byte of
+                0: (Value: word); // 16Bit Register
+                1: (low: byte;    // lower 8Bit
+                    high: byte);  // upper 8Bit
+        end;
+
+        Treg32 = packed record
+            case byte of
+                0: (Value: dword); // 32Bit Register
+                1: (low: Treg16;   // lower 16Bit
+                    high: Treg16); // upper 16Bit
+        end;
+
+        TDataMode = (SECTOR_READ, SECTOR_WRITE, BUFFER_READ, BUFFER_WRITE, ID_READ);
+
+        THardDriveData = record
+            Heads: byte;
+            Tracks: word;
+            Sectors: byte;
+            ImageFileName: string;
+            Size: dword;
+            ImageChanged: boolean;
+            HddStatus: TPanel;
+        end;
+
+    var
+        dataBuffer: array[0..SECBYTES - 1] of byte;
+        dataCount: dword;
+        dataMode: TDataMode;
+        timerHddStatus: TTimer;
+        hardDrive: THardDriveData;
+        hddData: file;
+        hdcDataHigh: byte;
+        hdcTrack: Treg16;
+        hdcSector: byte;
+        hdcSectorCount: word;
+        hdcDriveHead: TBitReg8;
+        hdcFeatures: byte;
+        hdcStatus: TBitReg8;
+        hdcError: TBitReg8;
+        hdcLba: Treg32;
+        enable8BitDataTransfer: boolean;
 
     protected // Attribute
 
@@ -156,7 +156,7 @@ type
         procedure setHddHeads(heads: byte);
         procedure setHddTracks(tracks: word);
         procedure setHddSectors(sectors: byte);
-        function setHddImage(fileName: string): boolean;
+        procedure setHddImage(fileName: string);
         procedure setHddStatusPanel(var panel: TPanel);
         procedure setDataLow(Value: byte);
         procedure setDataHigh(Value: byte);
@@ -194,7 +194,6 @@ begin
     timerHddStatus.Enabled := False;
     timerHddStatus.Interval := 50;
     timerHddStatus.OnTimer := @setHddOffState;
-    SetLength(dataBuffer, SECBYTES);
     doReset;
 end;
 
@@ -360,8 +359,8 @@ begin
     idword.Value := 1; //  Buffer size in 512 byte increments
     dataBuffer[42] := idword.low;
     dataBuffer[43] := idword.high;
-    dataBuffer[49]:=%00000000; // Vendor unique
-    dataBuffer[50]:=%00000010; // LBA supported
+    dataBuffer[49] := %00000000; // Vendor unique
+    dataBuffer[50] := %00000010; // LBA supported
     idword.Value := hardDrive.Tracks; // Number of current cylinders
     dataBuffer[108] := idword.low;
     dataBuffer[109] := idword.high;
@@ -545,7 +544,7 @@ begin
 end;
 
 // --------------------------------------------------------------------------------
-function TSystemHdc.setHddImage(fileName: string): boolean;
+procedure TSystemHdc.setHddImage(fileName: string);
 var
     isLoaded: boolean;
     imageFileSize: dword;
@@ -579,7 +578,6 @@ begin
     hdcStatus.bit[DRDY] := isLoaded;
     hdcStatus.bit[DSC] := isLoaded;
     hardDrive.HddStatus.Enabled := isLoaded;
-    Result := isLoaded;
 end;
 
 // --------------------------------------------------------------------------------
