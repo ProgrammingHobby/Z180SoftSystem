@@ -13,6 +13,7 @@ object HddSettings: THddSettings
   ClientWidth = 1079
   OnClose = FormClose
   OnShow = FormShow
+  LCLVersion = '2.0.10.0'
   object groupboxHddGeometrie: TGroupBox
     Left = 0
     Height = 297
@@ -39,8 +40,8 @@ object HddSettings: THddSettings
       ChildSizing.EnlargeVertical = crsHomogenousChildResize
       ChildSizing.Layout = cclLeftToRightThenTopToBottom
       ChildSizing.ControlsPerLine = 2
-      ClientHeight = 271
-      ClientWidth = 264
+      ClientHeight = 275
+      ClientWidth = 268
       TabOrder = 0
       object labelHddHeads: TLabel
         Left = 0
@@ -80,8 +81,8 @@ object HddSettings: THddSettings
       ChildSizing.EnlargeVertical = crsHomogenousChildResize
       ChildSizing.Layout = cclLeftToRightThenTopToBottom
       ChildSizing.ControlsPerLine = 2
-      ClientHeight = 271
-      ClientWidth = 272
+      ClientHeight = 275
+      ClientWidth = 276
       TabOrder = 1
       object labelHddTracks: TLabel
         Left = 0
@@ -121,8 +122,8 @@ object HddSettings: THddSettings
       ChildSizing.EnlargeVertical = crsHomogenousChildResize
       ChildSizing.Layout = cclLeftToRightThenTopToBottom
       ChildSizing.ControlsPerLine = 2
-      ClientHeight = 271
-      ClientWidth = 282
+      ClientHeight = 275
+      ClientWidth = 286
       TabOrder = 2
       object labelHddSectors: TLabel
         Left = 0
@@ -163,8 +164,8 @@ object HddSettings: THddSettings
       ChildSizing.EnlargeVertical = crsHomogenousChildResize
       ChildSizing.Layout = cclLeftToRightThenTopToBottom
       ChildSizing.ControlsPerLine = 2
-      ClientHeight = 271
-      ClientWidth = 235
+      ClientHeight = 275
+      ClientWidth = 239
       TabOrder = 3
       object labelHddSize: TLabel
         Left = 0

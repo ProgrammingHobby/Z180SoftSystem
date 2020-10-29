@@ -5,7 +5,7 @@ unit Hdd_Settings;
 interface
 
 uses
-    Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, ExtCtrls, EditBtn, SpinEx, Types;
+    Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, ExtCtrls, EditBtn, SpinEx;
 
 type
 
