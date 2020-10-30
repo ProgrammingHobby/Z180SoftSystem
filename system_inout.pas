@@ -86,7 +86,7 @@ begin
             readValue := SystemFdc.getSector;
         end;
         $73: begin
-            readValue := SystemFdc.readData;
+            readValue := SystemFdc.getData;
         end;
         $74: begin
             readValue := SystemFdc.getExtStatus;
@@ -140,7 +140,7 @@ begin
             SystemFdc.setSector(Data);
         end;
         $73: begin
-            SystemFdc.writeData(Data);
+            SystemFdc.setData(Data);
         end;
         $78: begin
             SystemFdc.setExtControl(Data);
