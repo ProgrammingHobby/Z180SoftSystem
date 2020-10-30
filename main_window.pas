@@ -488,7 +488,7 @@ end;
 procedure TMainWindow.actionResetExecute(Sender: TObject);
 begin
     Z180Cpu.reset;
-    //SystemTerminal.terminalReset;
+    SystemTerminal.terminalReset;
     SystemMemory.EnableBootRom(bootRomEnabled);
     if Assigned(MemoryEditor) then begin
         MemoryEditor.showMemoryData;
