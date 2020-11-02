@@ -203,7 +203,6 @@ end;
 // --------------------------------------------------------------------------------
 procedure TSystemFdc.calcFilePosition;
 begin
-    //filePos := (((((fdcTrack * actualFloppyDrive.Sides) + fdcSide) * actualFloppyDrive.Sectors) + (fdcSector - 1)) * SECBYTES);
     filePos := ((((fdcTrack * actualFloppyDrive.Sides) + fdcSide) * actualFloppyDrive.Sectors) + (fdcSector - 1));
 end;
 
