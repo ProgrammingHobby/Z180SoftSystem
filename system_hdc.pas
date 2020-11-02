@@ -682,17 +682,14 @@ end;
 
 // --------------------------------------------------------------------------------
 function TSystemHdc.getDataLow: byte;
-var
-    dataLow: byte;
 begin
     timerHddStatus.Enabled := True;
-    dataLow := dataBuffer[dataCount];
+    Result := dataBuffer[dataCount];
     Inc(dataCount);
     if (not enable8BitDataTransfer) then begin
         hdcDataHigh := dataBuffer[dataCount];
         Inc(dataCount);
     end;
-    Result := dataLow;
     if (dataCount >= SECBYTES) then begin
         finishReadData;
     end;
