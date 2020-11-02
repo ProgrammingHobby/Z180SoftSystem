@@ -709,7 +709,7 @@ begin
     repeat
 
         if (characterReadIndex = characterWriteIndex) then begin
-            Sleep(10);
+            Sleep(1);
         end
         else begin
             character := characterBuffer[characterReadIndex];
