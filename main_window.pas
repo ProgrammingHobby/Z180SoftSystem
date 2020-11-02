@@ -149,20 +149,20 @@ uses UscaleDPI, System_Settings, Cpu_Register, Cpu_Io_Register, Memory_Editor, M
 
 const
   {$ifndef Windows}
-  RUNSPEED_4MHZ = 2500;
-  RUNSPEED_8MHZ = 4500;
-  RUNSPEED_12MHZ = 6500;
-  RUNSPEED_16MHZ = 8500;
+    RUNSPEED_4MHZ = 2500;
+    RUNSPEED_8MHZ = 4500;
+    RUNSPEED_12MHZ = 6500;
+    RUNSPEED_16MHZ = 8500;
   {$else}
-  RUNSPEED_4MHZ = 6250;
-  RUNSPEED_8MHZ = 11250;
-  RUNSPEED_12MHZ = 16250;
-  RUNSPEED_16MHZ = 21250;
+    RUNSPEED_4MHZ = 6250;
+    RUNSPEED_8MHZ = 11250;
+    RUNSPEED_12MHZ = 16250;
+    RUNSPEED_16MHZ = 21250;
   {$endif}
-  SLOWSPEED_1OPS = 1000;
-  SLOWSPEED_2OPS = 500;
-  SLOWSPEED_5OPS = 200;
-  SLOWSPEED_10OPS = 100;
+    SLOWSPEED_1OPS = 1000;
+    SLOWSPEED_2OPS = 500;
+    SLOWSPEED_5OPS = 200;
+    SLOWSPEED_10OPS = 100;
 
 // --------------------------------------------------------------------------------
 procedure TMainWindow.FormClose(Sender: TObject; var CloseAction: TCloseAction);
