@@ -147,6 +147,23 @@ uses UscaleDPI, System_Settings, Cpu_Register, Cpu_Io_Register, Memory_Editor, M
 
 { TformMainWindow }
 
+const
+  {$ifndef Windows}
+  RUNSPEED_4MHZ = 2500;
+  RUNSPEED_8MHZ = 4500;
+  RUNSPEED_12MHZ = 6500;
+  RUNSPEED_16MHZ = 8500;
+  {$else}
+  RUNSPEED_4MHZ = 6250;
+  RUNSPEED_8MHZ = 11250;
+  RUNSPEED_12MHZ = 16250;
+  RUNSPEED_16MHZ = 21250;
+  {$endif}
+  SLOWSPEED_1OPS = 1000;
+  SLOWSPEED_2OPS = 500;
+  SLOWSPEED_5OPS = 200;
+  SLOWSPEED_10OPS = 100;
+
 // --------------------------------------------------------------------------------
 procedure TMainWindow.FormClose(Sender: TObject; var CloseAction: TCloseAction);
 begin
@@ -321,23 +338,23 @@ end;
 procedure TMainWindow.popupRunSpeedClick(Sender: TObject);
 begin
     if (Sender = popup4Mhz) then begin
-        runSpeedValue := 2500;
+        runSpeedValue := RUNSPEED_4MHZ;
         SystemSettings.WriteInteger('Emulation', 'RunSpeed', 0);
     end
     else if (Sender = popup8Mhz) then begin
-        runSpeedValue := 4500;
+        runSpeedValue := RUNSPEED_8MHZ;
         SystemSettings.WriteInteger('Emulation', 'RunSpeed', 1);
     end
     else if (Sender = popup12Mhz) then begin
-        runSpeedValue := 6500;
+        runSpeedValue := RUNSPEED_12MHZ;
         SystemSettings.WriteInteger('Emulation', 'RunSpeed', 2);
     end
     else if (Sender = popup16Mhz) then begin
-        runSpeedValue := 8500;
+        runSpeedValue := RUNSPEED_16MHZ;
         SystemSettings.WriteInteger('Emulation', 'RunSpeed', 3);
     end
     else begin
-        runSpeedValue := 2500;
+        runSpeedValue := RUNSPEED_4MHZ;
         SystemSettings.WriteInteger('Emulation', 'RunSpeed', 0);
     end;
 end;
@@ -346,24 +363,24 @@ end;
 procedure TMainWindow.popupSlowRunSpeedClick(Sender: TObject);
 begin
     if (Sender = popup1Ops) then begin
-        cpuRun.Interval := 1000;
+        cpuRun.Interval := SLOWSPEED_1OPS;
         SystemSettings.WriteInteger('Emulation', 'SlowRunSpeed', 0);
     end
     else if (Sender = popup2Ops) then begin
-        cpuRun.Interval := 500;
+        cpuRun.Interval := SLOWSPEED_2OPS;
         SystemSettings.WriteInteger('Emulation', 'SlowRunSpeed', 1);
     end
     else if (Sender = popup5Ops) then begin
-        cpuRun.Interval := 200;
+        cpuRun.Interval := SLOWSPEED_5OPS;
         SystemSettings.WriteInteger('Emulation', 'SlowRunSpeed', 2);
     end
     else if (Sender = popup10Ops) then begin
-        cpuRun.Interval := 100;
+        cpuRun.Interval := SLOWSPEED_10OPS;
         SystemSettings.WriteInteger('Emulation', 'SlowRunSpeed', 3);
     end
     else begin
-        cpuRun.Interval := 1000;
-        SystemSettings.WriteInteger('Emulation', 'SlowRunSpeed', 0);
+        cpuRun.Interval := SLOWSPEED_5OPS;
+        SystemSettings.WriteInteger('Emulation', 'SlowRunSpeed', 2);
     end;
 end;
 
@@ -373,23 +390,23 @@ begin
     case (SystemSettings.ReadInteger('Emulation', 'SlowRunSpeed', 2)) of
         0: begin
             popup1Ops.Checked := True;
-            cpuRun.Interval := 1000;
+            cpuRun.Interval := SLOWSPEED_1OPS;
         end;
         1: begin
             popup2Ops.Checked := True;
-            cpuRun.Interval := 500;
+            cpuRun.Interval := SLOWSPEED_2OPS;
         end;
         2: begin
             popup5Ops.Checked := True;
-            cpuRun.Interval := 200;
+            cpuRun.Interval := SLOWSPEED_5OPS;
         end;
         3: begin
             popup10Ops.Checked := True;
-            cpuRun.Interval := 100;
+            cpuRun.Interval := SLOWSPEED_10OPS;
         end;
         else begin
             popup5Ops.Checked := True;
-            cpuRun.Interval := 200;
+            cpuRun.Interval := SLOWSPEED_5OPS;
         end;
     end;
 end;
@@ -400,23 +417,23 @@ begin
     case (SystemSettings.ReadInteger('Emulation', 'RunSpeed', 0)) of
         0: begin
             popup4Mhz.Checked := True;
-            runSpeedValue := 2500;
+            runSpeedValue := RUNSPEED_4MHZ;
         end;
         1: begin
             popup8Mhz.Checked := True;
-            runSpeedValue := 4500;
+            runSpeedValue := RUNSPEED_8MHZ;
         end;
         2: begin
             popup12Mhz.Checked := True;
-            runSpeedValue := 6500;
+            runSpeedValue := RUNSPEED_12MHZ;
         end;
         3: begin
             popup16Mhz.Checked := True;
-            runSpeedValue := 8500;
+            runSpeedValue := RUNSPEED_16MHZ;
         end;
         else begin
             popup4Mhz.Checked := True;
-            runSpeedValue := 2500;
+            runSpeedValue := RUNSPEED_4MHZ;
         end;
     end;
 end;
