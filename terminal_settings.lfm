@@ -12,6 +12,7 @@ object TerminalSettings: TTerminalSettings
   ClientWidth = 803
   OnClose = FormClose
   OnShow = FormShow
+  LCLVersion = '2.0.10.0'
   object groupboxCrLf: TGroupBox
     Left = 2
     Height = 136
@@ -21,7 +22,7 @@ object TerminalSettings: TTerminalSettings
     BorderSpacing.Top = 4
     BorderSpacing.Right = 2
     BorderSpacing.Bottom = 4
-    ClientHeight = 134
+    ClientHeight = 118
     ClientWidth = 797
     TabOrder = 0
     object checkboxEnableCrLf: TCheckBox
@@ -47,7 +48,7 @@ object TerminalSettings: TTerminalSettings
     BorderSpacing.Top = 4
     BorderSpacing.Right = 2
     BorderSpacing.Bottom = 2
-    ClientHeight = 134
+    ClientHeight = 118
     ClientWidth = 797
     TabOrder = 1
     object checkboxEnableLocalEcho: TCheckBox
@@ -73,7 +74,7 @@ object TerminalSettings: TTerminalSettings
     BorderSpacing.Top = 4
     BorderSpacing.Right = 2
     BorderSpacing.Bottom = 2
-    ClientHeight = 134
+    ClientHeight = 118
     ClientWidth = 797
     TabOrder = 2
     object checkboxEnableLogging: TCheckBox
@@ -103,7 +104,7 @@ object TerminalSettings: TTerminalSettings
     ChildSizing.EnlargeVertical = crsHomogenousChildResize
     ChildSizing.Layout = cclLeftToRightThenTopToBottom
     ChildSizing.ControlsPerLine = 1
-    ClientHeight = 133
+    ClientHeight = 117
     ClientWidth = 797
     TabOrder = 3
     object checkboxInverseTerminalScreen: TCheckBox

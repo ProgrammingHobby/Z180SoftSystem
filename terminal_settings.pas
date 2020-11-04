@@ -23,14 +23,12 @@ type
         procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
         procedure FormShow(Sender: TObject);
     private
-        dialogChanges: integer;
         oldEnableCrLf: boolean;
         oldEnableLocalEcho: boolean;
         oldEnableLogging: boolean;
         oldInverseTerminal: boolean;
 
     public
-        function getResult: integer;
 
     end;
 
@@ -41,7 +39,7 @@ implementation
 
 {$R *.lfm}
 
-uses UscaleDPI, System_Settings;
+uses UscaleDPI, System_Settings, System_Terminal;
 
 { TTerminalSettings }
 
@@ -49,22 +47,21 @@ uses UscaleDPI, System_Settings;
 procedure TTerminalSettings.FormClose(Sender: TObject; var CloseAction: TCloseAction);
 begin
     SystemSettings.saveFormState(TForm(self));
-    dialogChanges := 0;
     if (checkboxEnableCrLf.Checked <> oldEnableCrLf) then begin
         SystemSettings.WriteBoolean('Terminal', 'UseCRLF', checkboxEnableCrLf.Checked);
-        dialogChanges := dialogChanges + $0001;
+        SystemTerminal.setCrLF(checkboxEnableCrLf.Checked);
     end;
     if (checkboxEnableLocalEcho.Checked <> oldEnableLocalEcho) then begin
         SystemSettings.WriteBoolean('Terminal', 'LocalEcho', checkboxEnableLocalEcho.Checked);
-        dialogChanges := dialogChanges + $0002;
+        SystemTerminal.setLocalEcho(checkboxEnableLocalEcho.Checked);
     end;
     if (checkboxEnableLogging.Checked <> oldEnableLogging) then begin
         SystemSettings.WriteBoolean('Terminal', 'Loggin', checkboxEnableLogging.Checked);
-        dialogChanges := dialogChanges + $0004;
+        SystemTerminal.setTerminalLogging(checkboxEnableLogging.Checked);
     end;
     if(checkboxInverseTerminalScreen.Checked <> oldInverseTerminal) then begin
         SystemSettings.WriteBoolean('Terminal', 'InverseScreen', checkboxInverseTerminalScreen.Checked);
-        dialogChanges := dialogChanges + $0008;
+        SystemTerminal.setInverseScreen(checkboxInverseTerminalScreen.Checked);
     end;
     CloseAction := caFree;
 end;
@@ -87,12 +84,6 @@ begin
     checkboxEnableLogging.Checked := oldEnableLogging;
     oldInverseTerminal := SystemSettings.ReadBoolean('Terminal', 'InverseScreen', False);
     checkboxInverseTerminalScreen.Checked:=oldInverseTerminal;
-end;
-
-// --------------------------------------------------------------------------------
-function TTerminalSettings.getResult: integer;
-begin
-    Result := dialogChanges;
 end;
 
 // --------------------------------------------------------------------------------

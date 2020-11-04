@@ -238,12 +238,6 @@ begin
     Constraints.MaxHeight := Constraints.MinHeight;
 
     SystemMemory := TSystemMemory.Create;
-    SystemFdc := TSystemFdc.Create;
-    SystemHdc := TSystemHdc.Create;
-    SystemRtc := TSystemRtc.Create;
-    SystemInOut := TSystemInOut.Create;
-    Z180Cpu := TZ180Cpu.Create;
-    SystemTerminal := TSystemTerminal.Create(panelSystemTerminal, False);
     SystemMemory.setBootRomSize(SystemSettings.ReadString('Memory', 'RomSize', '8KB'));
     SystemMemory.setSystemRamSize(SystemSettings.ReadString('Memory', 'RamSize', '64KB'));
     SystemMemory.EnableReloadImageOnEnable(SystemSettings.ReadBoolean('Memory', 'ReloadOnEnable', False));
@@ -255,11 +249,7 @@ begin
     SystemMemory.SetRomImageFile(ImageFile);
     bootRomEnabled := SystemMemory.isRomFileValid;
 
-    SystemTerminal.setCrLF(SystemSettings.ReadBoolean('Terminal', 'UseCRLF', False));
-    SystemTerminal.setLocalEcho(SystemSettings.ReadBoolean('Terminal', 'LocalEcho', False));
-    SystemTerminal.setTerminalLogging(SystemSettings.ReadBoolean('Terminal', 'Loggin', False));
-    SystemTerminal.setInverseScreen(SystemSettings.ReadBoolean('Terminal', 'InverseScreen', False));
-
+    SystemFdc := TSystemFdc.Create;
     SystemFdc.setFdd0StatusPanel(panelFdd0);
     SystemFdc.setFdd0Sides(SystemSettings.ReadInteger('Fdd0', 'Sides', 2));
     SystemFdc.setFdd0Tracks(SystemSettings.ReadInteger('Fdd0', 'Tracks', 80));
@@ -270,7 +260,6 @@ begin
         ImageFile := '';
     end;
     SystemFdc.setFdd0Image(ImageFile);
-
     SystemFdc.setFdd1StatusPanel(panelFdd1);
     SystemFdc.setFdd1Sides(SystemSettings.ReadInteger('Fdd1', 'Sides', 2));
     SystemFdc.setFdd1Tracks(SystemSettings.ReadInteger('Fdd1', 'Tracks', 80));
@@ -282,6 +271,10 @@ begin
     end;
     SystemFdc.setFdd1Image(ImageFile);
 
+
+
+
+    SystemHdc := TSystemHdc.Create;
     SystemHdc.setHddStatusPanel(panelHdd);
     SystemHdc.setHddHeads(SystemSettings.ReadInteger('Hdd', 'Heads', 16));
     SystemHdc.setHddTracks(SystemSettings.ReadInteger('Hdd', 'Tracks', 246));
@@ -292,6 +285,16 @@ begin
         ImageFile := '';
     end;
     SystemHdc.setHddImage(ImageFile);
+
+    SystemTerminal := TSystemTerminal.Create(panelSystemTerminal, False);
+    SystemTerminal.setCrLF(SystemSettings.ReadBoolean('Terminal', 'UseCRLF', False));
+    SystemTerminal.setLocalEcho(SystemSettings.ReadBoolean('Terminal', 'LocalEcho', False));
+    SystemTerminal.setTerminalLogging(SystemSettings.ReadBoolean('Terminal', 'Loggin', False));
+    SystemTerminal.setInverseScreen(SystemSettings.ReadBoolean('Terminal', 'InverseScreen', False));
+
+    SystemRtc := TSystemRtc.Create;
+    SystemInOut := TSystemInOut.Create;
+    Z180Cpu := TZ180Cpu.Create;
 
     {$ifndef Windows}
     isKeyAltGr := False;
@@ -507,6 +510,7 @@ begin
     Z180Cpu.reset;
     SystemTerminal.terminalReset;
     SystemMemory.EnableBootRom(bootRomEnabled);
+    SystemHdc.doReset;
     if Assigned(MemoryEditor) then begin
         MemoryEditor.showMemoryData;
     end;
@@ -599,24 +603,10 @@ end;
 // --------------------------------------------------------------------------------
 procedure TMainWindow.actionTerminalSettingsExecute(Sender: TObject);
 var
-    dialogResult: integer;
     dialog: TTerminalSettings;
 begin
     Application.CreateForm(TTerminalSettings, dialog);
     dialog.ShowModal;
-    dialogResult := dialog.getResult;
-    if ((dialogResult and $0001) <> 0) then begin
-        SystemTerminal.setCrLF(SystemSettings.ReadBoolean('Terminal', 'UseCRLF', False));
-    end;
-    if ((dialogResult and $0002) <> 0) then begin
-        SystemTerminal.setLocalEcho(SystemSettings.ReadBoolean('Terminal', 'LocalEcho', False));
-    end;
-    if ((dialogResult and $0004) <> 0) then begin
-        SystemTerminal.setTerminalLogging(SystemSettings.ReadBoolean('Terminal', 'Loggin', False));
-    end;
-    if ((dialogResult and $0008) <> 0) then begin
-        SystemTerminal.setInverseScreen(SystemSettings.ReadBoolean('Terminal', 'InverseScreen', False));
-    end;
 end;
 
 // --------------------------------------------------------------------------------

@@ -397,12 +397,6 @@ begin
                 prepareReadSectors;
             end;
         end;
-        BUFFER_READ: begin
-            hdcStatus.bit[DRQ] := False;
-        end;
-        ID_READ: begin
-            hdcStatus.bit[DRQ] := False;
-        end;
     end;
     timerHddStatus.Enabled := True;
 end;
@@ -444,9 +438,9 @@ end;
 // --------------------------------------------------------------------------------
 procedure TSystemHdc.finishWriteData;
 begin
+    hdcStatus.bit[DRQ] := False;
     case (dataMode) of
         SECTOR_WRITE: begin
-            hdcStatus.bit[DRQ] := False;
             try
                 Reset(hddData, SECBYTES);
                 Seek(hddData, hdcLba.Value);
@@ -464,9 +458,6 @@ begin
                 calcChsValues;
                 prepareWriteSectors;
             end;
-        end;
-        BUFFER_WRITE: begin
-            hdcStatus.bit[DRQ] := False;
         end;
     end;
     timerHddStatus.Enabled := True;
@@ -640,8 +631,8 @@ end;
 // --------------------------------------------------------------------------------
 procedure TSystemHdc.setCommand(Value: byte);
 begin
-    hdcStatus.Value := 0;
-    hdcError.Value := 0;
+    //hdcStatus.Value := 0;
+    //hdcError.Value := 0;
     hdcStatus.bit[DRDY] := hardDrive.HddStatus.Enabled;
     hardDrive.ImageChanged := False;
     case (Value) of
