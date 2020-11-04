@@ -18,9 +18,9 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="Main_Window"/>
-        <EditorIndex Value="1"/>
-        <TopLine Value="135"/>
-        <CursorPos X="27" Y="165"/>
+        <IsVisibleTab Value="True"/>
+        <TopLine Value="619"/>
+        <CursorPos X="22" Y="609"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -83,10 +83,10 @@
         <Filename Value="system_terminal.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="System_Terminal"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="701"/>
         <CursorPos X="20" Y="712"/>
         <UsageCount Value="200"/>
-        <Loaded Value="True"/>
       </Unit7>
       <Unit8>
         <Filename Value="cpu_io_register.pas"/>
@@ -104,11 +104,10 @@
         <Filename Value="system_fdc.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="System_Fdc"/>
-        <EditorIndex Value="2"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="707"/>
         <CursorPos X="10" Y="728"/>
         <UsageCount Value="200"/>
-        <Loaded Value="True"/>
       </Unit9>
       <Unit10>
         <Filename Value="memory_settings.pas"/>
@@ -138,7 +137,7 @@
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="Fdd_Settings"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="125"/>
+        <TopLine Value="77"/>
         <CursorPos X="81" Y="127"/>
         <UsageCount Value="200"/>
       </Unit12>
@@ -150,8 +149,8 @@
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="Terminal_Settings"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="58"/>
-        <CursorPos X="90" Y="88"/>
+        <TopLine Value="35"/>
+        <CursorPos X="47" Y="49"/>
         <UsageCount Value="200"/>
       </Unit13>
       <Unit14>
@@ -179,12 +178,10 @@
         <Filename Value="system_hdc.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="System_Hdc"/>
-        <IsVisibleTab Value="True"/>
-        <EditorIndex Value="3"/>
-        <TopLine Value="663"/>
-        <CursorPos X="10" Y="684"/>
-        <UsageCount Value="145"/>
-        <Loaded Value="True"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="567"/>
+        <CursorPos X="33" Y="441"/>
+        <UsageCount Value="146"/>
       </Unit16>
       <Unit17>
         <Filename Value="hdd_settings.pas"/>
@@ -195,7 +192,7 @@
         <UnitName Value="Hdd_Settings"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="95" Y="8"/>
-        <UsageCount Value="144"/>
+        <UsageCount Value="145"/>
       </Unit17>
       <Unit18>
         <Filename Value="hardware_info.pas"/>
@@ -207,7 +204,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="22"/>
         <CursorPos X="100" Y="36"/>
-        <UsageCount Value="106"/>
+        <UsageCount Value="107"/>
       </Unit18>
       <Unit19>
         <Filename Value="system_rtc.pas"/>
@@ -216,7 +213,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="308"/>
         <CursorPos X="41" Y="494"/>
-        <UsageCount Value="99"/>
+        <UsageCount Value="100"/>
       </Unit19>
       <Unit20>
         <Filename Value="system_sio.pas"/>
@@ -449,7 +446,7 @@
         <DefaultSyntaxHighlighter Value="LFM"/>
       </Unit50>
     </Units>
-    <JumpHistory Count="13" HistoryIndex="12">
+    <JumpHistory Count="8" HistoryIndex="7">
       <Position1>
         <Filename Value="main_window.pas"/>
         <Caret Line="340" Column="28" TopLine="310"/>
@@ -482,26 +479,6 @@
         <Filename Value="main_window.pas"/>
         <Caret Line="154" Column="17" TopLine="130"/>
       </Position8>
-      <Position9>
-        <Filename Value="system_terminal.pas"/>
-        <Caret Line="259" Column="15" TopLine="218"/>
-      </Position9>
-      <Position10>
-        <Filename Value="system_fdc.pas"/>
-        <Caret Line="205" Column="6" TopLine="369"/>
-      </Position10>
-      <Position11>
-        <Filename Value="system_hdc.pas"/>
-        <Caret Line="580" Column="45" TopLine="556"/>
-      </Position11>
-      <Position12>
-        <Filename Value="system_hdc.pas"/>
-        <Caret Line="692" Column="9" TopLine="680"/>
-      </Position12>
-      <Position13>
-        <Filename Value="system_hdc.pas"/>
-        <Caret Line="729" Column="10" TopLine="705"/>
-      </Position13>
     </JumpHistory>
     <RunParams>
       <FormatVersion Value="2"/>
