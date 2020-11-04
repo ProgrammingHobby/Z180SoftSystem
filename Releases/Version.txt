@@ -1,3 +1,10 @@
+========== Z180SoftSystem V2.3.0 ==========
+- Die Terminal-Emulation läuft nun in einem eigenen Thread und ist somit von der
+  CPU-Emulation entkoppelt.
+- Die Disketten-Emulation wurde komplett überarbeitet und läuft nun deutlich schneller.
+- Die Emulations-Geschwindigkeit unter Windows wurde verbessert.
+- Allgemeine kleine Verbesserungen und Fehlerbereinigungen.
+
 ========== Z180SoftSystem V2.2.0 ==========
 - Emulation eines DS12887 kompatiblem RTC-Chips fertig. Uhrzeit und Datum können gelesen und gesetzt werden.
 - In den Speichereinstellungen wurde die Auswahl zwischen unvollständiger(gespiegelter) und vollständiger
