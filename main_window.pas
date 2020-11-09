@@ -271,9 +271,6 @@ begin
     end;
     SystemFdc.setFdd1Image(ImageFile);
 
-
-
-
     SystemHdc := TSystemHdc.Create;
     SystemHdc.setHddStatusPanel(panelHdd);
     SystemHdc.setHddHeads(SystemSettings.ReadInteger('Hdd', 'Heads', 16));
@@ -302,6 +299,7 @@ begin
 
     setSlowRunSpeed;
     setRunSpeed;
+    actionResetExecute(nil);
 end;
 
 // --------------------------------------------------------------------------------
@@ -511,6 +509,9 @@ begin
     SystemTerminal.terminalReset;
     SystemMemory.EnableBootRom(bootRomEnabled);
     SystemHdc.doReset;
+    if (not cpuRun.Enabled) then begin
+        actionHddDrive.Enabled := True;
+    end;
     if Assigned(MemoryEditor) then begin
         MemoryEditor.showMemoryData;
     end;
@@ -534,7 +535,6 @@ begin
     cpuRun.Interval := 2;
     cpuRun.Enabled := True;
     actionMemorySettings.Enabled := False;
-    actionFloppyDrive.Enabled := False;
     actionHddDrive.Enabled := False;
     actionLoadFileToRam.Enabled := False;
 end;
@@ -557,7 +557,6 @@ begin
         CpuIoRegister.showRegisterData;
     end;
     actionMemorySettings.Enabled := True;
-    actionFloppyDrive.Enabled := True;
     actionHddDrive.Enabled := True;
     actionLoadFileToRam.Enabled := True;
 end;
@@ -573,7 +572,6 @@ begin
     setSlowRunSpeed;
     cpuRun.Enabled := True;
     actionMemorySettings.Enabled := False;
-    actionFloppyDrive.Enabled := False;
     actionHddDrive.Enabled := False;
     actionLoadFileToRam.Enabled := False;
 end;
@@ -596,7 +594,6 @@ begin
     end;
     actionMemorySettings.Enabled := True;
     actionFloppyDrive.Enabled := True;
-    actionHddDrive.Enabled := True;
     actionLoadFileToRam.Enabled := True;
 end;
 
