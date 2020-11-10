@@ -70,13 +70,13 @@ type
 
         TDataMode = (SECTOR_READ, SECTOR_WRITE, NONE);
 
-        TFloppyDriveData = record
+        TFloppyDriveData = packed record
             Sides: byte;
             Tracks: byte;
             Sectors: byte;
             ImageFileName: string;
             Size: dword;
-            ImageChanged: boolean;
+            Changed: boolean;
             MotorOn: boolean;
             FddStatus: TPanel;
         end;
@@ -96,7 +96,7 @@ type
         stepForward: boolean;
         isMultiSectorCommand: boolean;
         canClearIntrq: boolean;
-        floppyDrive0, floppyDrive1, actualFloppyDrive: TFloppyDriveData;
+        floppyDrive0, oldFDD0, floppyDrive1, oldFDD1, actualFloppyDrive: TFloppyDriveData;
         fddData: file;
         filePos: DWord;
 
@@ -165,11 +165,11 @@ begin
     timerFddStatus.OnTimer := @setFddOffState;
     floppyDrive0.ImageFileName := '';
     floppyDrive0.Size := 0;
-    floppyDrive0.ImageChanged := False;
+    floppyDrive0.Changed := False;
     floppyDrive0.MotorOn := False;
     floppyDrive1.ImageFileName := '';
     floppyDrive1.Size := 0;
-    floppyDrive1.ImageChanged := False;
+    floppyDrive1.Changed := False;
     floppyDrive1.MotorOn := False;
     doReset;
 end;
@@ -367,7 +367,6 @@ var
 begin
     cmd.Value := command;
     fdcStatus.bit[BUSY] := True;
-    actualFloppyDrive.ImageChanged := False;
     case (cmd.Value and %11100000) of
         %00000000: begin    // Restore / Seek
             fdcStatus.bit[CRCERROR] := False;
@@ -580,6 +579,13 @@ begin
         end;
         actualFloppyDrive := floppyDrive0;
         AssignFile(fddData, floppyDrive0.ImageFileName);
+        if (not CompareMem(@oldFDD0, @floppyDrive0, SizeOf(TFloppyDriveData))) then begin
+            oldFDD0 := floppyDrive0;
+            actualFloppyDrive.Changed := True;
+        end
+        else begin
+            actualFloppyDrive.Changed := False;
+        end;
     end;
     if ((extControl.bit[D1S]) and (not oldExtControl.bit[D1S])) then begin
         if Assigned(actualFloppyDrive.FddStatus) then begin
@@ -587,6 +593,13 @@ begin
         end;
         actualFloppyDrive := floppyDrive1;
         AssignFile(fddData, floppyDrive1.ImageFileName);
+        if (not CompareMem(@oldFDD1, @floppyDrive1, SizeOf(TFloppyDriveData))) then begin
+            oldFDD1 := floppyDrive1;
+            actualFloppyDrive.Changed := True;
+        end
+        else begin
+            actualFloppyDrive.Changed := False;
+        end;
     end;
     if ((extControl.bit[SS]) and (actualFloppyDrive.Sides = 2)) then begin
         fdcSide := 1;
@@ -622,7 +635,6 @@ var
     hintString: string;
 begin
     isLoaded := False;
-    floppyDrive0.ImageChanged := False;
     hintString := '';
     if (FileExists(FileName)) then begin
         try
@@ -630,9 +642,8 @@ begin
             Reset(fddData, 1);
             imageFileSize := FileSize(fddData);
             if ((FileName <> floppyDrive0.ImageFileName) or (imageFileSize <> floppyDrive0.Size)) then begin
-                floppyDrive0.ImageChanged := True;
                 if (extControl.bit[D0S]) then begin
-                    actualFloppyDrive.ImageChanged := True;
+                    actualFloppyDrive.Changed := True;
                 end;
                 floppyDrive0.ImageFileName := FileName;
                 floppyDrive0.Size := imageFileSize;
@@ -650,6 +661,7 @@ begin
         floppyDrive0.ImageFileName := '';
         floppyDrive0.Size := 0;
     end;
+    floppyDrive0.Changed := False;
     floppyDrive0.FddStatus.Hint := hintString;
     floppyDrive0.FddStatus.Enabled := isLoaded;
 end;
@@ -686,7 +698,6 @@ var
     hintString: string;
 begin
     isLoaded := False;
-    floppyDrive1.ImageChanged := False;
     hintString := '';
     if (FileExists(FileName)) then begin
         try
@@ -694,9 +705,8 @@ begin
             Reset(fddData, 1);
             imageFileSize := FileSize(fddData);
             if ((FileName <> floppyDrive1.ImageFileName) or (imageFileSize <> floppyDrive1.Size)) then begin
-                floppyDrive1.ImageChanged := True;
                 if (extControl.bit[D1S]) then begin
-                    actualFloppyDrive.ImageChanged := True;
+                    actualFloppyDrive.Changed := True;
                 end;
                 floppyDrive1.ImageFileName := FileName;
                 floppyDrive1.Size := imageFileSize;
@@ -714,6 +724,7 @@ begin
         floppyDrive1.ImageFileName := '';
         floppyDrive1.Size := 0;
     end;
+    floppyDrive1.Changed := False;
     floppyDrive1.FddStatus.Hint := hintString;
     floppyDrive1.FddStatus.Enabled := isLoaded;
 end;
@@ -766,7 +777,8 @@ end;
 // --------------------------------------------------------------------------------
 function TSystemFdc.getExtStatus: byte;
 begin
-    extStatus.bit[DC] := actualFloppyDrive.ImageChanged;
+    extStatus.bit[DC] := actualFloppyDrive.Changed;
+    actualFloppyDrive.Changed := False;
     Result := extStatus.Value;
 end;
 
