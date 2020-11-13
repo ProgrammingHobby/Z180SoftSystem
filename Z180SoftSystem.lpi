@@ -20,7 +20,8 @@
       <AutoIncrementBuild Value="True"/>
       <MajorVersionNr Value="2"/>
       <MinorVersionNr Value="3"/>
-      <BuildNr Value="1222"/>
+      <RevisionNr Value="1"/>
+      <BuildNr Value="1223"/>
       <Language Value="0407"/>
       <StringTable FileDescription="Zilog Z180MPU Emulation" InternalName="Z180SoftSystem" LegalCopyright="Uwe Merker  2020" OriginalFilename="Z180SoftSystem"/>
     </VersionInfo>
@@ -85,7 +86,7 @@
         <IsPartOfProject Value="True"/>
       </Unit0>
       <Unit1>
-        <Filename Value="main_window.pas"/>
+        <Filename Value="Sources/main_window.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="MainWindow"/>
         <HasResources Value="True"/>
@@ -93,7 +94,7 @@
         <UnitName Value="Main_Window"/>
       </Unit1>
       <Unit2>
-        <Filename Value="cpu_register.pas"/>
+        <Filename Value="Sources/cpu_register.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="CpuRegister"/>
         <HasResources Value="True"/>
@@ -101,12 +102,12 @@
         <UnitName Value="Cpu_Register"/>
       </Unit2>
       <Unit3>
-        <Filename Value="system_memory.pas"/>
+        <Filename Value="Sources/system_memory.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="System_Memory"/>
       </Unit3>
       <Unit4>
-        <Filename Value="memory_editor.pas"/>
+        <Filename Value="Sources/memory_editor.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="MemoryEditor"/>
         <HasResources Value="True"/>
@@ -114,7 +115,7 @@
         <UnitName Value="Memory_Editor"/>
       </Unit4>
       <Unit5>
-        <Filename Value="system_settings.pas"/>
+        <Filename Value="Sources/system_settings.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="SystemSettings"/>
         <HasResources Value="True"/>
@@ -122,17 +123,17 @@
         <UnitName Value="System_Settings"/>
       </Unit5>
       <Unit6>
-        <Filename Value="z180_cpu.pas"/>
+        <Filename Value="Sources/z180_cpu.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="Z180_CPU"/>
       </Unit6>
       <Unit7>
-        <Filename Value="system_terminal.pas"/>
+        <Filename Value="Sources/system_terminal.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="System_Terminal"/>
       </Unit7>
       <Unit8>
-        <Filename Value="cpu_io_register.pas"/>
+        <Filename Value="Sources/cpu_io_register.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="CpuIoRegister"/>
         <HasResources Value="True"/>
@@ -140,12 +141,12 @@
         <UnitName Value="Cpu_Io_Register"/>
       </Unit8>
       <Unit9>
-        <Filename Value="system_fdc.pas"/>
+        <Filename Value="Sources/system_fdc.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="System_Fdc"/>
       </Unit9>
       <Unit10>
-        <Filename Value="memory_settings.pas"/>
+        <Filename Value="Sources/memory_settings.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="MemorySettings"/>
         <HasResources Value="True"/>
@@ -153,12 +154,12 @@
         <UnitName Value="Memory_Settings"/>
       </Unit10>
       <Unit11>
-        <Filename Value="system_inout.pas"/>
+        <Filename Value="Sources/system_inout.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="System_InOut"/>
       </Unit11>
       <Unit12>
-        <Filename Value="fdd_settings.pas"/>
+        <Filename Value="Sources/fdd_settings.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="FddSettings"/>
         <HasResources Value="True"/>
@@ -166,7 +167,7 @@
         <UnitName Value="Fdd_Settings"/>
       </Unit12>
       <Unit13>
-        <Filename Value="terminal_settings.pas"/>
+        <Filename Value="Sources/terminal_settings.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="TerminalSettings"/>
         <HasResources Value="True"/>
@@ -174,7 +175,7 @@
         <UnitName Value="Terminal_Settings"/>
       </Unit13>
       <Unit14>
-        <Filename Value="about_window.pas"/>
+        <Filename Value="Sources/about_window.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="AboutWindow"/>
         <HasResources Value="True"/>
@@ -182,17 +183,17 @@
         <UnitName Value="About_Window"/>
       </Unit14>
       <Unit15>
-        <Filename Value="version_info.pas"/>
+        <Filename Value="Sources/version_info.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="Version_Info"/>
       </Unit15>
       <Unit16>
-        <Filename Value="system_hdc.pas"/>
+        <Filename Value="Sources/system_hdc.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="System_Hdc"/>
       </Unit16>
       <Unit17>
-        <Filename Value="hdd_settings.pas"/>
+        <Filename Value="Sources/hdd_settings.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="HddSettings"/>
         <HasResources Value="True"/>
@@ -200,7 +201,7 @@
         <UnitName Value="Hdd_Settings"/>
       </Unit17>
       <Unit18>
-        <Filename Value="hardware_info.pas"/>
+        <Filename Value="Sources/hardware_info.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="HardwareInfo"/>
         <HasResources Value="True"/>
@@ -208,7 +209,7 @@
         <UnitName Value="Hardware_Info"/>
       </Unit18>
       <Unit19>
-        <Filename Value="system_rtc.pas"/>
+        <Filename Value="Sources/system_rtc.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="System_Rtc"/>
       </Unit19>
@@ -221,6 +222,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
+      <OtherUnitFiles Value="Sources"/>
       <UnitOutputDirectory Value="$(TargetCPU)-$(TargetOS)_debug/lib"/>
     </SearchPaths>
     <Parsing>
