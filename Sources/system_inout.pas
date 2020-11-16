@@ -70,60 +70,57 @@ end;
 
 // --------------------------------------------------------------------------------
 function TSystemInOut.cpuIoRead(port: word): byte;
-var
-    readValue: byte;
 begin
-    readValue := $FF;
-
     case (port) of
         $70: begin
-            readValue := SystemFdc.getStatus;
+            Result := SystemFdc.getStatus;
         end;
         $71: begin
-            readValue := SystemFdc.getTrack;
+            Result := SystemFdc.getTrack;
         end;
         $72: begin
-            readValue := SystemFdc.getSector;
+            Result := SystemFdc.getSector;
         end;
         $73: begin
-            readValue := SystemFdc.getData;
+            Result := SystemFdc.getData;
         end;
         $74: begin
-            readValue := SystemFdc.getExtStatus;
+            Result := SystemFdc.getExtStatus;
         end;
         $7D: begin
-            readValue := SystemRtc.Read;
+            Result := SystemRtc.Read;
         end;
         $A0: begin
-            readValue := SystemHdc.getDataLow;
+            Result := SystemHdc.getDataLow;
         end;
         $A1: begin
-            readValue := SystemHdc.getError;
+            Result := SystemHdc.getError;
         end;
         $A2: begin
-            readValue := SystemHdc.getSectorCount;
+            Result := SystemHdc.getSectorCount;
         end;
         $A3: begin
-            readValue := SystemHdc.getSector;
+            Result := SystemHdc.getSector;
         end;
         $A4: begin
-            readValue := SystemHdc.getTrackLow;
+            Result := SystemHdc.getTrackLow;
         end;
         $A5: begin
-            readValue := SystemHdc.getTrackHigh;
+            Result := SystemHdc.getTrackHigh;
         end;
         $A6: begin
-            readValue := SystemHdc.getDriveHead;
+            Result := SystemHdc.getDriveHead;
         end;
         $A7: begin
-            readValue := SystemHdc.getStatus;
+            Result := SystemHdc.getStatus;
         end;
         $A8: begin
-            readValue := SystemHdc.getDataHigh;
+            Result := SystemHdc.getDataHigh;
+        end;
+        else begin
+            Result := $FF;
         end;
     end;
-    Result := readValue;
-
 end;
 
 // --------------------------------------------------------------------------------

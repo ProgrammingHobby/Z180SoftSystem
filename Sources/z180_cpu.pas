@@ -506,184 +506,181 @@ end;
 
 // --------------------------------------------------------------------------------
 function TZ180Cpu.ioRead(const portHI: byte; const portLO: byte): byte;
-var
-    readValue: byte;
 begin
     extraWaitCycles := extraWaitCycles + ioWaitCycles;
-    readValue := SystemInOut.cpuIoRead(((portHI shl 8) + portLO));
+    result := SystemInOut.cpuIoRead(((portHI shl 8) + portLO));
     if ((portLo <= (ioICR.Value and IOAsel) + $3F) and (portLo >= (ioICR.Value and IOAsel)) and (portHi = $00)) then begin
         case (portLO and $3F) of
             $00: begin   //portCNTLA0
-                readValue := (ioCNTLA0.Value and $FF);
+                result := (ioCNTLA0.Value and $FF);
             end;
             $01: begin   //portCNTLA1
-                readValue := (ioCNTLA1.Value and $FF);
+                result := (ioCNTLA1.Value and $FF);
             end;
             $02: begin   //portCNTLB0
-                readValue := (ioCNTLB0.Value and $FF);
+                result := (ioCNTLB0.Value and $FF);
             end;
             $03: begin   //portCNTLB1
-                readValue := (ioCNTLB1.Value and $FF);
+                result := (ioCNTLB1.Value and $FF);
             end;
             $04: begin   //portSTAT0
-                readValue := (ioSTAT0.Value and $FF);
+                result := (ioSTAT0.Value and $FF);
             end;
             $05: begin   //portSTAT1
-                readValue := (ioSTAT1.Value and $FF);
+                result := (ioSTAT1.Value and $FF);
             end;
             $06: begin   //portTDR0
-                readValue := (ioTDR0 and $FF);
+                result := (ioTDR0 and $FF);
             end;
             $07: begin   //portTDR1
-                readValue := (ioTDR1 and $FF);
+                result := (ioTDR1 and $FF);
             end;
             $08: begin   //portRDR0
-                readValue := (ioRDR0 and $FF);
+                result := (ioRDR0 and $FF);
                 ioSTAT0.bit[RDRF] := False;   // Bit 'Receive Data Register Full' loeschen
             end;
             $09: begin   //portRDR1
-                readValue := (ioRDR1 and $FF);
+                result := (ioRDR1 and $FF);
                 ioSTAT1.bit[RDRF] := False;   // Bit 'Receive Data Register Full' loeschen
             end;
             $0A: begin   //portCNTR
-                readValue := (ioCNTR.Value and $F7);
+                result := (ioCNTR.Value and $F7);
             end;
             $0B: begin   //portTRD
-                readValue := (ioTRD and $FF);
+                result := (ioTRD and $FF);
             end;
             $0C: begin   //portTMDR0L
                 bufTMDR0H := (ioTMDR0.high and $FF);   // Lesereihenfolge Low-Byte , High-Byte !
                 isBufTMDR0H := True; // High-Byte puffern. Z8018x Family MPU User Manual Seite 158
-                readValue := (ioTMDR0.low and $FF);
+                result := (ioTMDR0.low and $FF);
                 ioTCR.bit[TIF0] := False; // Timer 0 Interrupt Flag beim lesen von TMDR0L loeschen
             end;
             $0D: begin   //portTMDR0H
                 if (isBufTMDR0H = True) then begin   // wenn gepuffertes High-Byte vorhanden
-                    readValue := (bufTMDR0H and $FF);   // dann dieses auslesen
+                    result := (bufTMDR0H and $FF);   // dann dieses auslesen
                     isBufTMDR0H := False;    // und Puffer-Marker loeschen.
                 end
                 else begin
-                    readValue := (ioTMDR0.high and $FF00);
+                    result := (ioTMDR0.high and $FF00);
                 end;
                 ioTCR.bit[TIF0] := False; // Timer 0 Interrupt Flag beim lesen von TMDR0H loeschen
             end;
             $0E: begin   //portRLDR0L
-                readValue := (ioRLDR0.low and $FF);
+                result := (ioRLDR0.low and $FF);
             end;
             $0F: begin   //portRLDR0H
-                readValue := (ioRLDR0.high and $FF);
+                result := (ioRLDR0.high and $FF);
             end;
             $10: begin   //portTCR
-                readValue := (ioTCR.Value and $FF);
+                result := (ioTCR.Value and $FF);
                 ioTCR.bit[TIF0] := False; // Timer 0 Interrupt Flag und
                 ioTCR.bit[TIF1] := False; // Timer 1 Interrupt Flag und beim lesen von TCR loeschen
             end;
             $14: begin   //portTMDR1L
                 bufTMDR1H := (ioTMDR1.high and $FF);   // Lesereihenfolge Low-Byte , High-Byte !
                 isBufTMDR1H := True; // High-Byte puffern. Z8018x Family MPU User Manual Seite 158
-                readValue := (ioTMDR1.low and $FF);
+                result := (ioTMDR1.low and $FF);
                 ioTCR.bit[TIF1] := False; // Timer 1 Interrupt Flag beim lesen von TMDR1L loeschen
             end;
             $15: begin   //portTMDR1H
                 if (isBufTMDR1H = True) then begin  // wenn gepuffertes High-Byte vorhanden
-                    readValue := (bufTMDR1H and $FF);   // dann dieses auslesen
+                    result := (bufTMDR1H and $FF);   // dann dieses auslesen
                     isBufTMDR1H := False;    // und Puffer-Marker loeschen.
                 end
                 else begin
-                    readValue := (ioTMDR1.high and $FF);
+                    result := (ioTMDR1.high and $FF);
                 end;
                 ioTCR.bit[TIF1] := False; // Timer 1 Interrupt Flag beim lesen von TMDR1H loeschen
             end;
             $16: begin   //portRLDR1L
-                readValue := (ioRLDR1.low and $FF);
+                result := (ioRLDR1.low and $FF);
             end;
             $17: begin   //portRLDR1H
-                readValue := (ioRLDR1.high and $FF);
+                result := (ioRLDR1.high and $FF);
             end;
             $18: begin   //portFRC
-                readValue := (ioFRC and $FF);
+                result := (ioFRC and $FF);
             end;
             $20: begin   //portSAR0L
-                readValue := (ioSAR0.low and $FF);
+                result := (ioSAR0.low and $FF);
             end;
             $21: begin   //portSAR0H
-                readValue := (ioSAR0.high and $FF);
+                result := (ioSAR0.high and $FF);
             end;
             $22: begin   //portSAR0B
-                readValue := (ioSAR0.bank and $0F);
+                result := (ioSAR0.bank and $0F);
             end;
             $23: begin   //portDAR0L
-                readValue := (ioDAR0.low and $FF);
+                result := (ioDAR0.low and $FF);
             end;
             $24: begin   //portDAR0H
-                readValue := (ioDAR0.high and $FF);
+                result := (ioDAR0.high and $FF);
             end;
             $25: begin   //portDAR0B
-                readValue := (ioDAR0.bank and $0F);
+                result := (ioDAR0.bank and $0F);
             end;
             $26: begin   //portBCR0L
-                readValue := (ioBCR0.low and $FF);
+                result := (ioBCR0.low and $FF);
             end;
             $27: begin   //portBCR0H
-                readValue := (ioBCR0.high and $FF);
+                result := (ioBCR0.high and $FF);
             end;
             $28: begin   //portMAR1L
-                readValue := (ioMAR1.low and $FF);
+                result := (ioMAR1.low and $FF);
             end;
             $29: begin   //portMAR1H
-                readValue := (ioMAR1.high and $FF);
+                result := (ioMAR1.high and $FF);
             end;
             $2A: begin   //portMAR1B
-                readValue := (ioMAR1.bank and $0F);
+                result := (ioMAR1.bank and $0F);
             end;
             $2B: begin   //portIAR1L
-                readValue := (ioIAR1.low and $FF);
+                result := (ioIAR1.low and $FF);
             end;
             $2C: begin   //portIAR1H
-                readValue := (ioIAR1.high and $FF);
+                result := (ioIAR1.high and $FF);
             end;
             $2E: begin   //portBCR1L
-                readValue := (ioBCR1.low and $FF);
+                result := (ioBCR1.low and $FF);
             end;
             $2F: begin   //portBCR1H
-                readValue := (ioBCR1.high and $FF);
+                result := (ioBCR1.high and $FF);
             end;
             $30: begin   //portDSTAT
-                readValue := (ioDSTAT.Value and $CD);
+                result := (ioDSTAT.Value and $CD);
             end;
             $31: begin   //portDMODE
-                readValue := (ioDMODE.Value and $3E);
+                result := (ioDMODE.Value and $3E);
             end;
             $32: begin   //portDCNTL
-                readValue := (ioDCNTL.Value and $FF);
+                result := (ioDCNTL.Value and $FF);
             end;
             $33: begin   //portIL
-                readValue := (ioIL and $E0);
+                result := (ioIL and $E0);
             end;
             $34: begin   //portITC
-                readValue := (ioITC.Value and $C7);
+                result := (ioITC.Value and $C7);
             end;
             $36: begin   //portRCR
-                readValue := (ioRCR.Value and $C3);
+                result := (ioRCR.Value and $C3);
             end;
             $38: begin   //portCBR
-                readValue := (ioCBR and $FF);
+                result := (ioCBR and $FF);
             end;
             $39: begin   //portBBR
-                readValue := (ioBBR and $FF);
+                result := (ioBBR and $FF);
             end;
             $3A: begin   //portCBAR
-                readValue := (ioCBAR and $FF);
+                result := (ioCBAR and $FF);
             end;
             $3E: begin   //portOMCR
-                readValue := (ioOMCR.Value and $A0);
+                result := (ioOMCR.Value and $A0);
             end;
             $3F: begin   //portICR
-                readValue := (ioICR.Value and $E0);
+                result := (ioICR.Value and $E0);
             end;
         end;
     end;
-    Result := readValue;
 end;
 
 // --------------------------------------------------------------------------------
