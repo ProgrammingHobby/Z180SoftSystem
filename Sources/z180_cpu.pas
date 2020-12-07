@@ -441,6 +441,7 @@ type
 
     public    // Methoden
         procedure reset;
+        procedure clrSlpHalt;
         procedure exec(opCount: DWord = 1);
         function getCoreData: TCoreData;
         function getIoRegData: TIoData;
@@ -508,176 +509,176 @@ end;
 function TZ180Cpu.ioRead(const portHI: byte; const portLO: byte): byte;
 begin
     extraWaitCycles := extraWaitCycles + ioWaitCycles;
-    result := SystemInOut.cpuIoRead(((portHI shl 8) + portLO));
+    Result := SystemInOut.cpuIoRead(((portHI shl 8) + portLO));
     if ((portLo <= (ioICR.Value and IOAsel) + $3F) and (portLo >= (ioICR.Value and IOAsel)) and (portHi = $00)) then begin
         case (portLO and $3F) of
             $00: begin   //portCNTLA0
-                result := (ioCNTLA0.Value and $FF);
+                Result := (ioCNTLA0.Value and $FF);
             end;
             $01: begin   //portCNTLA1
-                result := (ioCNTLA1.Value and $FF);
+                Result := (ioCNTLA1.Value and $FF);
             end;
             $02: begin   //portCNTLB0
-                result := (ioCNTLB0.Value and $FF);
+                Result := (ioCNTLB0.Value and $FF);
             end;
             $03: begin   //portCNTLB1
-                result := (ioCNTLB1.Value and $FF);
+                Result := (ioCNTLB1.Value and $FF);
             end;
             $04: begin   //portSTAT0
-                result := (ioSTAT0.Value and $FF);
+                Result := (ioSTAT0.Value and $FF);
             end;
             $05: begin   //portSTAT1
-                result := (ioSTAT1.Value and $FF);
+                Result := (ioSTAT1.Value and $FF);
             end;
             $06: begin   //portTDR0
-                result := (ioTDR0 and $FF);
+                Result := (ioTDR0 and $FF);
             end;
             $07: begin   //portTDR1
-                result := (ioTDR1 and $FF);
+                Result := (ioTDR1 and $FF);
             end;
             $08: begin   //portRDR0
-                result := (ioRDR0 and $FF);
+                Result := (ioRDR0 and $FF);
                 ioSTAT0.bit[RDRF] := False;   // Bit 'Receive Data Register Full' loeschen
             end;
             $09: begin   //portRDR1
-                result := (ioRDR1 and $FF);
+                Result := (ioRDR1 and $FF);
                 ioSTAT1.bit[RDRF] := False;   // Bit 'Receive Data Register Full' loeschen
             end;
             $0A: begin   //portCNTR
-                result := (ioCNTR.Value and $F7);
+                Result := (ioCNTR.Value and $F7);
             end;
             $0B: begin   //portTRD
-                result := (ioTRD and $FF);
+                Result := (ioTRD and $FF);
             end;
             $0C: begin   //portTMDR0L
                 bufTMDR0H := (ioTMDR0.high and $FF);   // Lesereihenfolge Low-Byte , High-Byte !
                 isBufTMDR0H := True; // High-Byte puffern. Z8018x Family MPU User Manual Seite 158
-                result := (ioTMDR0.low and $FF);
+                Result := (ioTMDR0.low and $FF);
                 ioTCR.bit[TIF0] := False; // Timer 0 Interrupt Flag beim lesen von TMDR0L loeschen
             end;
             $0D: begin   //portTMDR0H
                 if (isBufTMDR0H = True) then begin   // wenn gepuffertes High-Byte vorhanden
-                    result := (bufTMDR0H and $FF);   // dann dieses auslesen
+                    Result := (bufTMDR0H and $FF);   // dann dieses auslesen
                     isBufTMDR0H := False;    // und Puffer-Marker loeschen.
                 end
                 else begin
-                    result := (ioTMDR0.high and $FF00);
+                    Result := (ioTMDR0.high and $FF00);
                 end;
                 ioTCR.bit[TIF0] := False; // Timer 0 Interrupt Flag beim lesen von TMDR0H loeschen
             end;
             $0E: begin   //portRLDR0L
-                result := (ioRLDR0.low and $FF);
+                Result := (ioRLDR0.low and $FF);
             end;
             $0F: begin   //portRLDR0H
-                result := (ioRLDR0.high and $FF);
+                Result := (ioRLDR0.high and $FF);
             end;
             $10: begin   //portTCR
-                result := (ioTCR.Value and $FF);
+                Result := (ioTCR.Value and $FF);
                 ioTCR.bit[TIF0] := False; // Timer 0 Interrupt Flag und
                 ioTCR.bit[TIF1] := False; // Timer 1 Interrupt Flag und beim lesen von TCR loeschen
             end;
             $14: begin   //portTMDR1L
                 bufTMDR1H := (ioTMDR1.high and $FF);   // Lesereihenfolge Low-Byte , High-Byte !
                 isBufTMDR1H := True; // High-Byte puffern. Z8018x Family MPU User Manual Seite 158
-                result := (ioTMDR1.low and $FF);
+                Result := (ioTMDR1.low and $FF);
                 ioTCR.bit[TIF1] := False; // Timer 1 Interrupt Flag beim lesen von TMDR1L loeschen
             end;
             $15: begin   //portTMDR1H
                 if (isBufTMDR1H = True) then begin  // wenn gepuffertes High-Byte vorhanden
-                    result := (bufTMDR1H and $FF);   // dann dieses auslesen
+                    Result := (bufTMDR1H and $FF);   // dann dieses auslesen
                     isBufTMDR1H := False;    // und Puffer-Marker loeschen.
                 end
                 else begin
-                    result := (ioTMDR1.high and $FF);
+                    Result := (ioTMDR1.high and $FF);
                 end;
                 ioTCR.bit[TIF1] := False; // Timer 1 Interrupt Flag beim lesen von TMDR1H loeschen
             end;
             $16: begin   //portRLDR1L
-                result := (ioRLDR1.low and $FF);
+                Result := (ioRLDR1.low and $FF);
             end;
             $17: begin   //portRLDR1H
-                result := (ioRLDR1.high and $FF);
+                Result := (ioRLDR1.high and $FF);
             end;
             $18: begin   //portFRC
-                result := (ioFRC and $FF);
+                Result := (ioFRC and $FF);
             end;
             $20: begin   //portSAR0L
-                result := (ioSAR0.low and $FF);
+                Result := (ioSAR0.low and $FF);
             end;
             $21: begin   //portSAR0H
-                result := (ioSAR0.high and $FF);
+                Result := (ioSAR0.high and $FF);
             end;
             $22: begin   //portSAR0B
-                result := (ioSAR0.bank and $0F);
+                Result := (ioSAR0.bank and $0F);
             end;
             $23: begin   //portDAR0L
-                result := (ioDAR0.low and $FF);
+                Result := (ioDAR0.low and $FF);
             end;
             $24: begin   //portDAR0H
-                result := (ioDAR0.high and $FF);
+                Result := (ioDAR0.high and $FF);
             end;
             $25: begin   //portDAR0B
-                result := (ioDAR0.bank and $0F);
+                Result := (ioDAR0.bank and $0F);
             end;
             $26: begin   //portBCR0L
-                result := (ioBCR0.low and $FF);
+                Result := (ioBCR0.low and $FF);
             end;
             $27: begin   //portBCR0H
-                result := (ioBCR0.high and $FF);
+                Result := (ioBCR0.high and $FF);
             end;
             $28: begin   //portMAR1L
-                result := (ioMAR1.low and $FF);
+                Result := (ioMAR1.low and $FF);
             end;
             $29: begin   //portMAR1H
-                result := (ioMAR1.high and $FF);
+                Result := (ioMAR1.high and $FF);
             end;
             $2A: begin   //portMAR1B
-                result := (ioMAR1.bank and $0F);
+                Result := (ioMAR1.bank and $0F);
             end;
             $2B: begin   //portIAR1L
-                result := (ioIAR1.low and $FF);
+                Result := (ioIAR1.low and $FF);
             end;
             $2C: begin   //portIAR1H
-                result := (ioIAR1.high and $FF);
+                Result := (ioIAR1.high and $FF);
             end;
             $2E: begin   //portBCR1L
-                result := (ioBCR1.low and $FF);
+                Result := (ioBCR1.low and $FF);
             end;
             $2F: begin   //portBCR1H
-                result := (ioBCR1.high and $FF);
+                Result := (ioBCR1.high and $FF);
             end;
             $30: begin   //portDSTAT
-                result := (ioDSTAT.Value and $CD);
+                Result := (ioDSTAT.Value and $CD);
             end;
             $31: begin   //portDMODE
-                result := (ioDMODE.Value and $3E);
+                Result := (ioDMODE.Value and $3E);
             end;
             $32: begin   //portDCNTL
-                result := (ioDCNTL.Value and $FF);
+                Result := (ioDCNTL.Value and $FF);
             end;
             $33: begin   //portIL
-                result := (ioIL and $E0);
+                Result := (ioIL and $E0);
             end;
             $34: begin   //portITC
-                result := (ioITC.Value and $C7);
+                Result := (ioITC.Value and $C7);
             end;
             $36: begin   //portRCR
-                result := (ioRCR.Value and $C3);
+                Result := (ioRCR.Value and $C3);
             end;
             $38: begin   //portCBR
-                result := (ioCBR and $FF);
+                Result := (ioCBR and $FF);
             end;
             $39: begin   //portBBR
-                result := (ioBBR and $FF);
+                Result := (ioBBR and $FF);
             end;
             $3A: begin   //portCBAR
-                result := (ioCBAR and $FF);
+                Result := (ioCBAR and $FF);
             end;
             $3E: begin   //portOMCR
-                result := (ioOMCR.Value and $A0);
+                Result := (ioOMCR.Value and $A0);
             end;
             $3F: begin   //portICR
-                result := (ioICR.Value and $E0);
+                Result := (ioICR.Value and $E0);
             end;
         end;
     end;
@@ -819,44 +820,48 @@ begin
             $2F: begin   //portBCR1H
                 ioBCR1.high := ((ioBCR1.high and not $FF) or (Data and $FF));
             end;
-            $30: begin   //portDSTAT
-                ioDSTAT.Value := ((ioDSTAT.Value and not $FC) or (Data and $FC));
-                if ((ioDSTAT.bit[DE0]) and (not ioDSTAT.bit[DWE0])) then begin
-                    case (ioDMODE.Value and (DMsel or SMsel)) of
-                        $0C, $1C: begin // 64k-I/O SAR0 to Memory DAR0 transfer
-                            if (ioDCNTL.bit[DMS0] and (ioSAR0.low = $08) and ((ioSAR0.bank and $03) = $01)) then begin
-                                asciDmaMode := ASCI0RECEIVE;
+            $30, $31: begin
+                if ((portLO and $3F) = $30) then begin   //portDSTAT
+                    ioDSTAT.Value := ((ioDSTAT.Value and not $FC) or (Data and $FC));
+                    if ((ioDSTAT.bit[DE0]) and (not ioDSTAT.bit[DWE0])) then begin
+                        case (ioDMODE.Value and (DMsel or SMsel)) of
+                            $0C, $1C: begin // 64k-I/O SAR0 to Memory DAR0 transfer
+                                if (ioDCNTL.bit[DMS0] and (ioSAR0.low = $08) and ((ioSAR0.bank and $03) = $01)) then begin
+                                    asciDmaMode := ASCI0RECEIVE;
+                                end;
+                                if (ioDCNTL.bit[DMS0] and (ioSAR0.low = $09) and ((ioSAR0.bank and $03) = $02)) then begin
+                                    asciDmaMode := ASCI1RECEIVE;
+                                end;
                             end;
-                            if (ioDCNTL.bit[DMS0] and (ioSAR0.low = $09) and ((ioSAR0.bank and $03) = $02)) then begin
-                                asciDmaMode := ASCI1RECEIVE;
+                            $30, $34: begin // Memory SAR0 to 64k-I/O DAR0 transfer
+                                if (ioDCNTL.bit[DMS0] and (ioDAR0.low = $06) and ((ioDAR0.bank and $03) = $01)) then begin
+                                    asciDmaMode := ASCI0SEND;
+                                end;
+                                if (ioDCNTL.bit[DMS0] and (ioDAR0.low = $07) and ((ioDAR0.bank and $03) = $02)) then begin
+                                    asciDmaMode := ASCI1SEND;
+                                end;
                             end;
                         end;
-                        $30, $34: begin // Memory SAR0 to 64k-I/O DAR0 transfer
-                            if (ioDCNTL.bit[DMS0] and (ioDAR0.low = $06) and ((ioDAR0.bank and $03) = $01)) then begin
-                                asciDmaMode := ASCI0SEND;
-                            end;
-                            if (ioDCNTL.bit[DMS0] and (ioDAR0.low = $07) and ((ioDAR0.bank and $03) = $02)) then begin
-                                asciDmaMode := ASCI1SEND;
-                            end;
-                        end;
+                        ioDSTAT.bit[DME] := True;
+                        ioDSTAT.bit[DWE0] := True;
                     end;
-                    ioDSTAT.bit[DME] := True;
-                    ioDSTAT.bit[DWE0] := True;
+                    if ((ioDSTAT.bit[DE1]) and (not ioDSTAT.bit[DWE1])) then begin
+                        ioDSTAT.bit[DME] := True;
+                        ioDSTAT.bit[DWE1] := True;
+                    end;
+                end
+                else begin   //portDMODE
+                    ioDMODE.Value := ((ioDMODE.Value and not $3E) or (Data and $3E));
                 end;
-                if ((ioDSTAT.bit[DE1]) and (not ioDSTAT.bit[DWE1])) then begin
-                    ioDSTAT.bit[DME] := True;
-                    ioDSTAT.bit[DWE1] := True;
-                end;
-            end;
-            $31: begin   //portDMODE
-                ioDMODE.Value := ((ioDMODE.Value and not $3E) or (Data and $3E));
                 // DMA Burst-Mode kann nur aktiv werden, wenn Memory to Memory Transfer gesetzt.
                 // um0050.pdf Seite 97
-                if (ioDMODE.bit[MMOD] and not ((ioDMODE.Value and (DMsel or SMsel)) = (DMsel or SMsel))) then begin
-                    dmaBurstMode := True;
-                end
-                else begin
-                    dmaBurstMode := False;
+                if (ioDSTAT.bit[DME] and ioDSTAT.bit[DE0]) then begin
+                    if (ioDMODE.bit[MMOD] and not ((ioDMODE.Value and (DMsel or SMsel)) = (DMsel or SMsel))) then begin
+                        dmaBurstMode := True;
+                    end
+                    else begin
+                        dmaBurstMode := False;
+                    end;
                 end;
             end;
             $32: begin   //portDCNTL
@@ -1025,128 +1030,118 @@ end;
 
 // --------------------------------------------------------------------------------
 procedure TZ180Cpu.doDma0;
-var
-    dmaTransferCount: DWord;
 begin
     if (ioBCR0.Value = 0) then begin
         ioBCR0.Value := $10000; // Vorbelegung fuer vollen 64K Transfer
     end;
-    if (dmaBurstMode) then begin
-        dmaTransferCount := ioBCR0.Value;
-    end
-    else begin
-        dmaTransferCount := 1;
+    if (ioBCR0.Value = 1) then begin
+        tend0 := True; // beim letzten anstehenden DMA-Transfer TEND0 setzen
     end;
-    while (dmaTransferCount > 0) do begin
-        if (ioBCR0.Value = 1) then begin
-            tend0 := True; // beim letzten anstehenden DMA-Transfer TEND0 setzen
+    case (ioDMODE.Value and (DMsel or SMsel)) of
+        $00: begin // Memory SAR0++ to Memory DAR0++ transfer
+            systemmemory.Write(ioDAR0.Value, systemmemory.Read(ioSAR0.Value));
+            ioDAR0.Value := ((ioDAR0.Value + 1) and $FFFFF);
+            ioSAR0.Value := ((ioSAR0.Value + 1) and $FFFFF);
+            clockCycles := clockCycles + (2 * memWaitCycles);
+            ioBCR0.Value := ((ioBCR0.Value - 1) and $FFFFF);
         end;
-        case (ioDMODE.Value and (DMsel or SMsel)) of
-            $00: begin // Memory SAR0++ to Memory DAR0++ transfer
+        $04: begin // Memory SAR0-- to Memory DAR0++ transfer
+            systemmemory.Write(ioDAR0.Value, systemmemory.Read(ioSAR0.Value));
+            ioDAR0.Value := ((ioDAR0.Value + 1) and $FFFFF);
+            ioSAR0.Value := ((ioSAR0.Value - 1) and $FFFFF);
+            clockCycles := clockCycles + (2 * memWaitCycles);
+            ioBCR0.Value := ((ioBCR0.Value - 1) and $FFFFF);
+        end;
+        $08: begin // Memory SAR0 to Memory DAR0++ transfer
+            if (dreq0) then begin
                 systemmemory.Write(ioDAR0.Value, systemmemory.Read(ioSAR0.Value));
                 ioDAR0.Value := ((ioDAR0.Value + 1) and $FFFFF);
+                clockCycles := clockCycles + (2 * memWaitCycles);
+                ioBCR0.Value := ((ioBCR0.Value - 1) and $FFFFF);
+                dreq0 := False;
+            end;
+        end;
+        $0C: begin // 64k-I/O SAR0 to Memory DAR0++ transfer
+            if (dreq0) then begin
+                systemmemory.Write(ioDAR0.Value, ioRead(ioSAR0.high, ioSAR0.low));
+                ioDAR0.Value := ((ioDAR0.Value + 1) and $FFFFF);
+                clockCycles := clockCycles + memWaitCycles + ioWaitCycles;
+                ioBCR0.Value := ((ioBCR0.Value - 1) and $FFFFF);
+                dreq0 := False;
+            end;
+        end;
+        $10: begin // Memory SAR0++ to Memory DAR0-- transfer
+            systemmemory.Write(ioDAR0.Value, systemmemory.Read(ioSAR0.Value));
+            ioDAR0.Value := ((ioDAR0.Value - 1) and $FFFFF);
+            ioSAR0.Value := ((ioSAR0.Value + 1) and $FFFFF);
+            clockCycles := clockCycles + (2 * memWaitCycles);
+            ioBCR0.Value := ((ioBCR0.Value - 1) and $FFFFF);
+        end;
+        $14: begin // Memory SAR0-- to Memory DAR0-- transfer
+            systemmemory.Write(ioDAR0.Value, systemmemory.Read(ioSAR0.Value));
+            ioDAR0.Value := ((ioDAR0.Value - 1) and $FFFFF);
+            ioSAR0.Value := ((ioSAR0.Value - 1) and $FFFFF);
+            clockCycles := clockCycles + (2 * memWaitCycles);
+            ioBCR0.Value := ((ioBCR0.Value - 1) and $FFFFF);
+        end;
+        $18: begin // Memory SAR0 to Memory DAR0-- transfer
+            if (dreq0) then begin
+                systemmemory.Write(ioDAR0.Value, systemmemory.Read(ioSAR0.Value));
+                ioDAR0.Value := ((ioDAR0.Value - 1) and $FFFFF);
+                clockCycles := clockCycles + (2 * memWaitCycles);
+                ioBCR0.Value := ((ioBCR0.Value - 1) and $FFFFF);
+                dreq0 := False;
+            end;
+        end;
+        $1C: begin // 64k-I/O SAR0 to Memory DAR0-- transfer
+            if (dreq0) then begin
+                systemmemory.Write(ioDAR0.Value, ioRead(ioSAR0.high, ioSAR0.low));
+                ioDAR0.Value := ((ioDAR0.Value - 1) and $FFFFF);
+                clockCycles := clockCycles + memWaitCycles + ioWaitCycles;
+                ioBCR0.Value := ((ioBCR0.Value - 1) and $FFFFF);
+                dreq0 := False;
+            end;
+        end;
+        $20: begin // Memory SAR0++ to Memory DAR0 transfer
+            if (dreq0) then begin
+                systemmemory.Write(ioDAR0.Value, systemmemory.Read(ioSAR0.Value));
                 ioSAR0.Value := ((ioSAR0.Value + 1) and $FFFFF);
                 clockCycles := clockCycles + (2 * memWaitCycles);
                 ioBCR0.Value := ((ioBCR0.Value - 1) and $FFFFF);
-            end;
-            $04: begin // Memory SAR0-- to Memory DAR0++ transfer
-                systemmemory.Write(ioDAR0.Value, systemmemory.Read(ioSAR0.Value));
-                ioDAR0.Value := ((ioDAR0.Value + 1) and $FFFFF);
-                ioSAR0.Value := ((ioSAR0.Value - 1) and $FFFFF);
-                clockCycles := clockCycles + (2 * memWaitCycles);
-                ioBCR0.Value := ((ioBCR0.Value - 1) and $FFFFF);
-            end;
-            $08: begin // Memory SAR0 to Memory DAR0++ transfer
-                if (dreq0) then begin
-                    systemmemory.Write(ioDAR0.Value, systemmemory.Read(ioSAR0.Value));
-                    ioDAR0.Value := ((ioDAR0.Value + 1) and $FFFFF);
-                    clockCycles := clockCycles + (2 * memWaitCycles);
-                    ioBCR0.Value := ((ioBCR0.Value - 1) and $FFFFF);
-                    dreq0 := False;
-                end;
-            end;
-            $0C: begin // 64k-I/O SAR0 to Memory DAR0++ transfer
-                if (dreq0) then begin
-                    systemmemory.Write(ioDAR0.Value, ioRead(ioSAR0.high, ioSAR0.low));
-                    ioDAR0.Value := ((ioDAR0.Value + 1) and $FFFFF);
-                    clockCycles := clockCycles + memWaitCycles + ioWaitCycles;
-                    ioBCR0.Value := ((ioBCR0.Value - 1) and $FFFFF);
-                    dreq0 := False;
-                end;
-            end;
-            $10: begin // Memory SAR0++ to Memory DAR0-- transfer
-                systemmemory.Write(ioDAR0.Value, systemmemory.Read(ioSAR0.Value));
-                ioDAR0.Value := ((ioDAR0.Value - 1) and $FFFFF);
-                ioSAR0.Value := ((ioSAR0.Value + 1) and $FFFFF);
-                clockCycles := clockCycles + (2 * memWaitCycles);
-                ioBCR0.Value := ((ioBCR0.Value - 1) and $FFFFF);
-            end;
-            $14: begin // Memory SAR0-- to Memory DAR0-- transfer
-                systemmemory.Write(ioDAR0.Value, systemmemory.Read(ioSAR0.Value));
-                ioDAR0.Value := ((ioDAR0.Value - 1) and $FFFFF);
-                ioSAR0.Value := ((ioSAR0.Value - 1) and $FFFFF);
-                clockCycles := clockCycles + (2 * memWaitCycles);
-                ioBCR0.Value := ((ioBCR0.Value - 1) and $FFFFF);
-            end;
-            $18: begin // Memory SAR0 to Memory DAR0-- transfer
-                if (dreq0) then begin
-                    systemmemory.Write(ioDAR0.Value, systemmemory.Read(ioSAR0.Value));
-                    ioDAR0.Value := ((ioDAR0.Value - 1) and $FFFFF);
-                    clockCycles := clockCycles + (2 * memWaitCycles);
-                    ioBCR0.Value := ((ioBCR0.Value - 1) and $FFFFF);
-                    dreq0 := False;
-                end;
-            end;
-            $1C: begin // 64k-I/O SAR0 to Memory DAR0-- transfer
-                if (dreq0) then begin
-                    systemmemory.Write(ioDAR0.Value, ioRead(ioSAR0.high, ioSAR0.low));
-                    ioDAR0.Value := ((ioDAR0.Value - 1) and $FFFFF);
-                    clockCycles := clockCycles + memWaitCycles + ioWaitCycles;
-                    ioBCR0.Value := ((ioBCR0.Value - 1) and $FFFFF);
-                    dreq0 := False;
-                end;
-            end;
-            $20: begin // Memory SAR0++ to Memory DAR0 transfer
-                if (dreq0) then begin
-                    systemmemory.Write(ioDAR0.Value, systemmemory.Read(ioSAR0.Value));
-                    ioSAR0.Value := ((ioSAR0.Value + 1) and $FFFFF);
-                    clockCycles := clockCycles + (2 * memWaitCycles);
-                    ioBCR0.Value := ((ioBCR0.Value - 1) and $FFFFF);
-                    dreq0 := False;
-                end;
-            end;
-            $24: begin // Memory SAR0-- to Memory DAR0 transfer
-                if (dreq0) then begin
-                    systemmemory.Write(ioDAR0.Value, systemmemory.Read(ioSAR0.Value));
-                    ioSAR0.Value := ((ioSAR0.Value - 1) and $FFFFF);
-                    clockCycles := clockCycles + (2 * memWaitCycles);
-                    ioBCR0.Value := ((ioBCR0.Value - 1) and $FFFFF);
-                    dreq0 := False;
-                end;
-            end;
-            $30: begin // Memory SAR0++ to 64k-I/O DAR0 transfer
-                if (dreq0) then begin
-                    ioWrite(ioDAR0.high, ioDAR0.low, systemmemory.Read(ioSAR0.Value));
-                    ioSAR0.Value := ((ioSAR0.Value + 1) and $FFFFF);
-                    clockCycles := clockCycles + memWaitCycles + ioWaitCycles;
-                    ioBCR0.Value := ((ioBCR0.Value - 1) and $FFFFF);
-                    dreq0 := False;
-                end;
-            end;
-            $34: begin // Memory SAR0-- to 64k-I/O DAR0 transfer
-                if (dreq0) then begin
-                    ioWrite(ioDAR0.high, ioDAR0.low, systemmemory.Read(ioSAR0.Value));
-                    ioSAR0.Value := ((ioSAR0.Value - 1) and $FFFFF);
-                    clockCycles := clockCycles + memWaitCycles + ioWaitCycles;
-                    ioBCR0.Value := ((ioBCR0.Value - 1) and $FFFFF);
-                    dreq0 := False;
-                end;
+                dreq0 := False;
             end;
         end;
-        dmaTransferCount := ((dmaTransferCount - 1) and $FFFFFFFF);
+        $24: begin // Memory SAR0-- to Memory DAR0 transfer
+            if (dreq0) then begin
+                systemmemory.Write(ioDAR0.Value, systemmemory.Read(ioSAR0.Value));
+                ioSAR0.Value := ((ioSAR0.Value - 1) and $FFFFF);
+                clockCycles := clockCycles + (2 * memWaitCycles);
+                ioBCR0.Value := ((ioBCR0.Value - 1) and $FFFFF);
+                dreq0 := False;
+            end;
+        end;
+        $30: begin // Memory SAR0++ to 64k-I/O DAR0 transfer
+            if (dreq0) then begin
+                ioWrite(ioDAR0.high, ioDAR0.low, systemmemory.Read(ioSAR0.Value));
+                ioSAR0.Value := ((ioSAR0.Value + 1) and $FFFFF);
+                clockCycles := clockCycles + memWaitCycles + ioWaitCycles;
+                ioBCR0.Value := ((ioBCR0.Value - 1) and $FFFFF);
+                dreq0 := False;
+            end;
+        end;
+        $34: begin // Memory SAR0-- to 64k-I/O DAR0 transfer
+            if (dreq0) then begin
+                ioWrite(ioDAR0.high, ioDAR0.low, systemmemory.Read(ioSAR0.Value));
+                ioSAR0.Value := ((ioSAR0.Value - 1) and $FFFFF);
+                clockCycles := clockCycles + memWaitCycles + ioWaitCycles;
+                ioBCR0.Value := ((ioBCR0.Value - 1) and $FFFFF);
+                dreq0 := False;
+            end;
+        end;
     end;
     if (ioBCR0.Value = 0) then begin // aktueller DMA-Transfer beendet
         ioDSTAT.bit[DE0] := False; // DMA0-Enable loeschen
+        dmaBurstMode := False;
         if (not ioDSTAT.bit[DE1]) then begin // nur wenn Channel 1 nicht (noch) aktiv
             ioDSTAT.bit[DME] := False; // DMA Main Enable loeschen
         end;
@@ -1285,13 +1280,22 @@ begin
 end;
 
 // --------------------------------------------------------------------------------
+procedure TZ180Cpu.clrSlpHalt;
+begin
+    HALT := False;
+    SLP := False;
+    tmpHALT := False;
+    tmpSLP := False;
+end;
+
+// --------------------------------------------------------------------------------
 procedure TZ180Cpu.exec(opCount: DWord);
 var
     vectorAddress: word;
 begin
     while (opCount >= 1) do begin
         Dec(opCount);
-        if ((not HALT) and not (ioDSTAT.bit[DME] and ioDSTAT.bit[DE0] and dmaBurstMode)) then begin
+        if (not (HALT or SLP or dmaBurstMode)) then begin
             extraWaitCycles := 0;
             execOp00Codes;
             clockCycles := clockCycles + extraWaitCycles;
@@ -1313,7 +1317,9 @@ begin
         end;
         while (clockCycles >= 1) do begin // Zaehlschleife um den 'Systemtakt Phi' abbilden zu koennen
             clockCycles := clockCycles - 1;
-            Dec(ioFRC);    // FRC (Free running counter) wird bei jedem t_state um 1 heruntergezaehlt. Z8018x Family MPU User Manual Seite 172
+            if (not SLP) then begin
+                Dec(ioFRC);    // FRC (Free running counter) wird bei jedem t_state um 1 heruntergezaehlt. Z8018x Family MPU User Manual Seite 172
+            end;
             if (ioCNTLA0.bit[TE] or ioCNTLA0.bit[RE]) then begin // nur wenn ASCI0 Senden oder Empfangen soll
                 asciClockCount0 := asciClockCount0 + 1;    // wird der 'Takt' fuer ASCI0 gestartet
                 if ((not ioSTAT0.bit[TDRE]) and asciTSR0E) then begin // ist TSR leer und liegen neue Daten im TDR
@@ -1360,7 +1366,7 @@ begin
                     doAsci1;
                 end;
             end;
-            if (ioTCR.bit[TDE0] or ioTCR.bit[TDE1]) then begin // sobald einer der beiden PRT-Kanaele aktiv ist
+            if ((not SLP) and (ioTCR.bit[TDE0] or ioTCR.bit[TDE1])) then begin // sobald einer der beiden PRT-Kanaele aktiv ist
                 Inc(prtClockCount); // wird der 'Takt' gestartet
                 if (prtClockCount >= 20) then begin // nach 20 Systemtakten
                     prtClockCount := 0; // wird der PRT-Takt getriggert
