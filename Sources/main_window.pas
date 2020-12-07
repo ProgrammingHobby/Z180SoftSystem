@@ -592,6 +592,7 @@ begin
     if Assigned(CpuIoRegister) then begin
         CpuIoRegister.showRegisterData;
     end;
+    Z180Cpu.clrSlpHalt;
     actionMemorySettings.Enabled := True;
     actionFloppyDrive.Enabled := True;
     actionLoadFileToRam.Enabled := True;
