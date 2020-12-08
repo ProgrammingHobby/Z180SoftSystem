@@ -681,6 +681,9 @@ begin
                 Result := (ioICR.Value and $E0);
             end;
         end;
+    end
+    else begin
+        extraWaitCycles := extraWaitCycles + 1;
     end;
 end;
 
@@ -894,6 +897,9 @@ begin
                 ioICR.Value := ((ioICR.Value and not $E0) or (Data and $E0));
             end;
         end;
+    end
+    else begin
+        extraWaitCycles := extraWaitCycles + 1;
     end;
 end;
 
@@ -1042,21 +1048,21 @@ begin
             systemmemory.Write(ioDAR0.Value, systemmemory.Read(ioSAR0.Value));
             ioDAR0.Value := ((ioDAR0.Value + 1) and $FFFFF);
             ioSAR0.Value := ((ioSAR0.Value + 1) and $FFFFF);
-            clockCycles := clockCycles + (2 * memWaitCycles);
+            clockCycles := clockCycles + (2 * memWaitCycles) + 6;
             ioBCR0.Value := ((ioBCR0.Value - 1) and $FFFFF);
         end;
         $04: begin // Memory SAR0-- to Memory DAR0++ transfer
             systemmemory.Write(ioDAR0.Value, systemmemory.Read(ioSAR0.Value));
             ioDAR0.Value := ((ioDAR0.Value + 1) and $FFFFF);
             ioSAR0.Value := ((ioSAR0.Value - 1) and $FFFFF);
-            clockCycles := clockCycles + (2 * memWaitCycles);
+            clockCycles := clockCycles + (2 * memWaitCycles) + 6;
             ioBCR0.Value := ((ioBCR0.Value - 1) and $FFFFF);
         end;
         $08: begin // Memory SAR0 to Memory DAR0++ transfer
             if (dreq0) then begin
                 systemmemory.Write(ioDAR0.Value, systemmemory.Read(ioSAR0.Value));
                 ioDAR0.Value := ((ioDAR0.Value + 1) and $FFFFF);
-                clockCycles := clockCycles + (2 * memWaitCycles);
+                clockCycles := clockCycles + (2 * memWaitCycles) + 6;
                 ioBCR0.Value := ((ioBCR0.Value - 1) and $FFFFF);
                 dreq0 := False;
             end;
@@ -1065,7 +1071,7 @@ begin
             if (dreq0) then begin
                 systemmemory.Write(ioDAR0.Value, ioRead(ioSAR0.high, ioSAR0.low));
                 ioDAR0.Value := ((ioDAR0.Value + 1) and $FFFFF);
-                clockCycles := clockCycles + memWaitCycles + ioWaitCycles;
+                clockCycles := clockCycles + memWaitCycles + 6;
                 ioBCR0.Value := ((ioBCR0.Value - 1) and $FFFFF);
                 dreq0 := False;
             end;
@@ -1074,21 +1080,21 @@ begin
             systemmemory.Write(ioDAR0.Value, systemmemory.Read(ioSAR0.Value));
             ioDAR0.Value := ((ioDAR0.Value - 1) and $FFFFF);
             ioSAR0.Value := ((ioSAR0.Value + 1) and $FFFFF);
-            clockCycles := clockCycles + (2 * memWaitCycles);
+            clockCycles := clockCycles + (2 * memWaitCycles) + 6;
             ioBCR0.Value := ((ioBCR0.Value - 1) and $FFFFF);
         end;
         $14: begin // Memory SAR0-- to Memory DAR0-- transfer
             systemmemory.Write(ioDAR0.Value, systemmemory.Read(ioSAR0.Value));
             ioDAR0.Value := ((ioDAR0.Value - 1) and $FFFFF);
             ioSAR0.Value := ((ioSAR0.Value - 1) and $FFFFF);
-            clockCycles := clockCycles + (2 * memWaitCycles);
+            clockCycles := clockCycles + (2 * memWaitCycles) + 6;
             ioBCR0.Value := ((ioBCR0.Value - 1) and $FFFFF);
         end;
         $18: begin // Memory SAR0 to Memory DAR0-- transfer
             if (dreq0) then begin
                 systemmemory.Write(ioDAR0.Value, systemmemory.Read(ioSAR0.Value));
                 ioDAR0.Value := ((ioDAR0.Value - 1) and $FFFFF);
-                clockCycles := clockCycles + (2 * memWaitCycles);
+                clockCycles := clockCycles + (2 * memWaitCycles) + 6;
                 ioBCR0.Value := ((ioBCR0.Value - 1) and $FFFFF);
                 dreq0 := False;
             end;
@@ -1097,7 +1103,7 @@ begin
             if (dreq0) then begin
                 systemmemory.Write(ioDAR0.Value, ioRead(ioSAR0.high, ioSAR0.low));
                 ioDAR0.Value := ((ioDAR0.Value - 1) and $FFFFF);
-                clockCycles := clockCycles + memWaitCycles + ioWaitCycles;
+                clockCycles := clockCycles + memWaitCycles + 6;
                 ioBCR0.Value := ((ioBCR0.Value - 1) and $FFFFF);
                 dreq0 := False;
             end;
@@ -1106,7 +1112,7 @@ begin
             if (dreq0) then begin
                 systemmemory.Write(ioDAR0.Value, systemmemory.Read(ioSAR0.Value));
                 ioSAR0.Value := ((ioSAR0.Value + 1) and $FFFFF);
-                clockCycles := clockCycles + (2 * memWaitCycles);
+                clockCycles := clockCycles + (2 * memWaitCycles) + 6;
                 ioBCR0.Value := ((ioBCR0.Value - 1) and $FFFFF);
                 dreq0 := False;
             end;
@@ -1115,7 +1121,7 @@ begin
             if (dreq0) then begin
                 systemmemory.Write(ioDAR0.Value, systemmemory.Read(ioSAR0.Value));
                 ioSAR0.Value := ((ioSAR0.Value - 1) and $FFFFF);
-                clockCycles := clockCycles + (2 * memWaitCycles);
+                clockCycles := clockCycles + (2 * memWaitCycles) + 6;
                 ioBCR0.Value := ((ioBCR0.Value - 1) and $FFFFF);
                 dreq0 := False;
             end;
@@ -1124,7 +1130,7 @@ begin
             if (dreq0) then begin
                 ioWrite(ioDAR0.high, ioDAR0.low, systemmemory.Read(ioSAR0.Value));
                 ioSAR0.Value := ((ioSAR0.Value + 1) and $FFFFF);
-                clockCycles := clockCycles + memWaitCycles + ioWaitCycles;
+                clockCycles := clockCycles + memWaitCycles + 6;
                 ioBCR0.Value := ((ioBCR0.Value - 1) and $FFFFF);
                 dreq0 := False;
             end;
@@ -1133,7 +1139,7 @@ begin
             if (dreq0) then begin
                 ioWrite(ioDAR0.high, ioDAR0.low, systemmemory.Read(ioSAR0.Value));
                 ioSAR0.Value := ((ioSAR0.Value - 1) and $FFFFF);
-                clockCycles := clockCycles + memWaitCycles + ioWaitCycles;
+                clockCycles := clockCycles + memWaitCycles + 6;
                 ioBCR0.Value := ((ioBCR0.Value - 1) and $FFFFF);
                 dreq0 := False;
             end;
@@ -1168,7 +1174,7 @@ begin
             if (dreq1) then begin
                 ioWrite(ioIAR1.high, ioIAR1.low, systemmemory.Read(ioMAR1.Value));
                 ioMAR1.Value := ((ioMAR1.Value + 1) and $FFFFF);
-                clockCycles := clockCycles + memWaitCycles + ioWaitCycles;
+                clockCycles := clockCycles + memWaitCycles + 6;
                 ioBCR1.Value := ((ioBCR1.Value - 1) and $FFFFF);
                 dreq1 := False;
             end;
@@ -1177,7 +1183,7 @@ begin
             if (dreq1) then begin
                 ioWrite(ioIAR1.high, ioIAR1.low, systemmemory.Read(ioMAR1.Value));
                 ioMAR1.Value := ((ioMAR1.Value - 1) and $FFFFF);
-                clockCycles := clockCycles + memWaitCycles + ioWaitCycles;
+                clockCycles := clockCycles + memWaitCycles + 6;
                 ioBCR1.Value := ((ioBCR1.Value - 1) and $FFFFF);
                 dreq1 := False;
             end;
@@ -1186,7 +1192,7 @@ begin
             if (dreq1) then begin
                 systemmemory.Write(ioMAR1.Value, ioRead(ioIAR1.high, ioIAR1.low));
                 ioMAR1.Value := ((ioMAR1.Value + 1) and $FFFFF);
-                clockCycles := clockCycles + memWaitCycles + ioWaitCycles;
+                clockCycles := clockCycles + memWaitCycles + 6;
                 ioBCR1.Value := ((ioBCR1.Value - 1) and $FFFFF);
                 dreq1 := False;
             end;
@@ -1195,7 +1201,7 @@ begin
             if (dreq1) then begin
                 systemmemory.Write(ioMAR1.Value, ioRead(ioIAR1.high, ioIAR1.low));
                 ioMAR1.Value := ((ioMAR1.Value - 1) and $FFFFF);
-                clockCycles := clockCycles + memWaitCycles + ioWaitCycles;
+                clockCycles := clockCycles + memWaitCycles + 6;
                 ioBCR1.Value := ((ioBCR1.Value - 1) and $FFFFF);
                 dreq1 := False;
             end;
@@ -1305,23 +1311,24 @@ begin
             clockCycles := 1;
         end;
         while (machineCycles >= 1) do begin // Zaehlschleife fuer Maschinen-Zyklen
-            machineCycles := machineCycles - 1;
+            dec(machineCycles);
             if ((not SLP) and ioDSTAT.bit[DME]) then begin
                 if (ioDSTAT.bit[DE0]) then begin
                     doDma0;
                 end;
-                if (ioDSTAT.bit[DE1]) then begin
+                // DMA-Channel 1 darf nur laufen wenn DMA-Channel 0 nicht im Burst-Modus ist !!!
+                if ( (not dmaBurstMode) and (ioDSTAT.bit[DE1])) then begin
                     doDma1;
                 end;
             end;
         end;
         while (clockCycles >= 1) do begin // Zaehlschleife um den 'Systemtakt Phi' abbilden zu koennen
-            clockCycles := clockCycles - 1;
+            dec(clockCycles);
             if (not SLP) then begin
-                Dec(ioFRC);    // FRC (Free running counter) wird bei jedem t_state um 1 heruntergezaehlt. Z8018x Family MPU User Manual Seite 172
+                Dec(ioFRC); // FRC (Free running counter) wird bei jedem t_state um 1 heruntergezaehlt. Z8018x Family MPU User Manual Seite 172
             end;
             if (ioCNTLA0.bit[TE] or ioCNTLA0.bit[RE]) then begin // nur wenn ASCI0 Senden oder Empfangen soll
-                asciClockCount0 := asciClockCount0 + 1;    // wird der 'Takt' fuer ASCI0 gestartet
+                inc(asciClockCount0);    // wird der 'Takt' fuer ASCI0 gestartet
                 if ((not ioSTAT0.bit[TDRE]) and asciTSR0E) then begin // ist TSR leer und liegen neue Daten im TDR
                     TSR0 := ioTDR0; // werden diese ins TSR kopiert
                     asciTSR0E := False; // und die Status-Flags entsprechend setzen
@@ -1344,7 +1351,7 @@ begin
                 end;
             end;
             if (ioCNTLA1.bit[TE] or ioCNTLA1.bit[RE]) then begin// nur wenn ASCI1 Senden oder Empfangen soll
-                asciClockCount1 := asciClockCount1 + 1;    // wird der 'Takt' fuer ASCI1 gestartet
+                inc(asciClockCount1);    // wird der 'Takt' fuer ASCI1 gestartet
                 if ((not ioSTAT1.bit[TDRE]) and asciTSR1E) then begin// ist TSR leer und liegen neue Daten im TDR
                     TSR1 := ioTDR1; // werden diese ins TSR kopiert
                     asciTSR1E := False; // und die Status-Flags entsprechend setzen
