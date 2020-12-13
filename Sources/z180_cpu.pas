@@ -1311,24 +1311,24 @@ begin
             clockCycles := 1;
         end;
         while (machineCycles >= 1) do begin // Zaehlschleife fuer Maschinen-Zyklen
-            dec(machineCycles);
+            Dec(machineCycles);
             if ((not SLP) and ioDSTAT.bit[DME]) then begin
                 if (ioDSTAT.bit[DE0]) then begin
                     doDma0;
                 end;
                 // DMA-Channel 1 darf nur laufen wenn DMA-Channel 0 nicht im Burst-Modus ist !!!
-                if ( (not dmaBurstMode) and (ioDSTAT.bit[DE1])) then begin
+                if ((not dmaBurstMode) and (ioDSTAT.bit[DE1])) then begin
                     doDma1;
                 end;
             end;
         end;
         while (clockCycles >= 1) do begin // Zaehlschleife um den 'Systemtakt Phi' abbilden zu koennen
-            dec(clockCycles);
+            Dec(clockCycles);
             if (not SLP) then begin
                 Dec(ioFRC); // FRC (Free running counter) wird bei jedem t_state um 1 heruntergezaehlt. Z8018x Family MPU User Manual Seite 172
             end;
             if (ioCNTLA0.bit[TE] or ioCNTLA0.bit[RE]) then begin // nur wenn ASCI0 Senden oder Empfangen soll
-                inc(asciClockCount0);    // wird der 'Takt' fuer ASCI0 gestartet
+                Inc(asciClockCount0);    // wird der 'Takt' fuer ASCI0 gestartet
                 if ((not ioSTAT0.bit[TDRE]) and asciTSR0E) then begin // ist TSR leer und liegen neue Daten im TDR
                     TSR0 := ioTDR0; // werden diese ins TSR kopiert
                     asciTSR0E := False; // und die Status-Flags entsprechend setzen
@@ -1351,7 +1351,7 @@ begin
                 end;
             end;
             if (ioCNTLA1.bit[TE] or ioCNTLA1.bit[RE]) then begin// nur wenn ASCI1 Senden oder Empfangen soll
-                inc(asciClockCount1);    // wird der 'Takt' fuer ASCI1 gestartet
+                Inc(asciClockCount1);    // wird der 'Takt' fuer ASCI1 gestartet
                 if ((not ioSTAT1.bit[TDRE]) and asciTSR1E) then begin// ist TSR leer und liegen neue Daten im TDR
                     TSR1 := ioTDR1; // werden diese ins TSR kopiert
                     asciTSR1E := False; // und die Status-Flags entsprechend setzen
@@ -4953,6 +4953,7 @@ begin
         else begin
             ioITC.bit[TRAP] := True;  // TRAP Flag in ITC-Register setzen
             ioITC.bit[UFO] := False;  // UFO-Flag loeschen, da TRAP in 2. OP-Code aufgetreten
+            Dec(regPC.Value);         // PC korrigieren
             push(regPC.Value);
             regPC.Value := $0000;
             machineCycles := 4;
@@ -5248,6 +5249,7 @@ begin
         else begin
             ioITC.bit[TRAP] := True;  // TRAP Flag in ITC-Register setzen
             ioITC.bit[UFO] := False;  // UFO-Flag loeschen, da TRAP in 2. OP-Code aufgetreten
+            Dec(regPC.Value);         // PC korrigieren
             push(regPC.Value);
             regPC.Value := $0000;
             machineCycles := 4;
@@ -5496,6 +5498,7 @@ begin
         else begin
             ioITC.bit[TRAP] := True;   // TRAP Flag in ITC-Register setzen
             ioITC.bit[UFO] := True;    // UFO-Flag setzen, da TRAP in 3. OP-Code aufgetreten
+            Dec(regPC.Value);          // PC korrigieren
             push(regPC.Value);
             regPC.Value := $0000;
             machineCycles := 6;
@@ -5791,6 +5794,7 @@ begin
         else begin
             ioITC.bit[TRAP] := True;  // TRAP Flag in ITC-Register setzen
             ioITC.bit[UFO] := False;  // UFO-Flag loeschen, da TRAP in 2. OP-Code aufgetreten
+            Dec(regPC.Value);         // PC korrigieren
             push(regPC.Value);
             regPC.Value := $0000;
             machineCycles := 4;
@@ -6039,6 +6043,7 @@ begin
         else begin
             ioITC.bit[TRAP] := True;   // TRAP Flag in ITC-Register setzen
             ioITC.bit[UFO] := True;    // UFO-Flag setzen, da TRAP in 3. OP-Code aufgetreten
+            Dec(regPC.Value);          // PC korrigieren
             push(regPC.Value);
             regPC.Value := $0000;
             machineCycles := 6;
@@ -6812,7 +6817,8 @@ begin
         {$ifndef NOTRAP}
         else begin
             ioITC.bit[TRAP] := True;  // TRAP Flag in ITC-Register setzen
-            ioITC.bit[UFO] := False;  // UFO-Flag loeschen, da TRAP in 2. OP-Code aufgetreten
+            ioITC.bit[UFO] := False;  // UFO-Flag loeschen, da TRAP in 2. OP-Code aufgetreten 
+            Dec(regPC.Value);         // PC korrigieren
             push(regPC.Value);
             regPC.Value := $0000;
             machineCycles := 4;
