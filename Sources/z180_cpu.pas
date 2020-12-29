@@ -78,6 +78,7 @@ type
         // Variablen fuer die Takt- und Machinen-Zyklen Verarbeitung
         machineCycles, clockCycles: DWord;
         extraWaitCycles, ioWaitCycles, memWaitCycles: DWord;
+        clockMultiplier: byte;
 
         // 1. Z180Cpu Standard-Registersatz
         regAF: TregAF;  // 16Bit Register-Paar AF
@@ -120,6 +121,8 @@ type
         ioTMDR1: Treg16;    // Timer-Channel 1 Data Register
         ioRLDR1: Treg16;    // Timer-Channel 1 Reload Register
         ioFRC: byte;        // Free Running Counter
+        ioCMR: TbitReg8;    // Clock Multiplier Register
+        ioCCR: TbitReg8;    // CPU Control Register
         ioSAR0: Treg32;     // DMA-Channel 0 Source Address Register
         ioDAR0: Treg32;     // DMA-Channel 0 Destination Address Register
         ioBCR0: Treg32;     // DMA-Channel 0 Byte Count Register (32Bit um vollen 64K Transfer zu handeln)
@@ -481,6 +484,7 @@ begin
     machineCycles := 0;
     clockCycles := 0;
     extraWaitCycles := 0;
+    clockMultiplier := 1;
     memWaitCycles := 0;
     ioWaitCycles := 0;
 end;
@@ -601,6 +605,12 @@ begin
             end;
             $18: begin   //portFRC
                 Result := (ioFRC and $FF);
+            end;
+            $1E: begin   //portCMR
+                Result := (ioCMR.Value and $FF);
+            end;
+            $1F: begin   //portCCR
+                Result := (ioCCR.Value and $FF);
             end;
             $20: begin   //portSAR0L
                 Result := (ioSAR0.low and $FF);
@@ -778,6 +788,30 @@ begin
             $18: begin   //portFRC
                 ioFRC := ((ioFRC and not $00) or (Data and $00));
             end;
+            $1E: begin   //portCMR
+                ioCMR.Value := ((ioCMR.Value and not $80) or (Data and $80));
+                if not (ioCMR.bit[7] or ioCCR.bit[7]) then begin
+                    clockMultiplier := 1;
+                end
+                else if (ioCMR.bit[7] or ioCCR.bit[7]) then begin
+                    clockMultiplier := 2;
+                end
+                else if (ioCMR.bit[7] and ioCCR.bit[7]) then begin
+                    clockMultiplier := 4;
+                end;
+            end;
+            $1F: begin   //portCCR
+                ioCCR.Value := ((ioCCR.Value and not $FF) or (Data and $FF));
+                if not (ioCMR.bit[7] or ioCCR.bit[7]) then begin
+                    clockMultiplier := 1;
+                end
+                else if (ioCMR.bit[7] or ioCCR.bit[7]) then begin
+                    clockMultiplier := 2;
+                end
+                else if (ioCMR.bit[7] and ioCCR.bit[7]) then begin
+                    clockMultiplier := 4;
+                end;
+            end;
             $20: begin   //portSAR0L
                 ioSAR0.low := ((ioSAR0.low and not $FF) or (Data and $FF));
             end;
@@ -952,7 +986,7 @@ end;
 procedure TZ180Cpu.doAsci0;
 begin
     if (ioCNTLA0.bit[TE] and (not asciTSR0E)) then begin // ist Senden enabled und liegen Daten im TSR
-        transmitShiftCount0 := transmitShiftCount0 + 1; // den Bitshift-Takt
+        Inc(transmitShiftCount0); // den Bitshift-Takt
         if (transmitShiftCount0 >= shiftModeRatio0) then begin // entsprechend des Datenformats triggern
             SystemInOut.cpuTXA0(TSR0); // und nach den entsprechenden Shift-Takten die Daten ausgeben
             asciTSR0E := True; // Flags und
@@ -960,7 +994,7 @@ begin
         end;
     end;
     if (ioCNTLA0.bit[RE] and (not asciRSR0F) and SystemInOut.cpuCanReadRXA0()) then begin // ist Empfangen enabled, RSR leer und neue Daten verfuegbar
-        receiveShiftCount0 := receiveShiftCount0 + 1; // den Bitshift-Takt
+        Inc(receiveShiftCount0); // den Bitshift-Takt
         if (receiveShiftCount0 >= shiftModeRatio0) then begin // entsprechend des Datenformats triggern
             RSR0 := SystemInOut.cpuRXA0(); // und nach den entsprechenden Shift-Takten die Daten einlesen
             asciRSR0F := True; // Flags und
@@ -982,7 +1016,7 @@ end;
 procedure TZ180Cpu.doAsci1;
 begin
     if (ioCNTLA1.bit[TE] and (not asciTSR1E)) then begin // ist Senden enabled und liegen Daten im TSR
-        transmitShiftCount1 := transmitShiftCount1 + 1; // den Bitshift-Takt
+        Inc(transmitShiftCount1); // den Bitshift-Takt
         if (transmitShiftCount1 >= shiftModeRatio1) then begin // entsprechend des Datenformats triggern
             SystemInOut.cpuTXA1(TSR1); // und nach den entsprechenden Shift-Takten die Daten ausgeben
             asciTSR1E := True; // Flags und
@@ -990,7 +1024,7 @@ begin
         end;
     end;
     if (ioCNTLA1.bit[RE] and (not asciRSR1F) and SystemInOut.cpuCanReadRXA1()) then begin // ist Empfangen enabled, RSR leer und neue Daten verfuegbar
-        receiveShiftCount1 := receiveShiftCount1 + 1; // den Bitshift-Takt
+        Inc(receiveShiftCount1); // den Bitshift-Takt
         if (receiveShiftCount1 >= shiftModeRatio1) then begin // entsprechend des Datenformats triggern
             RSR1 := SystemInOut.cpuRXA1(); // und nach den entsprechenden Shift-Takten die Daten einlesen
             asciRSR1F := True; // Flags und
@@ -1257,6 +1291,8 @@ begin
     ioTMDR1.Value := $FFFF;
     ioRLDR1.Value := $FFFF;
     ioFRC := $FF;
+    ioCMR.Value := $7F;
+    ioCCR.Value := $00;
     ioSAR0.Value := $000000;
     ioDAR0.Value := $000000;
     ioBCR0.Value := $0000;
@@ -1328,7 +1364,7 @@ begin
                 Dec(ioFRC); // FRC (Free running counter) wird bei jedem t_state um 1 heruntergezaehlt. Z8018x Family MPU User Manual Seite 172
             end;
             if (ioCNTLA0.bit[TE] or ioCNTLA0.bit[RE]) then begin // nur wenn ASCI0 Senden oder Empfangen soll
-                Inc(asciClockCount0);    // wird der 'Takt' fuer ASCI0 gestartet
+                Inc(asciClockCount0, clockMultiplier);    // wird der 'Takt' fuer ASCI0 gestartet
                 if ((not ioSTAT0.bit[TDRE]) and asciTSR0E) then begin // ist TSR leer und liegen neue Daten im TDR
                     TSR0 := ioTDR0; // werden diese ins TSR kopiert
                     asciTSR0E := False; // und die Status-Flags entsprechend setzen
@@ -1351,7 +1387,7 @@ begin
                 end;
             end;
             if (ioCNTLA1.bit[TE] or ioCNTLA1.bit[RE]) then begin// nur wenn ASCI1 Senden oder Empfangen soll
-                Inc(asciClockCount1);    // wird der 'Takt' fuer ASCI1 gestartet
+                Inc(asciClockCount1, clockMultiplier);    // wird der 'Takt' fuer ASCI1 gestartet
                 if ((not ioSTAT1.bit[TDRE]) and asciTSR1E) then begin// ist TSR leer und liegen neue Daten im TDR
                     TSR1 := ioTDR1; // werden diese ins TSR kopiert
                     asciTSR1E := False; // und die Status-Flags entsprechend setzen
