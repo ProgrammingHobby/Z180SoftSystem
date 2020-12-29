@@ -103,7 +103,7 @@ type
             Sectors: byte;
             ImageFileName: string;
             Size: dword;
-            ImageChanged: boolean;
+            Ready: boolean;
             HddStatus: TPanel;
         end;
 
@@ -194,6 +194,7 @@ begin
     timerHddStatus.Enabled := False;
     timerHddStatus.Interval := 50;
     timerHddStatus.OnTimer := @setHddOffState;
+    hardDrive.Ready := False;
     doReset;
 end;
 
@@ -509,11 +510,14 @@ end;
 procedure TSystemHdc.doReset;
 begin
     hdcError.Value := $01;
+    hdcStatus.Value := $00;
     hdcSector := $01;
     hdcSectorCount := $01;
     hdcTrack.low := $00;
     hdcTrack.high := $00;
     hdcDriveHead.Value := $00;
+    hdcStatus.bit[DRDY] := hardDrive.Ready;
+    hdcStatus.bit[BSY] := not hardDrive.Ready;
 end;
 
 // --------------------------------------------------------------------------------
@@ -537,11 +541,10 @@ end;
 // --------------------------------------------------------------------------------
 procedure TSystemHdc.setHddImage(fileName: string);
 var
-    isLoaded: boolean;
     imageFileSize: dword;
     hintString: string;
 begin
-    isLoaded := False;
+    hardDrive.Ready := False;
     hintString := '';
     if (FileExists(FileName)) then begin
         try
@@ -549,14 +552,13 @@ begin
             Reset(hddData, 1);
             imageFileSize := FileSize(hddData);
             if ((FileName <> hardDrive.ImageFileName) or (imageFileSize <> hardDrive.Size)) then begin
-                hardDrive.ImageChanged := True;
                 hardDrive.ImageFileName := FileName;
                 hardDrive.Size := imageFileSize;
                 hintString := 'Image:  ' + ExtractFileName(fileName) + LineEnding + 'Größe:  ' + calcHddSize + LineEnding +
                     'Köpfe:  ' + IntToStr(hardDrive.Heads) + LineEnding + 'Spuren:  ' + IntToStr(hardDrive.Tracks) +
                     LineEnding + 'Sektoren:  ' + IntToStr(hardDrive.Sectors) + LineEnding + 'Bytes/Sektor:  ' + IntToStr(SECBYTES);
             end;
-            isLoaded := True;
+            hardDrive.Ready := True;
             Close(hddData);
         except;
         end;
@@ -566,9 +568,10 @@ begin
         hardDrive.Size := 0;
     end;
     hardDrive.HddStatus.Hint := hintString;
-    hdcStatus.bit[DRDY] := isLoaded;
-    hdcStatus.bit[DSC] := isLoaded;
-    hardDrive.HddStatus.Enabled := isLoaded;
+    hdcStatus.bit[DRDY] := hardDrive.Ready;
+    hdcStatus.bit[DSC] := hardDrive.Ready;
+    hdcStatus.bit[BSY] := not hardDrive.Ready;
+    hardDrive.HddStatus.Enabled := hardDrive.Ready;
 end;
 
 // --------------------------------------------------------------------------------
@@ -631,14 +634,22 @@ end;
 // --------------------------------------------------------------------------------
 procedure TSystemHdc.setCommand(Value: byte);
 begin
-    //hdcStatus.Value := 0;
-    //hdcError.Value := 0;
+    hdcError.Value := 0;
+    hdcStatus.bit[ERR] := False;
     hdcStatus.bit[DRDY] := hardDrive.HddStatus.Enabled;
-    hardDrive.ImageChanged := False;
+    hdcStatus.bit[BSY] := not hdcStatus.bit[DRDY];
     case (Value) of
+        $00: begin         // NOP
+            hdcStatus.bit[ERR] := True;
+            hdcStatus.bit[DSC] := True;
+            hdcError.bit[ABRT] := True;
+            hdcStatus.bit[BSY] := False;
+        end;
         $10..$1F: begin    // Recalibrate
             hdcTrack.Value := 0;
             hdcError.Value := 0;
+            hdcStatus.bit[DSC] := True;
+            hdcStatus.bit[BSY] := False;
         end;
         $20..$21: begin    // Read Sectors
             prepareReadSectors;
@@ -660,6 +671,7 @@ begin
         end;
         else begin
             hdcStatus.bit[ERR] := True;
+            hdcStatus.bit[BSY] := False;
             hdcError.bit[ABRT] := True;
         end;
     end;
