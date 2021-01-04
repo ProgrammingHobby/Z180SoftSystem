@@ -71,7 +71,7 @@ end;
 // --------------------------------------------------------------------------------
 function TSystemInOut.cpuIoRead(port: word): byte;
 begin
-    case (port) of
+    case (port and $FF) of
         $70: begin
             Result := SystemFdc.getStatus;
         end;
@@ -126,7 +126,7 @@ end;
 // --------------------------------------------------------------------------------
 procedure TSystemInOut.cpuIoWrite(port: word; Data: byte);
 begin
-    case (port) of
+    case (port and $FF) of
         $70: begin
             SystemFdc.setCommand(Data);
         end;
