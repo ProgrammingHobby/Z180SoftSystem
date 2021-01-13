@@ -5,15 +5,18 @@ unit Hdd_Settings;
 interface
 
 uses
-    Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, ExtCtrls, EditBtn, SpinEx;
+    Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, ExtCtrls,
+    EditBtn, ComCtrls, SpinEx;
 
 type
 
     { THddSettings }
 
     THddSettings = class(TForm)
+        labelHddDrive: TLabel;
         editHddImageFile: TFileNameEdit;
         editHddSize: TEdit;
+        groupboxHddDrive: TGroupBox;
         groupboxHddGeometrie: TGroupBox;
         groupboxHddImage: TGroupBox;
         labelHddHeads: TLabel;
@@ -24,12 +27,15 @@ type
         panelHddSectors: TPanel;
         panelHddSize: TPanel;
         panelHddTracks: TPanel;
-        spineditHddHeads: TSpinEditEx;
+        editHddHeads: TEdit;
         spineditHddSectors: TSpinEditEx;
         spineditHddTracks: TSpinEditEx;
+        updownHeads: TUpDown;
+        procedure editHddImageFileChange(Sender: TObject);
         procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
         procedure FormShow(Sender: TObject);
-        procedure HddGeometryChange(Sender: TObject);
+        procedure OnHddSizeChange(Sender: TObject);
+        procedure updownHeadsClick(Sender: TObject; Button: TUDBtnType);
     private
     var
         oldTracks: integer;
@@ -41,6 +47,7 @@ type
         SECBYTES = 512;
 
         procedure calcHddSize;
+        function calcBitIndex(Value: integer): integer;
 
     public
 
@@ -62,9 +69,9 @@ procedure THddSettings.FormClose(Sender: TObject; var CloseAction: TCloseAction)
 begin
     SystemSettings.saveFormState(TForm(self));
 
-    if (oldHeads <> spineditHddHeads.Value) then begin
-        SystemSettings.WriteString('Hdd', 'Heads', IntToStr(spineditHddHeads.Value));
-        SystemHdc.setHddHeads(spineditHddHeads.Value);
+    if (oldHeads <> StrToInt(editHddHeads.Text)) then begin
+        SystemSettings.WriteString('Hdd', 'Heads', editHddHeads.Text);
+        SystemHdc.setHddHeads(StrToInt(editHddHeads.Text));
     end;
     if (oldTracks <> spineditHddTracks.Value) then begin
         SystemSettings.WriteString('Hdd', 'Tracks', IntToStr(spineditHddTracks.Value));
@@ -83,6 +90,13 @@ begin
 end;
 
 // --------------------------------------------------------------------------------
+procedure THddSettings.editHddImageFileChange(Sender: TObject);
+begin
+    editHddImageFile.SelStart := editHddImageFile.FileName.Length;
+    editHddImageFile.Hint := editHddImageFile.FileName;
+end;
+
+// --------------------------------------------------------------------------------
 procedure THddSettings.FormShow(Sender: TObject);
 begin
     SystemSettings.restoreFormState(TForm(self));
@@ -94,7 +108,8 @@ begin
     Constraints.MaxHeight := Height;
 
     oldHeads := SystemSettings.ReadString('Hdd', 'Heads', '16').ToInteger;
-    spineditHddHeads.Value := oldHeads;
+    updownHeads.Position := calcBitIndex(oldHeads);
+    editHddHeads.Text := IntToStr(1 shl updownHeads.Position);
     oldTracks := SystemSettings.ReadString('Hdd', 'Tracks', '246').ToInteger;
     spineditHddTracks.Value := oldTracks;
     oldSectors := SystemSettings.ReadString('Hdd', 'Sectors', '63').ToInteger;
@@ -103,12 +118,19 @@ begin
     editHddImageFile.FileName := oldImageFile;
 
     calcHddSize;
+    groupboxHddDrive.SetFocus;
 end;
 
 // --------------------------------------------------------------------------------
-procedure THddSettings.HddGeometryChange(Sender: TObject);
+procedure THddSettings.OnHddSizeChange(Sender: TObject);
 begin
-    calcHddSize;
+   calcHddSize;
+end;
+
+// --------------------------------------------------------------------------------
+procedure THddSettings.updownHeadsClick(Sender: TObject; Button: TUDBtnType);
+begin
+    editHddHeads.Text := IntToStr(1 shl updownHeads.Position);
 end;
 
 // --------------------------------------------------------------------------------
@@ -119,7 +141,7 @@ var
 begin
     tracks := spineditHddTracks.Value;
     sectors := spineditHddSectors.Value;
-    heads := spineditHddHeads.Value;
+    TryStrToInt(editHddHeads.Text, heads);
     size := tracks * sectors * SECBYTES * heads;
     if ((size div 1048576) > 0) then begin
         sizeView := FloatToStrF((size / 1048576), ffNumber, 15, 2) + 'MB';
@@ -131,6 +153,15 @@ begin
         sizeView := IntToStr(size) + 'Byte';
     end;
     editHddSize.Text := sizeView;
+end;
+
+// --------------------------------------------------------------------------------
+function THddSettings.calcBitIndex(Value: integer): integer;
+begin
+    for Result := 0 to 8 do begin
+        if ((1 shl Result) >= Value) then
+            break;
+    end;
 end;
 
 // --------------------------------------------------------------------------------
