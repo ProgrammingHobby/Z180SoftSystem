@@ -19,11 +19,13 @@ type
         editBootRomImageFile: TFileNameEdit;
         groupBootRomFile: TGroupBox;
         groupBootRomSize: TGroupBox;
+        groupboxMemorySettings: TGroupBox;
         groupSystemRamSize: TGroupBox;
         panelBootRomFile: TPanel;
         panelMemorySettings: TPanel;
         procedure buttonReloadImageClick(Sender: TObject);
         procedure comboboxDrawItem(Control: TWinControl; Index: integer; ARect: TRect; State: TOwnerDrawState);
+        procedure editBootRomImageFileChange(Sender: TObject);
         procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
         procedure FormShow(Sender: TObject);
 
@@ -111,6 +113,13 @@ begin
 end;
 
 // --------------------------------------------------------------------------------
+procedure TMemorySettings.editBootRomImageFileChange(Sender: TObject);
+begin
+    editBootRomImageFile.SelStart := editBootRomImageFile.FileName.Length;
+    editBootRomImageFile.Hint := editBootRomImageFile.FileName;
+end;
+
+// --------------------------------------------------------------------------------
 procedure TMemorySettings.FormShow(Sender: TObject);
 var
     ItemIndex: integer;
@@ -127,7 +136,7 @@ begin
     oldRomSize := Trim(SystemSettings.ReadString('Memory', 'RomSize', '8KB'));
     ItemIndex := comboboxRomSize.Items.IndexOf(oldRomSize);
     if (ItemIndex = -1) then begin
-        ItemIndex := 1;
+        ItemIndex := 0;
     end;
     comboboxRomSize.ItemIndex := ItemIndex;
     oldImageFile := SystemSettings.ReadString('Memory', 'RomImageFile', '');
@@ -143,6 +152,8 @@ begin
     oldAdressDecode := SystemSettings.ReadBoolean('Memory', 'FullAdressDecode', True);
     instantlyReload := False;
     settingsLoaded := True;
+
+    groupboxMemorySettings.SetFocus;
 end;
 
 // --------------------------------------------------------------------------------

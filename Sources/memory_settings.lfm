@@ -4,189 +4,204 @@ object MemorySettings: TMemorySettings
   Top = 250
   Width = 711
   Caption = 'System Speicher-Einstellungen'
-  ChildSizing.EnlargeHorizontal = crsHomogenousChildResize
-  ChildSizing.EnlargeVertical = crsHomogenousChildResize
-  ChildSizing.Layout = cclLeftToRightThenTopToBottom
-  ChildSizing.ControlsPerLine = 1
   ClientHeight = 368
   ClientWidth = 711
   OnClose = FormClose
   OnShow = FormShow
-  object panelMemorySettings: TPanel
+  object groupboxMemorySettings: TGroupBox
     Left = 0
-    Height = 186
-    Top = 0
+    Height = 364
+    Top = 4
     Width = 711
-    BevelOuter = bvNone
-    ChildSizing.LeftRightSpacing = 4
-    ChildSizing.TopBottomSpacing = 4
-    ChildSizing.HorizontalSpacing = 16
+    Align = alClient
+    AutoSize = True
+    BorderSpacing.Top = 4
     ChildSizing.EnlargeHorizontal = crsHomogenousChildResize
     ChildSizing.EnlargeVertical = crsHomogenousChildResize
     ChildSizing.Layout = cclLeftToRightThenTopToBottom
-    ChildSizing.ControlsPerLine = 3
-    ClientHeight = 186
-    ClientWidth = 711
+    ChildSizing.ControlsPerLine = 1
+    ClientHeight = 362
+    ClientWidth = 709
     TabOrder = 0
-    object groupBootRomSize: TGroupBox
-      Left = 4
-      Height = 174
-      Top = 4
-      Width = 151
-      AutoSize = True
-      BorderSpacing.Left = 4
-      BorderSpacing.Top = 4
-      BorderSpacing.Right = 8
-      BorderSpacing.Bottom = 8
-      Caption = ' Boot-ROM Größe '
-      ChildSizing.LeftRightSpacing = 6
+    object panelMemorySettings: TPanel
+      Left = 0
+      Height = 187
+      Top = 0
+      Width = 709
+      BevelOuter = bvNone
+      ChildSizing.LeftRightSpacing = 4
+      ChildSizing.TopBottomSpacing = 4
+      ChildSizing.HorizontalSpacing = 16
       ChildSizing.EnlargeHorizontal = crsHomogenousChildResize
       ChildSizing.EnlargeVertical = crsHomogenousChildResize
-      ChildSizing.ShrinkHorizontal = crsScaleChilds
-      ChildSizing.ShrinkVertical = crsScaleChilds
       ChildSizing.Layout = cclLeftToRightThenTopToBottom
-      ChildSizing.ControlsPerLine = 2
-      ClientHeight = 156
-      ClientWidth = 149
-      TabOrder = 0
-      object comboboxRomSize: TComboBox
-        Left = 6
-        Height = 148
-        Top = 4
-        Width = 137
-        BorderSpacing.Left = 4
-        BorderSpacing.Top = 4
-        BorderSpacing.Right = 4
-        BorderSpacing.Bottom = 4
-        DoubleBuffered = True
-        ItemHeight = 0
-        ItemIndex = 1
-        Items.Strings = (
-          '4KB'
-          '8KB'
-          '16KB'
-          '32KB'
-        )
-        OnDrawItem = comboboxDrawItem
-        ParentDoubleBuffered = False
-        Style = csDropDownList
-        TabOrder = 0
-        Text = '8KB'
-      end
-    end
-    object groupSystemRamSize: TGroupBox
-      Left = 171
-      Height = 174
-      Top = 4
-      Width = 178
-      AutoSize = True
-      BorderSpacing.Left = 8
-      BorderSpacing.Top = 4
-      BorderSpacing.Right = 8
-      BorderSpacing.Bottom = 8
-      Caption = ' Arbeitsspeicher Größe '
-      ChildSizing.LeftRightSpacing = 6
-      ChildSizing.EnlargeHorizontal = crsHomogenousChildResize
-      ChildSizing.EnlargeVertical = crsHomogenousChildResize
-      ChildSizing.ShrinkHorizontal = crsScaleChilds
-      ChildSizing.ShrinkVertical = crsScaleChilds
-      ChildSizing.Layout = cclLeftToRightThenTopToBottom
-      ChildSizing.ControlsPerLine = 2
-      ClientHeight = 156
-      ClientWidth = 176
+      ChildSizing.ControlsPerLine = 3
+      ClientHeight = 187
+      ClientWidth = 709
       TabOrder = 1
-      object comboboxRamSize: TComboBox
-        Left = 6
-        Height = 148
-        Top = 4
-        Width = 164
-        BorderSpacing.Left = 4
-        BorderSpacing.Top = 4
-        BorderSpacing.Right = 4
-        BorderSpacing.Bottom = 4
-        ItemHeight = 0
-        ItemIndex = 0
-        Items.Strings = (
-          '64KB'
-          '128KB'
-          '256KB'
-          '512KB'
-          '1024KB'
-        )
-        OnDrawItem = comboboxDrawItem
-        Style = csDropDownList
-        TabOrder = 0
-        Text = '64KB'
-      end
-    end
-    object checkboxReloadOnEnable: TCheckBox
-      Left = 365
-      Height = 174
-      Top = 4
-      Width = 342
-      BorderSpacing.Left = 4
-      BorderSpacing.Right = 4
-      Caption = 'Image erneut Laden wenn Boot-ROM aktiviert wird'
-      TabOrder = 2
-    end
-  end
-  object panelBootRomFile: TPanel
-    Left = 0
-    Height = 182
-    Top = 186
-    Width = 711
-    BevelOuter = bvNone
-    ClientHeight = 182
-    ClientWidth = 711
-    TabOrder = 1
-    object groupBootRomFile: TGroupBox
-      Left = 4
-      Height = 176
-      Top = 2
-      Width = 703
-      Align = alClient
-      BorderSpacing.Left = 4
-      BorderSpacing.Top = 2
-      BorderSpacing.Right = 4
-      BorderSpacing.Bottom = 4
-      Caption = ' Boot-ROM Image Datei '
-      ClientHeight = 158
-      ClientWidth = 701
-      TabOrder = 0
-      object editBootRomImageFile: TFileNameEdit
+      object groupBootRomSize: TGroupBox
         Left = 4
-        Height = 150
+        Height = 175
         Top = 4
-        Width = 639
-        DialogTitle = 'Lade Boot-ROM Image'
-        DialogOptions = [ofPathMustExist, ofFileMustExist, ofNoNetworkButton, ofEnableSizing, ofViewDetail]
-        Filter = 'Binär Dateien (*.bin)|*.bin;*.BIN|Alle Dateien (*.*)|*.*'
-        FilterIndex = 0
-        HideDirectories = False
-        ButtonWidth = 23
-        NumGlyphs = 1
-        Align = alClient
-        BorderSpacing.Left = 4
-        BorderSpacing.Top = 4
-        BorderSpacing.Right = 4
-        BorderSpacing.Bottom = 4
-        MaxLength = 0
-        TabOrder = 0
-      end
-      object buttonReloadImage: TButton
-        Left = 647
-        Height = 150
-        Top = 4
-        Width = 50
-        Align = alRight
+        Width = 151
         AutoSize = True
         BorderSpacing.Left = 4
         BorderSpacing.Top = 4
+        BorderSpacing.Right = 8
+        BorderSpacing.Bottom = 8
+        Caption = ' Boot-ROM Größe '
+        ChildSizing.LeftRightSpacing = 6
+        ChildSizing.EnlargeHorizontal = crsHomogenousChildResize
+        ChildSizing.EnlargeVertical = crsHomogenousChildResize
+        ChildSizing.ShrinkHorizontal = crsScaleChilds
+        ChildSizing.ShrinkVertical = crsScaleChilds
+        ChildSizing.Layout = cclLeftToRightThenTopToBottom
+        ChildSizing.ControlsPerLine = 2
+        ClientHeight = 157
+        ClientWidth = 149
+        TabOrder = 0
+        object comboboxRomSize: TComboBox
+          Left = 6
+          Height = 149
+          Top = 4
+          Width = 137
+          BorderSpacing.Left = 4
+          BorderSpacing.Top = 4
+          BorderSpacing.Right = 4
+          BorderSpacing.Bottom = 4
+          DoubleBuffered = True
+          ItemHeight = 0
+          ItemIndex = 0
+          Items.Strings = (
+            '8KB'
+            '16KB'
+            '32KB'
+            '64KB'
+          )
+          OnDrawItem = comboboxDrawItem
+          ParentDoubleBuffered = False
+          Style = csDropDownList
+          TabOrder = 0
+          Text = '8KB'
+        end
+      end
+      object groupSystemRamSize: TGroupBox
+        Left = 171
+        Height = 175
+        Top = 4
+        Width = 178
+        AutoSize = True
+        BorderSpacing.Left = 8
+        BorderSpacing.Top = 4
+        BorderSpacing.Right = 8
+        BorderSpacing.Bottom = 8
+        Caption = ' Arbeitsspeicher Größe '
+        ChildSizing.LeftRightSpacing = 6
+        ChildSizing.EnlargeHorizontal = crsHomogenousChildResize
+        ChildSizing.EnlargeVertical = crsHomogenousChildResize
+        ChildSizing.ShrinkHorizontal = crsScaleChilds
+        ChildSizing.ShrinkVertical = crsScaleChilds
+        ChildSizing.Layout = cclLeftToRightThenTopToBottom
+        ChildSizing.ControlsPerLine = 2
+        ClientHeight = 157
+        ClientWidth = 176
+        TabOrder = 1
+        object comboboxRamSize: TComboBox
+          Left = 6
+          Height = 149
+          Top = 4
+          Width = 164
+          BorderSpacing.Left = 4
+          BorderSpacing.Top = 4
+          BorderSpacing.Right = 4
+          BorderSpacing.Bottom = 4
+          ItemHeight = 0
+          ItemIndex = 0
+          Items.Strings = (
+            '64KB'
+            '128KB'
+            '256KB'
+            '512KB'
+            '1024KB'
+          )
+          OnDrawItem = comboboxDrawItem
+          Style = csDropDownList
+          TabOrder = 0
+          Text = '64KB'
+        end
+      end
+      object checkboxReloadOnEnable: TCheckBox
+        Left = 365
+        Height = 175
+        Top = 4
+        Width = 340
+        BorderSpacing.Left = 4
+        BorderSpacing.Right = 4
+        Caption = 'Image erneut Laden wenn Boot-ROM aktiviert wird'
+        TabOrder = 2
+      end
+    end
+    object panelBootRomFile: TPanel
+      Left = 0
+      Height = 175
+      Top = 187
+      Width = 709
+      BevelOuter = bvNone
+      ClientHeight = 175
+      ClientWidth = 709
+      TabOrder = 0
+      object groupBootRomFile: TGroupBox
+        Left = 4
+        Height = 169
+        Top = 2
+        Width = 701
+        Align = alClient
+        BorderSpacing.Left = 4
+        BorderSpacing.Top = 2
         BorderSpacing.Right = 4
         BorderSpacing.Bottom = 4
-        Caption = 'Reload'
-        OnClick = buttonReloadImageClick
-        TabOrder = 1
+        Caption = ' Boot-ROM Image Datei '
+        ClientHeight = 151
+        ClientWidth = 699
+        TabOrder = 0
+        object editBootRomImageFile: TFileNameEdit
+          Left = 4
+          Height = 143
+          Top = 4
+          Width = 643
+          DialogTitle = 'Lade Boot-ROM Image'
+          DialogOptions = [ofPathMustExist, ofFileMustExist, ofNoNetworkButton, ofEnableSizing, ofViewDetail]
+          Filter = 'Binär Dateien (*.bin)|*.bin;*.BIN|Alle Dateien (*.*)|*.*'
+          FilterIndex = 0
+          HideDirectories = False
+          ButtonWidth = 23
+          NumGlyphs = 1
+          Align = alClient
+          BorderSpacing.Left = 4
+          BorderSpacing.Top = 4
+          BorderSpacing.Right = 4
+          BorderSpacing.Bottom = 4
+          MaxLength = 0
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 0
+          OnChange = editBootRomImageFileChange
+        end
+        object buttonReloadImage: TButton
+          Left = 651
+          Height = 143
+          Top = 4
+          Width = 44
+          Align = alRight
+          AutoSize = True
+          BorderSpacing.Left = 4
+          BorderSpacing.Top = 4
+          BorderSpacing.Right = 4
+          BorderSpacing.Bottom = 4
+          Caption = 'Reload'
+          OnClick = buttonReloadImageClick
+          TabOrder = 1
+        end
       end
     end
   end

@@ -205,10 +205,10 @@ var
     romSize: DWord;
 begin
     case size of
-        '4KB': romSize := $1000; //  4KB
         '8KB': romSize := $2000; //  8KB
         '16KB': romSize := $4000; // 16KB
         '32KB': romSize := $8000; // 32KB
+        '64KB': romSize := $10000; //  64KB
         else romSize := $2000;
     end;
     if (bootRomSize <> romSize) then begin
