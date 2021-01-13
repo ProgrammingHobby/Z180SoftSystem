@@ -21,32 +21,39 @@ object FddSettings: TFddSettings
     BorderSpacing.Left = 4
     BorderSpacing.Top = 4
     BorderSpacing.Right = 4
-    Caption = ' Disketten Laufwerk 0 '
     ChildSizing.LeftRightSpacing = 4
     ChildSizing.VerticalSpacing = 4
     ChildSizing.EnlargeHorizontal = crsHomogenousChildResize
     ChildSizing.EnlargeVertical = crsHomogenousChildResize
     ChildSizing.Layout = cclLeftToRightThenTopToBottom
     ChildSizing.ControlsPerLine = 1
-    ClientHeight = 279
+    ClientHeight = 295
     ClientWidth = 1069
     TabOrder = 0
+    object labelFdd0: TLabel
+      Left = 4
+      Height = 74
+      Top = 0
+      Width = 1061
+      Caption = ' Diskettenlaufwerk 0'
+      ParentColor = False
+    end
     object groupboxFdd0Geometrie: TGroupBox
       Left = 4
-      Height = 139
-      Top = 0
+      Height = 108
+      Top = 78
       Width = 1061
       Caption = ' Geometrie '
       ChildSizing.EnlargeHorizontal = crsHomogenousChildResize
       ChildSizing.EnlargeVertical = crsHomogenousChildResize
       ChildSizing.Layout = cclLeftToRightThenTopToBottom
       ChildSizing.ControlsPerLine = 5
-      ClientHeight = 121
+      ClientHeight = 90
       ClientWidth = 1059
       TabOrder = 0
       object panelFdd0Sides: TPanel
         Left = 4
-        Height = 117
+        Height = 86
         Top = 0
         Width = 265
         BorderSpacing.Left = 4
@@ -56,12 +63,12 @@ object FddSettings: TFddSettings
         ChildSizing.EnlargeVertical = crsHomogenousChildResize
         ChildSizing.Layout = cclLeftToRightThenTopToBottom
         ChildSizing.ControlsPerLine = 2
-        ClientHeight = 113
-        ClientWidth = 261
+        ClientHeight = 86
+        ClientWidth = 265
         TabOrder = 0
         object labelFdd0Sides: TLabel
           Left = 0
-          Height = 117
+          Height = 86
           Top = 0
           Width = 101
           AutoSize = False
@@ -71,7 +78,7 @@ object FddSettings: TFddSettings
         end
         object comboboxFdd0Sides: TComboBox
           Left = 101
-          Height = 117
+          Height = 86
           Top = 0
           Width = 156
           ArrowKeysTraverseList = False
@@ -91,7 +98,7 @@ object FddSettings: TFddSettings
       end
       object panelFdd0Tracks: TPanel
         Left = 269
-        Height = 117
+        Height = 86
         Top = 0
         Width = 270
         BorderSpacing.Bottom = 4
@@ -100,12 +107,12 @@ object FddSettings: TFddSettings
         ChildSizing.EnlargeVertical = crsHomogenousChildResize
         ChildSizing.Layout = cclLeftToRightThenTopToBottom
         ChildSizing.ControlsPerLine = 2
-        ClientHeight = 113
-        ClientWidth = 266
+        ClientHeight = 86
+        ClientWidth = 270
         TabOrder = 1
         object labelFdd0Tracks: TLabel
           Left = 0
-          Height = 117
+          Height = 86
           Top = 0
           Width = 106
           AutoSize = False
@@ -115,7 +122,7 @@ object FddSettings: TFddSettings
         end
         object comboboxFdd0Tracks: TComboBox
           Left = 106
-          Height = 117
+          Height = 86
           Top = 0
           Width = 156
           ArrowKeysTraverseList = False
@@ -135,7 +142,7 @@ object FddSettings: TFddSettings
       end
       object panelFdd0Sectors: TPanel
         Left = 539
-        Height = 117
+        Height = 86
         Top = 0
         Width = 280
         BorderSpacing.Bottom = 4
@@ -144,12 +151,12 @@ object FddSettings: TFddSettings
         ChildSizing.EnlargeVertical = crsHomogenousChildResize
         ChildSizing.Layout = cclLeftToRightThenTopToBottom
         ChildSizing.ControlsPerLine = 2
-        ClientHeight = 113
-        ClientWidth = 276
+        ClientHeight = 86
+        ClientWidth = 280
         TabOrder = 2
         object labelFdd0Sectors: TLabel
           Left = 0
-          Height = 117
+          Height = 86
           Top = 0
           Width = 116
           AutoSize = False
@@ -159,7 +166,7 @@ object FddSettings: TFddSettings
         end
         object comboboxFdd0Sectors: TComboBox
           Left = 116
-          Height = 117
+          Height = 86
           Top = 0
           Width = 156
           ArrowKeysTraverseList = False
@@ -181,7 +188,7 @@ object FddSettings: TFddSettings
       end
       object panelFdd0Size: TPanel
         Left = 819
-        Height = 117
+        Height = 86
         Top = 0
         Width = 236
         BorderSpacing.Right = 4
@@ -191,12 +198,12 @@ object FddSettings: TFddSettings
         ChildSizing.EnlargeVertical = crsHomogenousChildResize
         ChildSizing.Layout = cclLeftToRightThenTopToBottom
         ChildSizing.ControlsPerLine = 2
-        ClientHeight = 113
-        ClientWidth = 232
+        ClientHeight = 86
+        ClientWidth = 236
         TabOrder = 3
         object labelFdd0Size: TLabel
           Left = 0
-          Height = 117
+          Height = 86
           Top = 0
           Width = 101
           AutoSize = False
@@ -206,7 +213,7 @@ object FddSettings: TFddSettings
         end
         object editFdd0Size: TEdit
           Left = 101
-          Height = 117
+          Height = 86
           Top = 0
           Width = 135
           Alignment = taRightJustify
@@ -219,17 +226,17 @@ object FddSettings: TFddSettings
     end
     object groupboxFdd0Image: TGroupBox
       Left = 4
-      Height = 132
-      Top = 143
+      Height = 101
+      Top = 190
       Width = 1061
       BorderSpacing.Bottom = 4
       Caption = ' Image Datei '
-      ClientHeight = 114
+      ClientHeight = 83
       ClientWidth = 1059
       TabOrder = 1
       object editFdd0ImageFile: TFileNameEdit
         Left = 4
-        Height = 110
+        Height = 79
         Top = 0
         Width = 1051
         DialogOptions = [ofPathMustExist, ofFileMustExist, ofNoNetworkButton, ofEnableSizing, ofViewDetail]
@@ -243,7 +250,10 @@ object FddSettings: TFddSettings
         BorderSpacing.Right = 4
         BorderSpacing.Bottom = 4
         MaxLength = 0
+        ParentShowHint = False
+        ShowHint = True
         TabOrder = 0
+        OnChange = editFdd0ImageFileChange
       end
     end
   end
@@ -255,32 +265,39 @@ object FddSettings: TFddSettings
     BorderSpacing.Left = 4
     BorderSpacing.Right = 4
     BorderSpacing.Bottom = 4
-    Caption = ' Disketten Laufwerk 1 '
     ChildSizing.LeftRightSpacing = 4
     ChildSizing.VerticalSpacing = 4
     ChildSizing.EnlargeHorizontal = crsHomogenousChildResize
     ChildSizing.EnlargeVertical = crsHomogenousChildResize
     ChildSizing.Layout = cclLeftToRightThenTopToBottom
     ChildSizing.ControlsPerLine = 1
-    ClientHeight = 279
+    ClientHeight = 295
     ClientWidth = 1069
     TabOrder = 1
+    object labelFdd1: TLabel
+      Left = 4
+      Height = 74
+      Top = 0
+      Width = 1061
+      Caption = ' Diskettenlaufwerk 1'
+      ParentColor = False
+    end
     object groupboxFdd1Geometrie: TGroupBox
       Left = 4
-      Height = 139
-      Top = 0
+      Height = 108
+      Top = 78
       Width = 1061
       Caption = ' Geometrie '
       ChildSizing.EnlargeHorizontal = crsHomogenousChildResize
       ChildSizing.EnlargeVertical = crsHomogenousChildResize
       ChildSizing.Layout = cclLeftToRightThenTopToBottom
       ChildSizing.ControlsPerLine = 5
-      ClientHeight = 121
+      ClientHeight = 90
       ClientWidth = 1059
       TabOrder = 0
       object panelFdd1Sides: TPanel
         Left = 4
-        Height = 117
+        Height = 86
         Top = 0
         Width = 265
         BorderSpacing.Left = 4
@@ -290,12 +307,12 @@ object FddSettings: TFddSettings
         ChildSizing.EnlargeVertical = crsHomogenousChildResize
         ChildSizing.Layout = cclLeftToRightThenTopToBottom
         ChildSizing.ControlsPerLine = 2
-        ClientHeight = 113
-        ClientWidth = 261
+        ClientHeight = 86
+        ClientWidth = 265
         TabOrder = 0
         object labelFdd1Sides: TLabel
           Left = 0
-          Height = 117
+          Height = 86
           Top = 0
           Width = 101
           AutoSize = False
@@ -305,7 +322,7 @@ object FddSettings: TFddSettings
         end
         object comboboxFdd1Sides: TComboBox
           Left = 101
-          Height = 117
+          Height = 86
           Top = 0
           Width = 156
           ArrowKeysTraverseList = False
@@ -325,7 +342,7 @@ object FddSettings: TFddSettings
       end
       object panelFdd1Tracks: TPanel
         Left = 269
-        Height = 117
+        Height = 86
         Top = 0
         Width = 270
         BorderSpacing.Bottom = 4
@@ -334,12 +351,12 @@ object FddSettings: TFddSettings
         ChildSizing.EnlargeVertical = crsHomogenousChildResize
         ChildSizing.Layout = cclLeftToRightThenTopToBottom
         ChildSizing.ControlsPerLine = 2
-        ClientHeight = 113
-        ClientWidth = 266
+        ClientHeight = 86
+        ClientWidth = 270
         TabOrder = 1
         object labelFdd1Tracks: TLabel
           Left = 0
-          Height = 117
+          Height = 86
           Top = 0
           Width = 106
           AutoSize = False
@@ -349,7 +366,7 @@ object FddSettings: TFddSettings
         end
         object comboboxFdd1Tracks: TComboBox
           Left = 106
-          Height = 117
+          Height = 86
           Top = 0
           Width = 156
           ArrowKeysTraverseList = False
@@ -369,7 +386,7 @@ object FddSettings: TFddSettings
       end
       object panelFdd1Sectors: TPanel
         Left = 539
-        Height = 117
+        Height = 86
         Top = 0
         Width = 280
         BorderSpacing.Bottom = 4
@@ -378,12 +395,12 @@ object FddSettings: TFddSettings
         ChildSizing.EnlargeVertical = crsHomogenousChildResize
         ChildSizing.Layout = cclLeftToRightThenTopToBottom
         ChildSizing.ControlsPerLine = 2
-        ClientHeight = 113
-        ClientWidth = 276
+        ClientHeight = 86
+        ClientWidth = 280
         TabOrder = 2
         object labelFdd1Sectors: TLabel
           Left = 0
-          Height = 117
+          Height = 86
           Top = 0
           Width = 116
           AutoSize = False
@@ -393,7 +410,7 @@ object FddSettings: TFddSettings
         end
         object comboboxFdd1Sectors: TComboBox
           Left = 116
-          Height = 117
+          Height = 86
           Top = 0
           Width = 156
           ArrowKeysTraverseList = False
@@ -415,7 +432,7 @@ object FddSettings: TFddSettings
       end
       object panelFdd1Size: TPanel
         Left = 819
-        Height = 117
+        Height = 86
         Top = 0
         Width = 236
         BorderSpacing.Right = 4
@@ -425,12 +442,12 @@ object FddSettings: TFddSettings
         ChildSizing.EnlargeVertical = crsHomogenousChildResize
         ChildSizing.Layout = cclLeftToRightThenTopToBottom
         ChildSizing.ControlsPerLine = 2
-        ClientHeight = 113
-        ClientWidth = 232
+        ClientHeight = 86
+        ClientWidth = 236
         TabOrder = 3
         object labelFdd1Size: TLabel
           Left = 0
-          Height = 117
+          Height = 86
           Top = 0
           Width = 101
           AutoSize = False
@@ -440,7 +457,7 @@ object FddSettings: TFddSettings
         end
         object editFdd1Size: TEdit
           Left = 101
-          Height = 117
+          Height = 86
           Top = 0
           Width = 135
           Alignment = taRightJustify
@@ -452,17 +469,17 @@ object FddSettings: TFddSettings
     end
     object groupboxFdd1Image: TGroupBox
       Left = 4
-      Height = 132
-      Top = 143
+      Height = 101
+      Top = 190
       Width = 1061
       BorderSpacing.Bottom = 4
       Caption = ' Image Datei '
-      ClientHeight = 114
+      ClientHeight = 83
       ClientWidth = 1059
       TabOrder = 1
       object editFdd1ImageFile: TFileNameEdit
         Left = 4
-        Height = 110
+        Height = 79
         Top = 0
         Width = 1051
         DialogOptions = [ofPathMustExist, ofFileMustExist, ofNoNetworkButton, ofEnableSizing, ofViewDetail]
@@ -476,7 +493,10 @@ object FddSettings: TFddSettings
         BorderSpacing.Right = 4
         BorderSpacing.Bottom = 4
         MaxLength = 0
+        ParentShowHint = False
+        ShowHint = True
         TabOrder = 0
+        OnChange = editFdd1ImageFileChange
       end
     end
   end

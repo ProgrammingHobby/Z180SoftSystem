@@ -12,6 +12,8 @@ type
     { TFddSettings }
 
     TFddSettings = class(TForm)
+        labelFdd1: TLabel;
+        labelFdd0: TLabel;
         comboboxFdd0Sectors: TComboBox;
         comboboxFdd1Sectors: TComboBox;
         comboboxFdd0Sides: TComboBox;
@@ -44,6 +46,8 @@ type
         panelFdd1Size: TPanel;
         panelFdd0Tracks: TPanel;
         panelFdd1Tracks: TPanel;
+        procedure editFdd0ImageFileChange(Sender: TObject);
+        procedure editFdd1ImageFileChange(Sender: TObject);
         procedure onFdd0GeometryChange(Sender: TObject);
         procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
         procedure FormShow(Sender: TObject);
@@ -130,6 +134,20 @@ begin
 end;
 
 // --------------------------------------------------------------------------------
+procedure TFddSettings.editFdd0ImageFileChange(Sender: TObject);
+begin
+    editFdd0ImageFile.SelStart := editFdd0ImageFile.FileName.Length;
+    editFdd0ImageFile.Hint := editFdd0ImageFile.FileName;
+end;
+
+// --------------------------------------------------------------------------------
+procedure TFddSettings.editFdd1ImageFileChange(Sender: TObject);
+begin
+    editFdd1ImageFile.SelStart := editFdd1ImageFile.FileName.Length;
+    editFdd1ImageFile.Hint := editFdd1ImageFile.FileName;
+end;
+
+// --------------------------------------------------------------------------------
 procedure TFddSettings.FormShow(Sender: TObject);
 var
     ItemIndex: integer;
@@ -184,6 +202,8 @@ begin
     Fdd1.oldImageFile := SystemSettings.ReadString('Fdd1', 'ImageFile', '');
     editFdd1ImageFile.FileName := Fdd1.oldImageFile;
     calcFdd1Size;
+
+    groupboxFdd0.SetFocus;
 end;
 
 // --------------------------------------------------------------------------------
