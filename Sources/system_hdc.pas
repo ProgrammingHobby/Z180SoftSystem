@@ -522,8 +522,14 @@ end;
 
 // --------------------------------------------------------------------------------
 procedure TSystemHdc.setHddHeads(heads: byte);
+var
+    bit: integer;
 begin
-    hardDrive.Heads := heads;
+    for bit := 0 to 8 do begin
+        if ((1 shl bit) >= heads) then
+            break;
+    end;
+    hardDrive.Heads := (1 shl bit);
 end;
 
 // --------------------------------------------------------------------------------
