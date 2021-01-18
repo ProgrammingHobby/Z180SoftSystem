@@ -180,23 +180,25 @@ begin
             {$endif}
             if (imagePage1.Visible) then begin
                 imagePage2.Canvas.Brush.Color := backCol;
+                imagePage2.Canvas.Pen.Color := backCol;
                 imagePage2.Canvas.Font.Color := charCol;
                 imagePage2.Canvas.Font.Style := viewStyle;
                 {$ifdef Windows}
-                imagePage2.Canvas.Rectangle(posX - 2, posY, posX + charWidth + 1, posY + charHeight);
+                imagePage2.Canvas.Rectangle(posX - 2, posY, posX + charWidth, posY + charHeight);
                 {$else}
-                imagePage2.Canvas.Rectangle(posX - 1, posY, posX + charWidth + 1, posY + charHeight);
+                imagePage2.Canvas.Rectangle(posX - 1, posY, posX + charWidth, posY + charHeight);
                 {$endif}
                 imagePage2.Canvas.TextOut(posX, posY, viewChar);
             end
             else begin
                 imagePage1.Canvas.Brush.Color := backCol;
+                imagePage1.Canvas.Pen.Color := backCol;
                 imagePage1.Canvas.Font.Color := charCol;
                 imagePage1.Canvas.Font.Style := viewStyle;
                  {$ifdef Windows}
-                imagePage1.Canvas.Rectangle(posX - 2, posY, posX + charWidth + 1, posY + charHeight);
+                imagePage1.Canvas.Rectangle(posX - 2, posY, posX + charWidth, posY + charHeight);
                 {$else}
-                imagePage1.Canvas.Rectangle(posX - 1, posY, posX + charWidth + 1, posY + charHeight);
+                imagePage1.Canvas.Rectangle(posX - 1, posY, posX + charWidth, posY + charHeight);
                 {$endif}
                 imagePage1.Canvas.TextOut(posX, posY, viewChar);
             end;
@@ -214,10 +216,10 @@ var
 begin
     {$ifdef Windows}
     terminalPanel.Font.Name := 'Consolas';
-    terminalPanel.Font.Size := 12;
+    terminalPanel.Font.Size := 14;
     pageWidth := ((charWidth + 2) * terminalColumns) + charWidth;
     {$else}
-    terminalPanel.Font.Name := 'Courier New';
+    terminalPanel.Font.Name := 'Monospace';
     terminalPanel.Font.Size := 12;
     pageWidth := (charWidth * terminalColumns) + charWidth;
     {$endif}
@@ -309,10 +311,10 @@ begin
     backColor[terminalCursor.row, terminalCursor.column] := backgroundColor;
     charStyle[terminalCursor.row, terminalCursor.column] := fontStyle;
     Inc(terminalCursor.column);
-    if (terminalCursor.column > terminalColumns) then begin
+    if (terminalCursor.column > terminalColumns + 1) then begin
         terminalCursor.column := 1;
         Inc(terminalCursor.row);
-        if (terminalCursor.row > terminalRows) then begin
+        if (terminalCursor.row > terminalRows + 1) then begin
             scrollTerminalContentUp;
         end;
     end;
@@ -1068,7 +1070,10 @@ end;
 procedure TSystemTerminal.setInverseScreen(enable: boolean);
 var
     row, column: integer;
+    oldCharColor, oldBackColor: TColor;
 begin
+    oldCharColor := defaultCharColor;
+    oldBackColor := defaultBackColor;
     if (enable) then begin
         defaultCharColor := clWhite;
         defaultBackColor := clBlack;
@@ -1091,8 +1096,10 @@ begin
     end;
     for row := 1 to terminalRows do begin
         for column := 1 to terminalColumns do begin
-            if ((charStyle[row, column] = []) or (not (fsItalic in charStyle[row, column]) and not (fsStrikeOut in charStyle[row, column]))) then begin
+            if (charColor[row, column] = oldCharColor) then begin
                 charColor[row, column] := defaultCharColor;
+            end;
+            if (backColor[row, column] = oldBackColor) then begin
                 backColor[row, column] := defaultBackColor;
             end;
         end;
