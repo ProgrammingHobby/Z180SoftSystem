@@ -4,7 +4,7 @@
 
 Z180SoftSystem emuliert einen 8Bit-Mikrocomputer auf Basis einer Zilog Z180 MPU.
 Emuliert werden:
-- 4 - 32KB per Software abschaltbares Boot-ROM. Das Boot-ROM wird nach einem Reset wieder ab Adresse 0 eingeblendet.
+- 8 - 64KB per Software abschaltbares Boot-ROM. Das Boot-ROM wird nach einem Reset wieder ab Adresse 0 eingeblendet.
 - 64 - 1024KB System RAM.
 - Ein WD1770 kompatibler Disketten-Controller mit maximal 1440KB pro Diskette und maximal 2 Disketten-Laufwerken.
 - Ein ATA1 kompatibles Festplatten-Laufwerk mit einer maximalen Kapazität von 1008MB . 
