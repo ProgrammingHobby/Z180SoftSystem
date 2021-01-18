@@ -49,7 +49,7 @@ type
     var
         imagePage1, imagePage2: TImage;
         timerTerminalPageRefresh: TTimer;
-        timerCursorFlash: TTimer;
+        timerFlash: TTimer;
         charData: array[1..terminalRows, 1..terminalColumns] of char;
         charStyle: array[1..terminalRows, 1..terminalColumns] of TFontStyles;
         charColor: array[1..terminalRows, 1..terminalColumns] of TColor;
@@ -58,7 +58,6 @@ type
             column: integer;
             row: integer;
             cursorChar: char;
-            Visible: boolean;
         end;
         keyboardBuffer: array[1..maxKeyboardBuffer] of byte;
         keyboardReadIndex, keyboardWriteIndex: integer;
@@ -68,16 +67,17 @@ type
         enableLocalEcho: boolean;
         enableTerminalLogging: boolean;
         loggingFile: file of char;
-        fontColor, tmpFontColor, backgroundColor: TColor;
+        fontColor, backgroundColor: TColor;
         fontStyle: TFontStyles;
         termMode: TTermMode;
         dcaRow: word;
         csiPar: array[1..8] of word;
         parCount: word;
         defaultCharColor, defaultBackColor: TColor;
+        posVisible: boolean;
 
     protected // Attribute
-        procedure timerCursorFlashTimer(Sender: TObject);
+        procedure timerFlashTimer(Sender: TObject);
         procedure timerTerminalPageRefreshTimer(Sender: TObject);
 
     public    // Attribute
@@ -135,16 +135,9 @@ implementation
 { TSystemTerminal }
 
 // --------------------------------------------------------------------------------
-procedure TSystemTerminal.timerCursorFlashTimer(Sender: TObject);
+procedure TSystemTerminal.timerFlashTimer(Sender: TObject);
 begin
-    timerCursorFlash.Enabled := False;
-    if (terminalCursor.Visible) then begin
-        terminalCursor.Visible := False;
-    end
-    else begin
-        terminalCursor.Visible := True;
-    end;
-    timerCursorFlash.Enabled := True;
+    posVisible := (not posVisible);
 end;
 
 // --------------------------------------------------------------------------------
@@ -152,16 +145,33 @@ procedure TSystemTerminal.timerTerminalPageRefreshTimer(Sender: TObject);
 var
     row, column, posX, posY: integer;
     viewChar: char;
+    viewStyle: TFontStyles;
+    charCol, backCol, tmpCol: TColor;
 begin
     timerTerminalPageRefresh.Enabled := False;
     for row := 1 to terminalRows do begin
         posY := startTop + (charHeight * row);
         for column := 1 to terminalColumns do begin
-            if (terminalCursor.Visible and (row = terminalCursor.row) and (column = terminalCursor.column)) then begin
+            viewStyle := charStyle[row, column];
+            charCol := charColor[row, column];
+            backCol := backColor[row, column];
+            if ((row = terminalCursor.row) and (column = terminalCursor.column) and posVisible) then begin
                 viewchar := terminalCursor.cursorChar;
             end
             else begin
                 viewchar := charData[row, column];
+            end;
+            if (fsItalic in viewStyle) then begin
+                viewStyle := viewStyle - [fsItalic];
+                if (not posVisible) then begin
+                    viewChar := ' ';
+                end;
+            end;
+            if (fsStrikeOut in viewStyle) then begin
+                viewStyle := viewStyle - [fsStrikeOut];
+                tmpCol := charCol;
+                charCol := backCol;
+                backCol := tmpCol;
             end;
             {$ifdef Windows}
             posX := startLeft + ((charWidth + 2) * column);
@@ -169,9 +179,9 @@ begin
             posX := startLeft + (charWidth * column);
             {$endif}
             if (imagePage1.Visible) then begin
-                imagePage2.Canvas.Brush.Color := backColor[row, column];
-                imagePage2.Canvas.Font.Color := charColor[row, column];
-                imagePage2.Canvas.Font.Style := charStyle[row, column];
+                imagePage2.Canvas.Brush.Color := backCol;
+                imagePage2.Canvas.Font.Color := charCol;
+                imagePage2.Canvas.Font.Style := viewStyle;
                 {$ifdef Windows}
                 imagePage2.Canvas.Rectangle(posX - 2, posY, posX + charWidth + 1, posY + charHeight);
                 {$else}
@@ -180,9 +190,9 @@ begin
                 imagePage2.Canvas.TextOut(posX, posY, viewChar);
             end
             else begin
-                imagePage1.Canvas.Brush.Color := backColor[row, column];
-                imagePage1.Canvas.Font.Color := charColor[row, column];
-                imagePage1.Canvas.Font.Style := charStyle[row, column];
+                imagePage1.Canvas.Brush.Color := backCol;
+                imagePage1.Canvas.Font.Color := charCol;
+                imagePage1.Canvas.Font.Style := viewStyle;
                  {$ifdef Windows}
                 imagePage1.Canvas.Rectangle(posX - 2, posY, posX + charWidth + 1, posY + charHeight);
                 {$else}
@@ -211,7 +221,6 @@ begin
     terminalPanel.Font.Size := 12;
     pageWidth := (charWidth * terminalColumns) + charWidth;
     {$endif}
-    //terminalPanel.Font.Color := clBlack;
     pageHeight := (charHeight * terminalRows) + charHeight;
 
     imagePage1 := TImage.Create(terminalPanel);
@@ -228,10 +237,10 @@ begin
         Parent := terminalPanel;
     end;
 
-    timerCursorFlash := TTimer.Create(terminalPanel);
-    timerCursorFlash.Interval := 600;
-    timerCursorFlash.OnTimer := @timerCursorFlashTimer;
-    timerCursorFlash.Enabled := False;
+    timerFlash := TTimer.Create(terminalPanel);
+    timerFlash.Interval := 500;
+    timerFlash.OnTimer := @timerFlashTimer;
+    timerFlash.Enabled := False;
 
     timerTerminalPageRefresh := TTimer.Create(terminalPanel);
     timerTerminalPageRefresh.Interval := 20;
@@ -249,8 +258,8 @@ end;
 // --------------------------------------------------------------------------------
 destructor TSystemTerminal.Destroy;
 begin
-    timerCursorFlash.Enabled := False;
-    timerCursorFlash.OnTimer := nil;
+    timerFlash.Enabled := False;
+    timerFlash.OnTimer := nil;
     timerTerminalPageRefresh.Enabled := False;
     timerTerminalPageRefresh.OnTimer := nil;
     if (enableTerminalLogging) then begin
@@ -276,10 +285,9 @@ begin
     terminalCursor.column := 1;
     terminalCursor.row := 1;
     terminalCursor.cursorChar := '_';
-    terminalCursor.Visible := True;
     imagePage1.Visible := True;
     imagePage2.Visible := False;
-    timerCursorFlash.Enabled := True;
+    timerFlash.Enabled := True;
     timerTerminalPageRefresh.Enabled := True;
     fontStyle := [];
     fontColor := defaultCharColor;
@@ -289,6 +297,7 @@ begin
     characterWriteIndex := 1;
     keyboardReadIndex := 1;
     keyboardWriteIndex := 1;
+    posVisible := True;
     resetEscParameter;
 end;
 
@@ -570,9 +579,7 @@ var
                             fontStyle := fontStyle + [fsItalic];
                         end;
                         7: begin
-                            fontStyle := fontStyle + [fsBold];
-                            tmpFontColor := fontColor;
-                            fontColor := clGray;
+                            fontStyle := fontStyle + [fsStrikeOut];
                         end;
                         22: begin
                             fontStyle := fontStyle - [fsBold];
@@ -584,8 +591,7 @@ var
                             fontStyle := fontStyle - [fsItalic];
                         end;
                         27: begin
-                            fontStyle := fontStyle - [fsBold];
-                            fontColor := tmpFontColor;
+                            fontStyle := fontStyle - [fsStrikeOut];
                         end;
                         30: begin
                             fontColor := clBlack;
@@ -606,7 +612,7 @@ var
                             fontColor := $FF00FF;
                         end;
                         36: begin
-                            fontColor := $00FFFF;
+                            fontColor := $FFFF00;
                         end;
                         37: begin
                             fontColor := clWhite;
@@ -630,7 +636,7 @@ var
                             backgroundColor := $FF00FF;
                         end;
                         46: begin
-                            backgroundColor := $00FFFF;
+                            backgroundColor := $FFFF00;
                         end;
                         47: begin
                             backgroundColor := clWhite;
@@ -755,12 +761,13 @@ begin
     for row := 1 to terminalRows - 1 do begin
         charData[row] := charData[row + 1];
         charColor[row] := charColor[row + 1];
+        backColor[row] := backColor[row + 1];
         charStyle[row] := charStyle[row + 1];
     end;
     for column := 1 to terminalColumns do begin
         charData[terminalRows, column] := ' ';
-        //charColor[terminalRows, column] := defaultCharColor;
-        //backColor[terminalRows, column] := defaultBackColor;
+        charColor[terminalRows, column] := defaultCharColor;
+        backColor[terminalRows, column] := defaultBackColor;
         charStyle[terminalRows, column] := [];
     end;
     terminalCursor.column := 1;
@@ -812,8 +819,8 @@ begin
     if (terminalCursor.column > 1) then begin
         Dec(terminalCursor.column);
         charData[terminalCursor.row, terminalCursor.column] := ' ';
-        //charColor[terminalCursor.row, terminalCursor.column] := defaultCharColor;
-        //backColor[terminalCursor.row, terminalCursor.column] := defaultBackColor;
+        charColor[terminalCursor.row, terminalCursor.column] := defaultCharColor;
+        backColor[terminalCursor.row, terminalCursor.column] := defaultBackColor;
         charStyle[terminalCursor.row, terminalCursor.column] := [];
     end;
 end;
@@ -844,8 +851,8 @@ begin
     for row := 1 to terminalRows do begin
         for column := 1 to terminalColumns do begin
             charData[row, column] := ' ';
-            //charColor[row, column] := defaultCharColor;
-            //backColor[row, column] := defaultBackColor;
+            charColor[row, column] := defaultCharColor;
+            backColor[row, column] := defaultBackColor;
             charStyle[row, column] := [];
         end;
     end;
@@ -862,8 +869,8 @@ begin
     for row := 1 to terminalRows do begin
         for column := 1 to terminalColumns do begin
             charData[row, column] := ' ';
-            //charColor[row, column] := defaultCharColor;
-            //backColor[row, column] := defaultBackColor;
+            charColor[row, column] := defaultCharColor;
+            backColor[row, column] := defaultBackColor;
             charStyle[row, column] := [];
         end;
     end;
@@ -882,8 +889,8 @@ var
 begin
     for column := terminalCursor.column to terminalColumns do begin
         charData[terminalCursor.row, column] := ' ';
-        //charColor[terminalCursor.row, column] := defaultCharColor;
-        //backColor[terminalCursor.row, column] := defaultBackColor;
+        charColor[terminalCursor.row, column] := defaultCharColor;
+        backColor[terminalCursor.row, column] := defaultBackColor;
         charStyle[terminalCursor.row, column] := [];
     end;
 end;
@@ -898,8 +905,8 @@ begin
         for row := terminalCursor.row + 1 to terminalRows do begin
             for column := 1 to terminalColumns do begin
                 charData[row, column] := ' ';
-                //charColor[row, column] := defaultCharColor;
-                //backColor[row, column] := defaultBackColor;
+                charColor[row, column] := defaultCharColor;
+                backColor[row, column] := defaultBackColor;
                 charStyle[row, column] := [];
             end;
         end;
@@ -913,8 +920,8 @@ var
 begin
     for column := 1 to terminalCursor.column - 1 do begin
         charData[terminalCursor.row, column] := ' ';
-        //charColor[terminalCursor.row, column] := defaultCharColor;
-        //backColor[terminalCursor.row, column] := defaultBackColor;
+        charColor[terminalCursor.row, column] := defaultCharColor;
+        backColor[terminalCursor.row, column] := defaultBackColor;
         charStyle[terminalCursor.row, column] := [];
     end;
 end;
@@ -929,8 +936,8 @@ begin
         for row := 1 to terminalCursor.row - 1 do begin
             for column := 1 to terminalColumns do begin
                 charData[row, column] := ' ';
-                //charColor[row, column] := defaultCharColor;
-                //backColor[row, column] := defaultBackColor;
+                charColor[row, column] := defaultCharColor;
+                backColor[row, column] := defaultBackColor;
                 charStyle[row, column] := [];
             end;
         end;
@@ -944,8 +951,8 @@ var
 begin
     for column := 1 to terminalColumns do begin
         charData[terminalCursor.row, column] := ' ';
-        //charColor[terminalCursor.row, column] := defaultCharColor;
-        //backColor[terminalCursor.row, column] := defaultBackColor;
+        charColor[terminalCursor.row, column] := defaultCharColor;
+        backColor[terminalCursor.row, column] := defaultBackColor;
         charStyle[terminalCursor.row, column] := [];
     end;
     terminalCursor.column := 1;
@@ -959,12 +966,13 @@ begin
     for row := terminalCursor.row to terminalRows - 1 do begin
         charData[row] := charData[row + 1];
         charColor[row] := charColor[row + 1];
+        backColor[row] := backColor[row + 1];
         charStyle[row] := charStyle[row + 1];
     end;
     for column := 1 to terminalColumns do begin
         charData[terminalRows, column] := ' ';
-        //charColor[terminalRows, column] := defaultCharColor;
-        //backColor[terminalRows, column] := defaultBackColor;
+        charColor[terminalRows, column] := defaultCharColor;
+        backColor[terminalRows, column] := defaultBackColor;
         charStyle[terminalRows, column] := [];
     end;
     terminalCursor.column := 1;
@@ -978,12 +986,13 @@ begin
     for row := terminalRows downto terminalCursor.row + 1 do begin
         charData[row] := charData[row - 1];
         charColor[row] := charColor[row - 1];
+        backColor[row] := backColor[row - 1];
         charStyle[row] := charStyle[row - 1];
     end;
     for column := 1 to terminalColumns do begin
         charData[terminalCursor.row, column] := ' ';
-        //charColor[terminalCursor.row, column] := defaultCharColor;
-        //backColor[terminalCursor.row, column] := defaultBackColor;
+        charColor[terminalCursor.row, column] := defaultCharColor;
+        backColor[terminalCursor.row, column] := defaultBackColor;
         charStyle[terminalCursor.row, column] := [];
     end;
 end;
@@ -1082,8 +1091,10 @@ begin
     end;
     for row := 1 to terminalRows do begin
         for column := 1 to terminalColumns do begin
-            charColor[row, column] := defaultCharColor;
-            backColor[row, column] := defaultBackColor;
+            if ((charStyle[row, column] = []) or (not (fsItalic in charStyle[row, column]) and not (fsStrikeOut in charStyle[row, column]))) then begin
+                charColor[row, column] := defaultCharColor;
+                backColor[row, column] := defaultBackColor;
+            end;
         end;
     end;
     fontColor := defaultCharColor;
@@ -1245,6 +1256,7 @@ end;
 
 // --------------------------------------------------------------------------------
 end.
+
 
 
 
