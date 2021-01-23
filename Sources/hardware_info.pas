@@ -19,7 +19,7 @@ type
         memoTerminal: TMemo;
         memoZ180Mpu: TMemo;
         pagecontrolHardwareInfo: TPageControl;
-        TabSheet1: TTabSheet;
+        tabRtcChip: TTabSheet;
         tabZ180Mpu: TTabSheet;
         tabTerminal: TTabSheet;
         tabFddController: TTabSheet;

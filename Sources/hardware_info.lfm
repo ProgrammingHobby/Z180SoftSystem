@@ -15,22 +15,22 @@ object HardwareInfo: THardwareInfo
     Height = 557
     Top = 0
     Width = 851
-    ActivePage = tabTerminal
+    ActivePage = tabZ180Mpu
     Align = alClient
     Font.Height = -12
     Font.Name = 'Monospace'
     ParentFont = False
-    TabIndex = 1
+    TabIndex = 0
     TabOrder = 0
     object tabZ180Mpu: TTabSheet
       Caption = 'Z180MPU / Boot ROM'
-      ClientHeight = 534
-      ClientWidth = 849
+      ClientHeight = 530
+      ClientWidth = 841
       object memoZ180Mpu: TMemo
         Left = 0
-        Height = 534
+        Height = 530
         Top = 0
-        Width = 849
+        Width = 841
         Align = alClient
         Font.Height = -12
         Font.Name = 'Fixedsys'
@@ -62,18 +62,18 @@ object HardwareInfo: THardwareInfo
     end
     object tabTerminal: TTabSheet
       Caption = 'Terminal'
-      ClientHeight = 534
-      ClientWidth = 849
+      ClientHeight = 530
+      ClientWidth = 841
       object memoTerminal: TMemo
         Left = 0
-        Height = 534
+        Height = 530
         Top = 0
-        Width = 849
+        Width = 841
         Align = alClient
         Font.Height = -12
         Font.Name = 'Fixedsys'
         Lines.Strings = (
-          '- VT100/VT52 kompatibles Textterminal mit 24 Zeilen und 80 Zeichen pro Zeile.'
+          '- VT100/VT52 kompatibles Textterminal mit 30 Zeilen und 80 Zeichen pro Zeile.'
           '- folgende Steuerzeichen/ESC-Sequenzen sind implementiert:'
           ''
           '    - 0x01 : Cursor home            - 0x04 : Cursor right'
@@ -84,9 +84,13 @@ object HardwareInfo: THardwareInfo
           '    - 0x18 : Cursor down            - 0x1B : VT52-Mode einschalten'
           '    - 0x7F : Backspace'
           ''
+          '    - ESC 7 : Save cursor and attributes'
+          '    - ESC 8 : Restore cursor and attributes'
           '    - ESC A : Cursor up                 - ESC B : Cursor down'
-          '    - ESC C : Cursor right              - ESC D : Cursor left'
-          '    - ESC H : Cursor home               - ESC I : Reverse Line Feed'
+          '    - ESC C : Cursor right              - ESC c : What are you?              '
+          '    - ESC D : Cursor left'
+          '    - ESC H : Cursor home               - ESC f : Cursor home              '
+          '    - ESC I : Reverse Line Feed'
           '    - ESC J : Delete End of Screen      - ESC K : Delete End of Line'
           '    - ESC L : Insert Line               - ESC M : Remove Line'
           '    - ESC Y : Direct Cursor Address     - ESC Z : Identify VT52 Mode'
@@ -114,12 +118,12 @@ object HardwareInfo: THardwareInfo
           '    - ESC [ row ; col H : Move cursor to line ''row'' and column ''col'''
           '    - ESC [ row ; col f : Move cursor to line ''row'' and column ''col'''
           ''
-          '    - ESC [ 0 m : Reset all Attributes'
+          '    - ESC [ m  oder  ESC [ 0 m : Reset all Attributes'
           ''
-          '    - ESC [ 1 m : Bold enable                     - ESC [ 22 m : Bold disable'
-          '    - ESC [ 4 m : Underline enable                - ESC [ 24 m : Underline disable'
-          '    - ESC [ 5 m : Blink enable                    - ESC [ 25 m : Blink disable'
-          '    - ESC [ 7 m : Reverse Color enable            - ESC [ 27 m : Reverse Color disable   '
+          '    - ESC [ 1 m : Bold enable               - ESC [ 22 m : Bold disable'
+          '    - ESC [ 4 m : Underline enable          - ESC [ 24 m : Underline disable'
+          '    - ESC [ 5 m : Blink enable              - ESC [ 25 m : Blink disable'
+          '    - ESC [ 7 m : Reverse Color enable      - ESC [ 27 m : Reverse Color disable   '
           ''
           '    - ESC [ 30 m : Font Color black         - ESC [ 31 m : Font Color red'
           '    - ESC [ 32 m : Font Color green         - ESC [ 33 m : Font Color yellow'
@@ -130,6 +134,9 @@ object HardwareInfo: THardwareInfo
           '    - ESC [ 32 m : Background Color green   - ESC [ 33 m : Background Color yellow'
           '    - ESC [ 34 m : Background Color blue    - ESC [ 35 m : Background Color magenta'
           '    - ESC [ 36 m : Background Color Cyan    - ESC [ 37 m : Background Color white'
+          ''
+          '    - ESC [ 5 n : Status report'
+          '    - ESC [ 6 n : Cursor Position report'
         )
         ParentFont = False
         ReadOnly = True
@@ -141,13 +148,13 @@ object HardwareInfo: THardwareInfo
     end
     object tabFddController: TTabSheet
       Caption = 'FDD-Controller'
-      ClientHeight = 534
-      ClientWidth = 849
+      ClientHeight = 530
+      ClientWidth = 841
       object memoFddController: TMemo
         Left = 0
-        Height = 534
+        Height = 530
         Top = 0
-        Width = 849
+        Width = 841
         Align = alClient
         Font.Height = -12
         Font.Name = 'Fixedsys'
@@ -207,13 +214,13 @@ object HardwareInfo: THardwareInfo
     end
     object tabHddController: TTabSheet
       Caption = 'HDD-Controller'
-      ClientHeight = 534
-      ClientWidth = 849
+      ClientHeight = 530
+      ClientWidth = 841
       object memoHddController: TMemo
         Left = 0
-        Height = 534
+        Height = 530
         Top = 0
-        Width = 849
+        Width = 841
         Align = alClient
         Font.Height = -12
         Font.Name = 'Fixedsys'
@@ -275,15 +282,15 @@ object HardwareInfo: THardwareInfo
         WordWrap = False
       end
     end
-    object TabSheet1: TTabSheet
+    object tabRtcChip: TTabSheet
       Caption = 'RTC-Modul'
-      ClientHeight = 534
-      ClientWidth = 849
+      ClientHeight = 530
+      ClientWidth = 841
       object memoRtcChip: TMemo
         Left = 0
-        Height = 534
+        Height = 530
         Top = 0
-        Width = 849
+        Width = 841
         Align = alClient
         Font.Height = -12
         Font.Name = 'Fixedsys'
