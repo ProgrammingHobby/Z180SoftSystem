@@ -229,10 +229,10 @@ begin
     ScaleDPI(self, 96);
     {$ifdef Linux}
     Constraints.MinWidth := 890;
-    Constraints.MinHeight := 623;
+    Constraints.MinHeight := 755; //623;
     {$else}
     Constraints.MinWidth := 970;
-    Constraints.MinHeight := 616;
+    Constraints.MinHeight := 748; //616;
     {$endif}
     Constraints.MaxWidth := Constraints.MinWidth;
     Constraints.MaxHeight := Constraints.MinHeight;
@@ -286,8 +286,8 @@ begin
     SystemTerminal := TSystemTerminal.Create(panelSystemTerminal, False);
     SystemTerminal.setCrLF(SystemSettings.ReadBoolean('Terminal', 'UseCRLF', False));
     SystemTerminal.setLocalEcho(SystemSettings.ReadBoolean('Terminal', 'LocalEcho', False));
-    SystemTerminal.setTerminalLogging(SystemSettings.ReadBoolean('Terminal', 'Loggin', False));
-    SystemTerminal.setInverseScreen(SystemSettings.ReadBoolean('Terminal', 'InverseScreen', False));
+    SystemTerminal.setLogging(SystemSettings.ReadBoolean('Terminal', 'Loggin', False));
+    SystemTerminal.setColorType(SystemSettings.ReadInteger('Terminal', 'ColorType', 0));
 
     SystemRtc := TSystemRtc.Create;
     SystemInOut := TSystemInOut.Create;

@@ -16,7 +16,6 @@ object MainWindow: TMainWindow
   OnKeyDown = FormKeyDown
   OnKeyUp = FormKeyUp
   OnShow = FormShow
-  LCLVersion = '2.0.10.0'
   object toolbarMainWindow: TToolBar
     Left = 0
     Height = 36
@@ -191,8 +190,8 @@ object MainWindow: TMainWindow
     Width = 778
     Align = alBottom
     BevelOuter = bvNone
-    ClientHeight = 24
-    ClientWidth = 778
+    ClientHeight = 20
+    ClientWidth = 774
     Constraints.MaxHeight = 24
     Constraints.MinHeight = 24
     ParentColor = False
