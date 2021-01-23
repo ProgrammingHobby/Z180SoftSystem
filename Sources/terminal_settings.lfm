@@ -15,19 +15,19 @@ object TerminalSettings: TTerminalSettings
   LCLVersion = '2.0.10.0'
   object groupboxCrLf: TGroupBox
     Left = 2
-    Height = 136
+    Height = 134
     Top = 4
     Width = 799
     BorderSpacing.Left = 2
     BorderSpacing.Top = 4
     BorderSpacing.Right = 2
     BorderSpacing.Bottom = 4
-    ClientHeight = 118
+    ClientHeight = 116
     ClientWidth = 797
     TabOrder = 0
     object checkboxEnableCrLf: TCheckBox
       Left = 8
-      Height = 126
+      Height = 124
       Top = 4
       Width = 781
       Align = alClient
@@ -41,19 +41,19 @@ object TerminalSettings: TTerminalSettings
   end
   object groupboxLocalEcho: TGroupBox
     Left = 2
-    Height = 136
-    Top = 144
+    Height = 134
+    Top = 142
     Width = 799
     BorderSpacing.Left = 2
     BorderSpacing.Top = 4
     BorderSpacing.Right = 2
     BorderSpacing.Bottom = 2
-    ClientHeight = 118
+    ClientHeight = 116
     ClientWidth = 797
     TabOrder = 1
     object checkboxEnableLocalEcho: TCheckBox
       Left = 8
-      Height = 126
+      Height = 124
       Top = 4
       Width = 781
       Align = alClient
@@ -67,19 +67,19 @@ object TerminalSettings: TTerminalSettings
   end
   object groupboxLogging: TGroupBox
     Left = 2
-    Height = 136
-    Top = 284
+    Height = 134
+    Top = 280
     Width = 799
     BorderSpacing.Left = 2
     BorderSpacing.Top = 4
     BorderSpacing.Right = 2
     BorderSpacing.Bottom = 2
-    ClientHeight = 118
+    ClientHeight = 116
     ClientWidth = 797
     TabOrder = 2
     object checkboxEnableLogging: TCheckBox
       Left = 8
-      Height = 126
+      Height = 124
       Top = 4
       Width = 781
       Align = alClient
@@ -91,35 +91,41 @@ object TerminalSettings: TTerminalSettings
       TabOrder = 0
     end
   end
-  object groupboxTerminalColor: TGroupBox
+  object groupboxColorType: TGroupBox
     Left = 2
-    Height = 135
-    Top = 424
+    Height = 141
+    Top = 418
     Width = 799
     BorderSpacing.Left = 2
     BorderSpacing.Top = 4
     BorderSpacing.Right = 2
     BorderSpacing.Bottom = 2
+    ChildSizing.LeftRightSpacing = 4
+    ChildSizing.TopBottomSpacing = 4
     ChildSizing.EnlargeHorizontal = crsHomogenousChildResize
     ChildSizing.EnlargeVertical = crsHomogenousChildResize
     ChildSizing.Layout = cclLeftToRightThenTopToBottom
     ChildSizing.ControlsPerLine = 1
-    ClientHeight = 117
+    ClientHeight = 123
     ClientWidth = 797
     TabOrder = 3
-    object checkboxInverseTerminalScreen: TCheckBox
-      Left = 8
-      Height = 125
+    object comboboxColorType: TComboBox
+      Left = 4
+      Height = 131
       Top = 4
-      Width = 781
-      BorderSpacing.Left = 8
-      BorderSpacing.Top = 4
-      BorderSpacing.Right = 8
-      BorderSpacing.Bottom = 4
-      Caption = 'Inverse Darstellung (weisse Schrift auf schwarzem Hintergrund)'
-      Checked = True
-      State = cbChecked
+      Width = 789
+      AutoDropDown = True
+      ItemHeight = 0
+      ItemIndex = 0
+      Items.Strings = (
+        'Farbe: schwarz auf weiss'
+        'Farbe: weiss auf schwarz'
+        'Monocrom: grün auf schwarz'
+        'Monocrom: bernstein auf schwarz'
+      )
+      Style = csDropDownList
       TabOrder = 0
+      Text = 'Farbe: schwarz auf weiss'
     end
   end
 end
