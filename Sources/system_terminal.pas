@@ -33,7 +33,7 @@ type
 
     const
         terminalColumns = 80;
-        terminalRows = 24;
+        terminalRows = 30;  //24;
         {$ifdef Windows}
         charHeight = 22;
         charWidth = 10;
@@ -47,7 +47,7 @@ type
         maxCharacterBuffer = 1024;
 
     var
-        imagePage1, imagePage2: TImage;
+        imagePage: TImage;
         timerTerminalPageRefresh: TTimer;
         timerFlash: TTimer;
         charData: array[1..terminalRows, 1..terminalColumns] of char;
@@ -58,6 +58,13 @@ type
             column: integer;
             row: integer;
             cursorChar: char;
+        end;
+        curPosSave: record
+            column: integer;
+            row: integer;
+            style: TFontStyles;
+            charCol: TColor;
+            backCol: TColor;
         end;
         keyboardBuffer: array[1..maxKeyboardBuffer] of byte;
         keyboardReadIndex, keyboardWriteIndex: integer;
@@ -75,6 +82,7 @@ type
         parCount: word;
         defaultCharColor, defaultBackColor: TColor;
         posVisible: boolean;
+        monochromTerminal: boolean;
 
     protected // Attribute
         procedure timerFlashTimer(Sender: TObject);
@@ -88,6 +96,7 @@ type
 
     private   // Methoden
         procedure writeCharOnScreen(character: char);
+        procedure writeKeyboardBuffer(character: byte);
         procedure scrollTerminalContentUp;
         procedure cursorHome;
         procedure cursorLeft;
@@ -109,6 +118,9 @@ type
         procedure insertLineAndScroll;
         procedure reverseLineFeed;
         procedure setCursorPosition(row, column: integer);
+        procedure sendCursorPosition;
+        procedure sendTerminalOk;
+        procedure sendWhatAreYou;
         procedure resetEscParameter;
 
     protected // Methoden
@@ -118,8 +130,8 @@ type
         procedure terminalReset;
         procedure setCrLF(enable: boolean);
         procedure setLocalEcho(enable: boolean);
-        procedure setTerminalLogging(enable: boolean);
-        procedure setInverseScreen(enable: boolean);
+        procedure setLogging(enable: boolean);
+        procedure setColorType(colorType: integer);
         procedure writeCharacter(character: byte);
         function readCharacter: byte;
         function terminalReadable: boolean;
@@ -148,7 +160,7 @@ var
     viewStyle: TFontStyles;
     charCol, backCol, tmpCol: TColor;
 begin
-    timerTerminalPageRefresh.Enabled := False;
+    //timerTerminalPageRefresh.Enabled := False;
     for row := 1 to terminalRows do begin
         posY := startTop + (charHeight * row);
         for column := 1 to terminalColumns do begin
@@ -173,40 +185,28 @@ begin
                 charCol := backCol;
                 backCol := tmpCol;
             end;
+            if (monochromTerminal) then begin
+                charCol := defaultCharColor;
+                backCol := defaultBackColor;
+            end;
             {$ifdef Windows}
             posX := startLeft + ((charWidth + 2) * column);
             {$else}
             posX := startLeft + (charWidth * column);
             {$endif}
-            if (imagePage1.Visible) then begin
-                imagePage2.Canvas.Brush.Color := backCol;
-                imagePage2.Canvas.Pen.Color := backCol;
-                imagePage2.Canvas.Font.Color := charCol;
-                imagePage2.Canvas.Font.Style := viewStyle;
-                {$ifdef Windows}
-                imagePage2.Canvas.Rectangle(posX - 2, posY, posX + charWidth, posY + charHeight);
-                {$else}
-                imagePage2.Canvas.Rectangle(posX - 1, posY, posX + charWidth, posY + charHeight);
-                {$endif}
-                imagePage2.Canvas.TextOut(posX, posY, viewChar);
-            end
-            else begin
-                imagePage1.Canvas.Brush.Color := backCol;
-                imagePage1.Canvas.Pen.Color := backCol;
-                imagePage1.Canvas.Font.Color := charCol;
-                imagePage1.Canvas.Font.Style := viewStyle;
+            imagePage.Canvas.Brush.Color := backCol;
+            imagePage.Canvas.Pen.Color := backCol;
+            imagePage.Canvas.Font.Color := charCol;
+            imagePage.Canvas.Font.Style := viewStyle;
                  {$ifdef Windows}
-                imagePage1.Canvas.Rectangle(posX - 2, posY, posX + charWidth, posY + charHeight);
+            imagePage.Canvas.Rectangle(posX - 2, posY, posX + charWidth, posY + charHeight);
                 {$else}
-                imagePage1.Canvas.Rectangle(posX - 1, posY, posX + charWidth, posY + charHeight);
+            imagePage.Canvas.Rectangle(posX - 1, posY, posX + charWidth, posY + charHeight);
                 {$endif}
-                imagePage1.Canvas.TextOut(posX, posY, viewChar);
-            end;
+            imagePage.Canvas.TextOut(posX, posY, viewChar);
         end;
     end;
-    imagePage1.Visible := imagePage2.Visible;
-    imagePage2.Visible := not imagePage1.Visible;
-    timerTerminalPageRefresh.Enabled := True;
+    //timerTerminalPageRefresh.Enabled := True;
 end;
 
 // --------------------------------------------------------------------------------
@@ -225,18 +225,13 @@ begin
     {$endif}
     pageHeight := (charHeight * terminalRows) + charHeight;
 
-    imagePage1 := TImage.Create(terminalPanel);
-    with (imagePage1) do begin
+    imagePage := TImage.Create(terminalPanel);
+    with (imagePage) do begin
         SetBounds(0, 0, pageWidth, pageHeight);
         Canvas.Font := terminalPanel.Font;
         Parent := terminalPanel;
-    end;
-
-    imagePage2 := TImage.Create(terminalPanel);
-    with (imagePage2) do begin
-        SetBounds(0, 0, pageWidth, pageHeight);
-        Canvas.Font := terminalPanel.Font;
-        Parent := terminalPanel;
+        Enabled := True;
+        Visible := True;
     end;
 
     timerFlash := TTimer.Create(terminalPanel);
@@ -245,13 +240,14 @@ begin
     timerFlash.Enabled := False;
 
     timerTerminalPageRefresh := TTimer.Create(terminalPanel);
-    timerTerminalPageRefresh.Interval := 20;
+    timerTerminalPageRefresh.Interval := 50;
     timerTerminalPageRefresh.OnTimer := @timerTerminalPageRefreshTimer;
     timerTerminalPageRefresh.Enabled := False;
 
     enableCrLf := False;
     enableLocalEcho := False;
-    setTerminalLogging(False);
+    monochromTerminal := False;
+    setLogging(False);
     terminalReset;
 
     FreeOnTerminate := False;
@@ -287,8 +283,6 @@ begin
     terminalCursor.column := 1;
     terminalCursor.row := 1;
     terminalCursor.cursorChar := '_';
-    imagePage1.Visible := True;
-    imagePage2.Visible := False;
     timerFlash.Enabled := True;
     timerTerminalPageRefresh.Enabled := True;
     fontStyle := [];
@@ -317,6 +311,16 @@ begin
         if (terminalCursor.row > terminalRows + 1) then begin
             scrollTerminalContentUp;
         end;
+    end;
+end;
+
+// --------------------------------------------------------------------------------
+procedure TSystemTerminal.writeKeyboardBuffer(character: byte);
+begin
+    keyboardBuffer[keyboardWriteIndex] := character;
+    Inc(keyboardWriteIndex);
+    if (keyboardWriteIndex > maxKeyboardBuffer) then begin
+        keyboardWriteIndex := 1;
     end;
 end;
 
@@ -384,6 +388,22 @@ var
     procedure vt52EscapeMode;
     begin
         case (character) of
+            $37: begin  // ESC 7 (Save cursor and attributes)
+                curPosSave.column := terminalCursor.column;
+                curPosSave.row := terminalCursor.row;
+                curPosSave.style := fontStyle;
+                curPosSave.charCol := fontColor;
+                curPosSave.backCol := backgroundColor;
+                termMode := STANDARD;
+            end;
+            $38: begin  // ESC 8 (Restore cursor and attributes)
+                terminalCursor.column := curPosSave.column;
+                terminalCursor.row := curPosSave.row;
+                fontStyle := curPosSave.style;
+                fontColor := curPosSave.charCol;
+                backgroundColor := curPosSave.backCol;
+                termMode := STANDARD;
+            end;
             $3C: begin  // ESC < (Enter ANSI Mode)
                 // ANSI-Mode ist immer aktiv.
             end;
@@ -431,18 +451,9 @@ var
                 termMode := DCA_ROW;
             end;
             $5A: begin  // ESC Z (Identify VT52 Mode)
-                keyboardBuffer[keyboardWriteIndex] := $1B;
-                Inc(keyboardWriteIndex);
-                if (keyboardWriteIndex > maxKeyboardBuffer) then
-                    keyboardWriteIndex := 1;
-                keyboardBuffer[keyboardWriteIndex] := $2F;
-                Inc(keyboardWriteIndex);
-                if (keyboardWriteIndex > maxKeyboardBuffer) then
-                    keyboardWriteIndex := 1;
-                keyboardBuffer[keyboardWriteIndex] := $5A;
-                Inc(keyboardWriteIndex);
-                if (keyboardWriteIndex > maxKeyboardBuffer) then
-                    keyboardWriteIndex := 1;
+                writeKeyboardBuffer($1B);
+                writeKeyboardBuffer($2F);
+                writeKeyboardBuffer($5A);
                 termMode := STANDARD;
             end;
             $5B: begin  // ESC [ (ESC Control Sequenz)
@@ -504,6 +515,17 @@ var
                 resetEscParameter;
                 termMode := STANDARD;
             end;
+            $63: begin // ESC [ Pn c (What are you?)
+                if (parCount = 1) then begin
+                    case (csiPar[1]) of
+                        0: begin
+                            sendWhatAreYou;
+                        end;
+                    end;
+                    resetEscParameter;
+                    termMode := STANDARD;
+                end;
+            end;
             $44: begin // ESC [ Pn D (Cursor left Pn columns)
                 if (parCount = 1) then begin
                     if terminalCursor.column > csiPar[1] then begin
@@ -519,9 +541,9 @@ var
             $48, $66: begin // ESC [ Pn1 ; Pn2 H , ESC [ Pn1 ; Pn2 f (Move cursor to line Pn1 and column Pn2)
                 if (parCount = 2) then begin
                     setCursorPosition(csiPar[1], csiPar[2]);
-                    resetEscParameter;
-                    termMode := STANDARD;
                 end;
+                resetEscParameter;
+                termMode := STANDARD;
             end;
             $4B: begin // ESC [ Pn K
                 if (parCount = 1) then begin
@@ -648,6 +670,24 @@ var
                 resetEscParameter;
                 termMode := STANDARD;
             end;
+            $6E: begin  // ESC [ Pn n
+                if (parCount = 1) then begin
+                    case csiPar[1] of
+                        5: begin
+                            sendTerminalOk;
+                        end;
+                        6: begin
+                            sendCursorPosition;
+                        end;
+                    end;
+                end;
+                resetEscParameter;
+                termMode := STANDARD;
+            end;
+            else begin
+                resetEscParameter;
+                termMode := STANDARD;
+            end;
         end;
     end;
 
@@ -706,6 +746,10 @@ var
                 cursorHome;
                 termMode := STANDARD;
             end;
+            $63: begin // ESC [ c  (What are you?)
+                sendWhatAreYou;
+                termMode := STANDARD;
+            end;
             else begin
                 termMode := STANDARD;
             end;
@@ -722,8 +766,9 @@ begin
         else begin
             character := characterBuffer[characterReadIndex];
             Inc(characterReadIndex);
-            if (characterReadIndex > maxCharacterBuffer) then
+            if (characterReadIndex > maxCharacterBuffer) then begin
                 characterReadIndex := 1;
+            end;
 
             case termMode of
                 STANDARD: normalTerminalMode;
@@ -1030,6 +1075,49 @@ begin
 end;
 
 // --------------------------------------------------------------------------------
+procedure TSystemTerminal.sendCursorPosition;
+var
+    responseString: string;
+    index: integer;
+begin
+    responseString := chr($1B);
+    responseString := responseString + '[';
+    responseString := responseString + IntToStr(terminalCursor.row);
+    responseString := responseString + ';';
+    responseString := responseString + IntToStr(terminalCursor.column);
+    responseString := responseString + 'R';
+    for index := 1 to responseString.Length do begin
+        writeKeyboardBuffer(byte(responseString[index]));
+    end;
+end;
+
+// --------------------------------------------------------------------------------
+procedure TSystemTerminal.sendTerminalOk;
+var
+    responseString: string;
+    index: integer;
+begin
+    responseString := chr($1B);
+    responseString := responseString + '[0n';
+    for index := 1 to responseString.Length do begin
+        writeKeyboardBuffer(byte(responseString[index]));
+    end;
+end;
+
+// --------------------------------------------------------------------------------
+procedure TSystemTerminal.sendWhatAreYou;
+var
+    responseString: string;
+    index: integer;
+begin
+    responseString := chr($1B);
+    responseString := responseString + '[?1;2c';
+    for index := 1 to responseString.Length do begin
+        writeKeyboardBuffer(byte(responseString[index]));
+    end;
+end;
+
+// --------------------------------------------------------------------------------
 procedure TSystemTerminal.resetEscParameter;
 var
     parIndex: integer;
@@ -1053,7 +1141,7 @@ begin
 end;
 
 // --------------------------------------------------------------------------------
-procedure TSystemTerminal.setTerminalLogging(enable: boolean);
+procedure TSystemTerminal.setLogging(enable: boolean);
 begin
     enableTerminalLogging := enable;
     if (enableTerminalLogging) then begin
@@ -1067,32 +1155,45 @@ begin
 end;
 
 // --------------------------------------------------------------------------------
-procedure TSystemTerminal.setInverseScreen(enable: boolean);
+procedure TSystemTerminal.setColorType(colorType: integer);
 var
     row, column: integer;
     oldCharColor, oldBackColor: TColor;
 begin
     oldCharColor := defaultCharColor;
     oldBackColor := defaultBackColor;
-    if (enable) then begin
-        defaultCharColor := clWhite;
-        defaultBackColor := clBlack;
-    end
-    else begin
-        defaultCharColor := clBlack;
-        defaultBackColor := clWhite;
+    case (colorType) of
+        0: begin
+            defaultCharColor := clBlack;
+            defaultBackColor := clWhite;
+            monochromTerminal := False;
+        end;
+        1: begin
+            defaultCharColor := clWhite;
+            defaultBackColor := clBlack;
+            monochromTerminal := False;
+        end;
+        2: begin
+            defaultCharColor := $00FF00;
+            defaultBackColor := clBlack;
+            monochromTerminal := True;
+        end;
+        3: begin
+            defaultCharColor := $0C84E6;  //00BFFF;  //2282D0;
+            defaultBackColor := clBlack;
+            monochromTerminal := True;
+        end;
+        else begin
+            defaultCharColor := clBlack;
+            defaultBackColor := clWhite;
+            monochromTerminal := False;
+        end;
     end;
-    with (imagePage1) do begin
+    with (imagePage) do begin
         Canvas.Font.Color := defaultCharColor;
         Canvas.Brush.Color := defaultBackColor;
         Canvas.Pen.Color := defaultBackColor;
-        Canvas.Rectangle(0, 0, imagePage1.Width, imagePage1.Height);
-    end;
-    with (imagePage2) do begin
-        Canvas.Font.Color := defaultCharColor;
-        Canvas.Brush.Color := defaultBackColor;
-        Canvas.Pen.Color := defaultBackColor;
-        Canvas.Rectangle(0, 0, imagePage2.Width, imagePage2.Height);
+        Canvas.Rectangle(0, 0, imagePage.Width, imagePage.Height);
     end;
     for row := 1 to terminalRows do begin
         for column := 1 to terminalColumns do begin
@@ -1114,8 +1215,9 @@ begin
     if (character > $00) then begin
         characterBuffer[characterWriteIndex] := character;
         Inc(characterWriteIndex);
-        if (characterWriteIndex > maxCharacterBuffer) then
+        if (characterWriteIndex > maxCharacterBuffer) then begin
             characterWriteIndex := 1;
+        end;
     end;
 end;
 
@@ -1124,8 +1226,9 @@ function TSystemTerminal.readCharacter: byte;
 begin
     Result := keyboardBuffer[keyboardReadIndex];
     Inc(keyboardReadIndex);
-    if (keyboardReadIndex > maxKeyboardBuffer) then
+    if (keyboardReadIndex > maxKeyboardBuffer) then begin
         keyboardReadIndex := 1;
+    end;
 end;
 
 // --------------------------------------------------------------------------------
@@ -1251,10 +1354,7 @@ begin
     end;
 
     if character > $00 then begin
-        keyboardBuffer[keyboardWriteIndex] := character;
-        Inc(keyboardWriteIndex);
-        if (keyboardWriteIndex > maxKeyboardBuffer) then
-            keyboardWriteIndex := 1;
+        writeKeyboardBuffer(character);
         if (enableLocalEcho) then begin
             writeCharacter(character);
         end;
