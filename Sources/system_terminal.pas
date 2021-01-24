@@ -35,14 +35,14 @@ type
         terminalColumns = 80;
         terminalRows = 30;  //24;
         {$ifdef Windows}
-        charHeight = 22;
-        charWidth = 10;
+        charHeight = 20;
+        charWidth = 9;
         {$else}
-        charHeight = 22;
-        charWidth = 11;
+        charHeight = 19;
+        charWidth = 10;
         {$endif}
         startLeft = -6;
-        startTop = -18;
+        startTop = -17;
         maxKeyboardBuffer = 16;
         maxCharacterBuffer = 1024;
 
@@ -160,7 +160,6 @@ var
     viewStyle: TFontStyles;
     charCol, backCol, tmpCol: TColor;
 begin
-    //timerTerminalPageRefresh.Enabled := False;
     for row := 1 to terminalRows do begin
         posY := startTop + (charHeight * row);
         for column := 1 to terminalColumns do begin
@@ -198,15 +197,9 @@ begin
             imagePage.Canvas.Pen.Color := backCol;
             imagePage.Canvas.Font.Color := charCol;
             imagePage.Canvas.Font.Style := viewStyle;
-                 {$ifdef Windows}
-            imagePage.Canvas.Rectangle(posX - 2, posY, posX + charWidth, posY + charHeight);
-                {$else}
-            imagePage.Canvas.Rectangle(posX - 1, posY, posX + charWidth, posY + charHeight);
-                {$endif}
             imagePage.Canvas.TextOut(posX, posY, viewChar);
         end;
     end;
-    //timerTerminalPageRefresh.Enabled := True;
 end;
 
 // --------------------------------------------------------------------------------
@@ -216,7 +209,7 @@ var
 begin
     {$ifdef Windows}
     terminalPanel.Font.Name := 'Consolas';
-    terminalPanel.Font.Size := 14;
+    terminalPanel.Font.Size := 13;
     pageWidth := ((charWidth + 2) * terminalColumns) + charWidth;
     {$else}
     terminalPanel.Font.Name := 'Monospace';
@@ -240,7 +233,11 @@ begin
     timerFlash.Enabled := False;
 
     timerTerminalPageRefresh := TTimer.Create(terminalPanel);
+    {$ifdef Windows}
+    timerTerminalPageRefresh.Interval := 10;
+    {$else}
     timerTerminalPageRefresh.Interval := 50;
+    {$endif}
     timerTerminalPageRefresh.OnTimer := @timerTerminalPageRefreshTimer;
     timerTerminalPageRefresh.Enabled := False;
 

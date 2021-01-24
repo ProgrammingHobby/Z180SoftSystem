@@ -228,11 +228,11 @@ begin
     self.SetAutoSize(True);
     ScaleDPI(self, 96);
     {$ifdef Linux}
-    Constraints.MinWidth := 890;
-    Constraints.MinHeight := 755; //623;
+    Constraints.MinWidth := 808;
+    Constraints.MinHeight := 662;
     {$else}
-    Constraints.MinWidth := 970;
-    Constraints.MinHeight := 748; //616;
+    Constraints.MinWidth := 888;
+    Constraints.MinHeight := 688;
     {$endif}
     Constraints.MaxWidth := Constraints.MinWidth;
     Constraints.MaxHeight := Constraints.MinHeight;

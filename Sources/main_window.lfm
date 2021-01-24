@@ -8,7 +8,7 @@ object MainWindow: TMainWindow
   VertScrollBar.Page = 108
   VertScrollBar.Range = 108
   Caption = 'Z180SoftSystem   (c) Uwe Merker 2020'
-  ClientHeight = 480
+  ClientHeight = 460
   ClientWidth = 778
   KeyPreview = True
   Menu = menuMainWindow
@@ -16,6 +16,7 @@ object MainWindow: TMainWindow
   OnKeyDown = FormKeyDown
   OnKeyUp = FormKeyUp
   OnShow = FormShow
+  LCLVersion = '2.0.10.0'
   object toolbarMainWindow: TToolBar
     Left = 0
     Height = 36
@@ -190,8 +191,8 @@ object MainWindow: TMainWindow
     Width = 778
     Align = alBottom
     BevelOuter = bvNone
-    ClientHeight = 20
-    ClientWidth = 774
+    ClientHeight = 24
+    ClientWidth = 778
     Constraints.MaxHeight = 24
     Constraints.MinHeight = 24
     ParentColor = False
