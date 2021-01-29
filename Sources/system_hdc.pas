@@ -291,12 +291,10 @@ begin
     if (hdcSectorCount = 0) then begin
         hdcSectorCount := 256;
     end;
-    if (((hdcLba.Value * SECBYTES) > (hardDrive.Size - SECBYTES)) or (hardDrive.Size = 0) or (hdcSector > hardDrive.Sectors) or
-        (hdcTrack.Value >= hardDrive.Tracks) or (hdcDriveHead.bit[DRV])) then begin
+    if (((hdcLba.Value * SECBYTES) = (hardDrive.Size - SECBYTES)) or (hardDrive.Size = 0) or (hdcSector > hardDrive.Sectors) or
+        (hdcTrack.Value >= hardDrive.Tracks) or (hdcDriveHead.bit[DRV]) or ((hdcDriveHead.Value and HEAD) > hardDrive.Heads)) then begin
         hdcStatus.bit[ERR] := True;
         hdcError.bit[IDNF] := True;
-        hdcStatus.bit[BSY] := False;
-        exit;
     end;
     try
         Reset(hddData, SECBYTES);
@@ -411,12 +409,10 @@ begin
     if (hdcSectorCount = 0) then begin
         hdcSectorCount := 256;
     end;
-    if (((hdcLba.Value * SECBYTES) > (hardDrive.Size - SECBYTES)) or (hardDrive.Size = 0) or (hdcSector > hardDrive.Sectors) or
-        (hdcTrack.Value >= hardDrive.Tracks) or (hdcDriveHead.bit[DRV])) then begin
+    if (((hdcLba.Value * SECBYTES) = (hardDrive.Size - SECBYTES)) or (hardDrive.Size = 0) or (hdcSector > hardDrive.Sectors) or
+        (hdcTrack.Value >= hardDrive.Tracks) or (hdcDriveHead.bit[DRV]) or ((hdcDriveHead.Value and HEAD) > hardDrive.Heads)) then begin
         hdcStatus.bit[ERR] := True;
         hdcError.bit[IDNF] := True;
-        hdcStatus.bit[BSY] := False;
-        exit;
     end;
     hdcStatus.bit[DSC] := True;
     hdcStatus.bit[BSY] := False;
