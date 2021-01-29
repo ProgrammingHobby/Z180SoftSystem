@@ -13,7 +13,7 @@ type
     { THardwareInfo }
 
     THardwareInfo = class(TForm)
-      memoRtcChip: TMemo;
+        memoRtcChip: TMemo;
         memoHddController: TMemo;
         memoFddController: TMemo;
         memoTerminal: TMemo;

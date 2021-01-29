@@ -15,22 +15,22 @@ object HardwareInfo: THardwareInfo
     Height = 557
     Top = 0
     Width = 851
-    ActivePage = tabZ180Mpu
+    ActivePage = tabFddController
     Align = alClient
     Font.Height = -12
     Font.Name = 'Monospace'
     ParentFont = False
-    TabIndex = 0
+    TabIndex = 2
     TabOrder = 0
     object tabZ180Mpu: TTabSheet
       Caption = 'Z180MPU / Boot ROM'
-      ClientHeight = 530
-      ClientWidth = 841
+      ClientHeight = 534
+      ClientWidth = 849
       object memoZ180Mpu: TMemo
         Left = 0
-        Height = 530
+        Height = 534
         Top = 0
-        Width = 841
+        Width = 849
         Align = alClient
         Font.Height = -12
         Font.Name = 'Fixedsys'
@@ -62,8 +62,8 @@ object HardwareInfo: THardwareInfo
     end
     object tabTerminal: TTabSheet
       Caption = 'Terminal'
-      ClientHeight = 530
-      ClientWidth = 841
+      ClientHeight = 534
+      ClientWidth = 849
       object memoTerminal: TMemo
         Left = 0
         Height = 530
@@ -148,13 +148,13 @@ object HardwareInfo: THardwareInfo
     end
     object tabFddController: TTabSheet
       Caption = 'FDD-Controller'
-      ClientHeight = 530
-      ClientWidth = 841
+      ClientHeight = 534
+      ClientWidth = 849
       object memoFddController: TMemo
         Left = 0
-        Height = 530
+        Height = 534
         Top = 0
-        Width = 841
+        Width = 849
         Align = alClient
         Font.Height = -12
         Font.Name = 'Fixedsys'
@@ -200,8 +200,8 @@ object HardwareInfo: THardwareInfo
           ''
           '- das Externe Control Register ist wie folgt belegt:'
           '        Bit0 : Master-Reset des Fdc-Controllers'
-          '        Bit2 : Disk-Drive 1 enable'
-          '        Bit3 : Disk-Drive 0 enable'
+          '        Bit2 : Disk-Drive 0 enable'
+          '        Bit3 : Disk-Drive 1 enable'
           '        Bit4 : Side-Select (false = Seite 0 , true = Seite 1)'
         )
         ParentFont = False
@@ -214,8 +214,8 @@ object HardwareInfo: THardwareInfo
     end
     object tabHddController: TTabSheet
       Caption = 'HDD-Controller'
-      ClientHeight = 530
-      ClientWidth = 841
+      ClientHeight = 534
+      ClientWidth = 849
       object memoHddController: TMemo
         Left = 0
         Height = 530
@@ -284,8 +284,8 @@ object HardwareInfo: THardwareInfo
     end
     object tabRtcChip: TTabSheet
       Caption = 'RTC-Modul'
-      ClientHeight = 530
-      ClientWidth = 841
+      ClientHeight = 534
+      ClientWidth = 849
       object memoRtcChip: TMemo
         Left = 0
         Height = 530
