@@ -8,7 +8,7 @@ object MainWindow: TMainWindow
   VertScrollBar.Page = 108
   VertScrollBar.Range = 108
   Caption = 'Z180SoftSystem   (c) Uwe Merker 2020'
-  ClientHeight = 460
+  ClientHeight = 480
   ClientWidth = 778
   KeyPreview = True
   Menu = menuMainWindow
@@ -25,7 +25,6 @@ object MainWindow: TMainWindow
     ButtonHeight = 32
     ButtonWidth = 32
     Caption = 'toolbarMainWindow'
-    EdgeBorders = [ebTop, ebBottom]
     Images = imagelistMainWindow
     TabOrder = 0
     Transparent = True

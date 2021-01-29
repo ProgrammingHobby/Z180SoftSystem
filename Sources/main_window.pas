@@ -154,10 +154,10 @@ const
     RUNSPEED_12MHZ = 6500;
     RUNSPEED_16MHZ = 8500;
   {$else}
-    RUNSPEED_4MHZ = 6250;
-    RUNSPEED_8MHZ = 11250;
-    RUNSPEED_12MHZ = 16250;
-    RUNSPEED_16MHZ = 21250;
+    RUNSPEED_4MHZ = 6875;
+    RUNSPEED_8MHZ = 12375;
+    RUNSPEED_12MHZ = 17875;
+    RUNSPEED_16MHZ = 23375;
   {$endif}
     SLOWSPEED_1OPS = 1000;
     SLOWSPEED_2OPS = 500;
@@ -227,12 +227,12 @@ begin
     SystemSettings.restoreFormState(TForm(self));
     self.SetAutoSize(True);
     ScaleDPI(self, 96);
-    {$ifdef Linux}
-    Constraints.MinWidth := 808;
-    Constraints.MinHeight := 662;
+    {$ifdef Windows}
+    Constraints.MinWidth := 886;  // 880 + 6
+    Constraints.MinHeight := 686; // 680 + 6
     {$else}
-    Constraints.MinWidth := 888;
-    Constraints.MinHeight := 688;
+    Constraints.MinWidth := 806;   // 800 + 6
+    Constraints.MinHeight := 663;  // 657 + 6
     {$endif}
     Constraints.MaxWidth := Constraints.MinWidth;
     Constraints.MaxHeight := Constraints.MinHeight;

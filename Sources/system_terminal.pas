@@ -33,16 +33,18 @@ type
 
     const
         terminalColumns = 80;
-        terminalRows = 30;  //24;
+        terminalRows = 30;
         {$ifdef Windows}
         charHeight = 20;
         charWidth = 9;
+        startLeft = -7;  // -10 + 3
+        startTop = -17;   // -20 + 3
         {$else}
         charHeight = 19;
         charWidth = 10;
+        startLeft = -7;  // -10 + 3
+        startTop = -16;   // -19 + 3
         {$endif}
-        startLeft = -6;
-        startTop = -17;
         maxKeyboardBuffer = 16;
         maxCharacterBuffer = 1024;
 
@@ -166,8 +168,9 @@ begin
             viewStyle := charStyle[row, column];
             charCol := charColor[row, column];
             backCol := backColor[row, column];
-            if ((row = terminalCursor.row) and (column = terminalCursor.column) and posVisible) then begin
+            if (posVisible and (row = terminalCursor.row) and (column = terminalCursor.column)) then begin
                 viewchar := terminalCursor.cursorChar;
+                viewStyle := [fsBold];
             end
             else begin
                 viewchar := charData[row, column];
@@ -178,15 +181,15 @@ begin
                     viewChar := ' ';
                 end;
             end;
+            if (monochromTerminal) then begin
+                charCol := defaultCharColor;
+                backCol := defaultBackColor;
+            end;
             if (fsStrikeOut in viewStyle) then begin
                 viewStyle := viewStyle - [fsStrikeOut];
                 tmpCol := charCol;
                 charCol := backCol;
                 backCol := tmpCol;
-            end;
-            if (monochromTerminal) then begin
-                charCol := defaultCharColor;
-                backCol := defaultBackColor;
             end;
             {$ifdef Windows}
             posX := startLeft + ((charWidth + 2) * column);
@@ -194,7 +197,6 @@ begin
             posX := startLeft + (charWidth * column);
             {$endif}
             imagePage.Canvas.Brush.Color := backCol;
-            imagePage.Canvas.Pen.Color := backCol;
             imagePage.Canvas.Font.Color := charCol;
             imagePage.Canvas.Font.Style := viewStyle;
             imagePage.Canvas.TextOut(posX, posY, viewChar);
@@ -234,7 +236,7 @@ begin
 
     timerTerminalPageRefresh := TTimer.Create(terminalPanel);
     {$ifdef Windows}
-    timerTerminalPageRefresh.Interval := 10;
+    timerTerminalPageRefresh.Interval := 20;
     {$else}
     timerTerminalPageRefresh.Interval := 50;
     {$endif}
