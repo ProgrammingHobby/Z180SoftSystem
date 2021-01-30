@@ -304,10 +304,10 @@ begin
     backColor[terminalCursor.row, terminalCursor.column] := backgroundColor;
     charStyle[terminalCursor.row, terminalCursor.column] := fontStyle;
     Inc(terminalCursor.column);
-    if (terminalCursor.column > terminalColumns + 1) then begin
+    if (terminalCursor.column > terminalColumns) then begin
         terminalCursor.column := 1;
         Inc(terminalCursor.row);
-        if (terminalCursor.row > terminalRows + 1) then begin
+        if (terminalCursor.row > terminalRows) then begin
             scrollTerminalContentUp;
         end;
     end;
