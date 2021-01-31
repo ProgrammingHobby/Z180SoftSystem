@@ -78,7 +78,7 @@ type
         // Variablen fuer die Takt- und Machinen-Zyklen Verarbeitung
         machineCycles, clockCycles: DWord;
         extraWaitCycles, ioWaitCycles, memWaitCycles: DWord;
-        clockMultiplier: byte;
+        clockShift: byte;
 
         // 1. Z180Cpu Standard-Registersatz
         regAF: TregAF;  // 16Bit Register-Paar AF
@@ -164,6 +164,8 @@ type
         shiftModeRatio0, shiftModeRatio1: byte;          // Gesamtzahl der zu Übertragenden Bits pro Datenbyte
         transmitShiftCount0, transmitShiftCount1: byte;  // Bit-Zaehler fuer das Senden von Daten
         receiveShiftCount0, receiveShiftCount1: byte;    // Bit-Zaehler fuer das Empfangen von Daten
+        timer0Count, timer0Reload: word;                  // Zähler und Reload für Timer 0
+        timer1Count, timer1Reload: word;                  // Zähler und Reload für Timer 0
         TSR0, TSR1: byte;                                // Sende Schiebe-Register (nicht per I/O Ansprechbar)
         RSR0, RSR1: byte;                                // Empfangs Schiebe-Register (nicht per I/O Ansprechbar)
         asciTSR0E, asciTSR1E: boolean;                   // Hilfsflag 'Transmit Shift Register Empty'
@@ -484,7 +486,7 @@ begin
     machineCycles := 0;
     clockCycles := 0;
     extraWaitCycles := 0;
-    clockMultiplier := 1;
+    clockShift := 0;
     memWaitCycles := 0;
     ioWaitCycles := 0;
 end;
@@ -726,11 +728,11 @@ begin
             end;
             $02: begin   //portCNTLB0
                 ioCNTLB0.Value := ((ioCNTLB0.Value and not $FF) or (Data and $FF));
-                asciPhiDevideRatio0 := calcAsciPhiDevide(ioCNTLB0.Value);   // bei Aenderungen die 'Baud-Rate' neu berechnen
+                asciPhiDevideRatio0 := (calcAsciPhiDevide(ioCNTLB0.Value) shr clockShift);   // bei Aenderungen die 'Baud-Rate' neu berechnen
             end;
             $03: begin   //portCNTLB1
                 ioCNTLB1.Value := ((ioCNTLB1.Value and not $FF) or (Data and $FF));
-                asciPhiDevideRatio1 := calcAsciPhiDevide(ioCNTLB1.Value);   // bei Aenderungen die 'Baud-Rate' neu berechnen
+                asciPhiDevideRatio1 := (calcAsciPhiDevide(ioCNTLB1.Value) shr clockShift);   // bei Aenderungen die 'Baud-Rate' neu berechnen
             end;
             $04: begin   //portSTAT0
                 ioSTAT0.Value := ((ioSTAT0.Value and not $09) or (Data and $09));
@@ -758,59 +760,70 @@ begin
             $0B: begin   //portTRD
                 ioTRD := ((ioTRD and not $FF) or (Data and $FF));
             end;
-            $0C: begin   //portTMDR0L
-                ioTMDR0.low := ((ioTMDR0.low and not $FF) or (Data and $FF));
+            $0C, $0D: begin
+                if ((portLO and $3F) = $0C) then begin  //portTMDR0L
+                    ioTMDR0.low := ((ioTMDR0.low and not $FF) or (Data and $FF));
+                end
+                else begin  //portTMDR0H
+                    ioTMDR0.high := ((ioTMDR0.high and not $FF) or (Data and $FF));
+                end;
+                timer0Count := (ioTMDR0.Value shr clockShift);
             end;
-            $0D: begin   //portTMDR0H
-                ioTMDR0.high := ((ioTMDR0.high and not $FF) or (Data and $FF));
-            end;
-            $0E: begin   //portRLDR0L
-                ioRLDR0.low := ((ioRLDR0.low and not $FF) or (Data and $FF));
-            end;
-            $0F: begin   //portRLDR0H
-                ioRLDR0.high := ((ioRLDR0.high and not $FF) or (Data and $FF));
+            $0E, $0F: begin
+                if ((portLO and $3F) = $0E) then begin  //portRLDR0L
+                    ioRLDR0.low := ((ioRLDR0.low and not $FF) or (Data and $FF));
+                end
+                else begin  //portRLDR0H
+                    ioRLDR0.high := ((ioRLDR0.high and not $FF) or (Data and $FF));
+                end;
+                timer0Reload := (ioRLDR0.Value shr clockShift);
             end;
             $10: begin   //portTCR
                 ioTCR.Value := ((ioTCR.Value and not $3F) or (Data and $3F));
             end;
-            $14: begin   //portTMDR1L
-                ioTMDR1.low := ((ioTMDR1.low and not $FF) or (Data and $FF));
-            end;
-            $15: begin   //portTMDR1H
-                ioTMDR1.high := ((ioTMDR1.high and not $FF) or (Data and $FF));
+            $14, $15: begin
+                if ((portLO and $3F) = $14) then begin  //portTMDR1L
+                    ioTMDR1.low := ((ioTMDR1.low and not $FF) or (Data and $FF));
+                end
+                else begin  //portTMDR1H
+                    ioTMDR1.high := ((ioTMDR1.high and not $FF) or (Data and $FF));
+                end;
+                timer1Count := (ioTMDR1.Value shr clockShift);
             end;
             $16: begin   //portRLDR1L
-                ioRLDR1.low := ((ioRLDR1.low and not $FF) or (Data and $FF));
-            end;
-            $17: begin   //portRLDR1H
-                ioRLDR1.high := ((ioRLDR1.high and not $FF) or (Data and $FF));
+                if ((portLO and $3F) = $16) then begin  //portRLDR1L
+                    ioRLDR1.low := ((ioRLDR1.low and not $FF) or (Data and $FF));
+                end
+                else begin  //portRLDR1H
+                    ioRLDR1.high := ((ioRLDR1.high and not $FF) or (Data and $FF));
+                end;
+                timer1Reload := (ioRLDR1.Value shr clockShift);
             end;
             $18: begin   //portFRC
                 ioFRC := ((ioFRC and not $00) or (Data and $00));
             end;
-            $1E: begin   //portCMR
-                ioCMR.Value := ((ioCMR.Value and not $80) or (Data and $80));
+            $1E, $1F: begin
+                if ((portLO and $3F) = $1E) then begin  //portCMR
+                    ioCMR.Value := ((ioCMR.Value and not $80) or (Data and $80));
+                end
+                else begin  //portCCR
+                    ioCCR.Value := ((ioCCR.Value and not $FF) or (Data and $FF));
+                end;
                 if not (ioCMR.bit[7] or ioCCR.bit[7]) then begin
-                    clockMultiplier := 1;
+                    clockShift := 0;
                 end
                 else if (ioCMR.bit[7] or ioCCR.bit[7]) then begin
-                    clockMultiplier := 2;
+                    clockShift := 1;
                 end
                 else if (ioCMR.bit[7] and ioCCR.bit[7]) then begin
-                    clockMultiplier := 4;
+                    clockShift := 2;
                 end;
-            end;
-            $1F: begin   //portCCR
-                ioCCR.Value := ((ioCCR.Value and not $FF) or (Data and $FF));
-                if not (ioCMR.bit[7] or ioCCR.bit[7]) then begin
-                    clockMultiplier := 1;
-                end
-                else if (ioCMR.bit[7] or ioCCR.bit[7]) then begin
-                    clockMultiplier := 2;
-                end
-                else if (ioCMR.bit[7] and ioCCR.bit[7]) then begin
-                    clockMultiplier := 4;
-                end;
+                timer0Count := (ioTMDR0.Value shr clockShift);
+                timer0Reload := (ioRLDR0.Value shr clockShift);
+                timer1Count := (ioTMDR1.Value shr clockShift);
+                timer1Reload := (ioRLDR1.Value shr clockShift);
+                asciPhiDevideRatio0 := (calcAsciPhiDevide(ioCNTLB0.Value) shr clockShift);
+                asciPhiDevideRatio1 := (calcAsciPhiDevide(ioCNTLB1.Value) shr clockShift);
             end;
             $20: begin   //portSAR0L
                 ioSAR0.low := ((ioSAR0.low and not $FF) or (Data and $FF));
@@ -1045,9 +1058,9 @@ end;
 // --------------------------------------------------------------------------------
 procedure TZ180Cpu.doPrt0;
 begin
-    Dec(ioTMDR0.Value);
-    if (ioTMDR0.Value = 0) then begin // Counter auf 0 ?
-        ioTMDR0.Value := ioRLDR0.Value; // aus dem Reload-Register neu laden
+    Dec(timer0Count);
+    if (timer0Count = 0) then begin // Counter auf 0 ?
+        timer0Count := timer0Reload; // aus dem Reload-Register neu laden
         if (ioTCR.bit[TIE0]) then begin // und falls Interrupts eingeschaltet
             ioTCR.bit[TIF0] := True; // Channel 0 Interrupt Flag setzen
             intPRT0 := True; // und PRT-Interrupt generieren
@@ -1058,9 +1071,9 @@ end;
 // --------------------------------------------------------------------------------
 procedure TZ180Cpu.doPrt1;
 begin
-    Dec(ioTMDR1.Value);
-    if (ioTMDR1.Value = 0) then begin // Counter auf 0 ?
-        ioTMDR1.Value := ioRLDR1.Value; // aus dem Reload-Register neu laden
+    Dec(timer1Count);
+    if (timer1Count = 0) then begin // Counter auf 0 ?
+        timer1Count := timer1Reload; // aus dem Reload-Register neu laden
         if (ioTCR.bit[TIE1]) then begin // und falls Interrupts eingeschaltet
             ioTCR.bit[TIF1] := True; // Channel 1 Interrupt Flag setzen
             intPRT1 := True; // und PRT-Interrupt generieren
@@ -1286,10 +1299,14 @@ begin
     ioCNTR.Value := $0F;
     ioTRD := $00;
     ioTMDR0.Value := $FFFF;
+    timer0Count := ioTMDR0.Value;
     ioRLDR0.Value := $FFFF;
+    timer0Reload := ioRLDR0.Value;
     ioTCR.Value := $00;
     ioTMDR1.Value := $FFFF;
+    timer1Count := ioTMDR0.Value;
     ioRLDR1.Value := $FFFF;
+    timer1Reload := ioRLDR0.Value;
     ioFRC := $FF;
     ioCMR.Value := $7F;
     ioCCR.Value := $00;
@@ -1319,6 +1336,11 @@ begin
     intCSIO := False;
     intASCI0 := False;
     intASCI1 := False;
+
+    asciPhiDevideRatio0 := calcAsciPhiDevide(ioCNTLB0.Value);
+    shiftModeRatio0 := asciTransLength[ioCNTLA0.Value and MODSEL];
+    asciPhiDevideRatio1 := calcAsciPhiDevide(ioCNTLB1.Value);
+    shiftModeRatio1 := asciTransLength[ioCNTLA1.Value and MODSEL];
 end;
 
 // --------------------------------------------------------------------------------
@@ -1364,7 +1386,7 @@ begin
                 Dec(ioFRC); // FRC (Free running counter) wird bei jedem t_state um 1 heruntergezaehlt. Z8018x Family MPU User Manual Seite 172
             end;
             if (ioCNTLA0.bit[TE] or ioCNTLA0.bit[RE]) then begin // nur wenn ASCI0 Senden oder Empfangen soll
-                Inc(asciClockCount0, clockMultiplier);    // wird der 'Takt' fuer ASCI0 gestartet
+                Inc(asciClockCount0);    // wird der 'Takt' fuer ASCI0 gestartet
                 if ((not ioSTAT0.bit[TDRE]) and asciTSR0E) then begin // ist TSR leer und liegen neue Daten im TDR
                     TSR0 := ioTDR0; // werden diese ins TSR kopiert
                     asciTSR0E := False; // und die Status-Flags entsprechend setzen
@@ -1387,7 +1409,7 @@ begin
                 end;
             end;
             if (ioCNTLA1.bit[TE] or ioCNTLA1.bit[RE]) then begin// nur wenn ASCI1 Senden oder Empfangen soll
-                Inc(asciClockCount1, clockMultiplier);    // wird der 'Takt' fuer ASCI1 gestartet
+                Inc(asciClockCount1);    // wird der 'Takt' fuer ASCI1 gestartet
                 if ((not ioSTAT1.bit[TDRE]) and asciTSR1E) then begin// ist TSR leer und liegen neue Daten im TDR
                     TSR1 := ioTDR1; // werden diese ins TSR kopiert
                     asciTSR1E := False; // und die Status-Flags entsprechend setzen
