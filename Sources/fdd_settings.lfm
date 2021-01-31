@@ -1,23 +1,24 @@
 object FddSettings: TFddSettings
   Left = 1520
-  Height = 610
+  Height = 278
   Top = 250
-  Width = 1079
+  Width = 521
+  AutoSize = True
   Caption = 'Disketten Laufwerke'
-  ChildSizing.VerticalSpacing = 8
+  ChildSizing.VerticalSpacing = 4
   ChildSizing.EnlargeHorizontal = crsHomogenousChildResize
   ChildSizing.EnlargeVertical = crsHomogenousChildResize
   ChildSizing.Layout = cclLeftToRightThenTopToBottom
   ChildSizing.ControlsPerLine = 1
-  ClientHeight = 610
-  ClientWidth = 1079
+  ClientHeight = 278
+  ClientWidth = 521
   OnClose = FormClose
   OnShow = FormShow
   object groupboxFdd0: TGroupBox
     Left = 4
-    Height = 297
+    Height = 133
     Top = 4
-    Width = 1071
+    Width = 513
     BorderSpacing.Left = 4
     BorderSpacing.Top = 4
     BorderSpacing.Right = 4
@@ -27,35 +28,36 @@ object FddSettings: TFddSettings
     ChildSizing.EnlargeVertical = crsHomogenousChildResize
     ChildSizing.Layout = cclLeftToRightThenTopToBottom
     ChildSizing.ControlsPerLine = 1
-    ClientHeight = 295
-    ClientWidth = 1069
+    ClientHeight = 131
+    ClientWidth = 511
     TabOrder = 0
     object labelFdd0: TLabel
       Left = 4
-      Height = 74
+      Height = 17
       Top = 0
-      Width = 1061
+      Width = 503
       Caption = ' Diskettenlaufwerk 0'
       ParentColor = False
     end
     object groupboxFdd0Geometrie: TGroupBox
       Left = 4
-      Height = 108
-      Top = 78
-      Width = 1061
+      Height = 51
+      Top = 21
+      Width = 503
       Caption = ' Geometrie '
+      ChildSizing.HorizontalSpacing = 24
       ChildSizing.EnlargeHorizontal = crsHomogenousChildResize
       ChildSizing.EnlargeVertical = crsHomogenousChildResize
       ChildSizing.Layout = cclLeftToRightThenTopToBottom
       ChildSizing.ControlsPerLine = 5
-      ClientHeight = 90
-      ClientWidth = 1059
+      ClientHeight = 33
+      ClientWidth = 501
       TabOrder = 0
       object panelFdd0Sides: TPanel
         Left = 4
-        Height = 86
+        Height = 29
         Top = 0
-        Width = 265
+        Width = 100
         BorderSpacing.Left = 4
         BorderSpacing.Bottom = 4
         BevelOuter = bvNone
@@ -63,27 +65,28 @@ object FddSettings: TFddSettings
         ChildSizing.EnlargeVertical = crsHomogenousChildResize
         ChildSizing.Layout = cclLeftToRightThenTopToBottom
         ChildSizing.ControlsPerLine = 2
-        ClientHeight = 86
-        ClientWidth = 265
+        ClientHeight = 29
+        ClientWidth = 100
         TabOrder = 0
         object labelFdd0Sides: TLabel
           Left = 0
-          Height = 86
+          Height = 29
           Top = 0
-          Width = 101
+          Width = 44
           AutoSize = False
           Caption = ' Seiten: '
           Layout = tlCenter
           ParentColor = False
         end
         object comboboxFdd0Sides: TComboBox
-          Left = 101
-          Height = 86
+          Left = 44
+          Height = 29
           Top = 0
-          Width = 156
+          Width = 48
           ArrowKeysTraverseList = False
           AutoSelect = False
           BorderSpacing.Right = 8
+          Constraints.MaxWidth = 48
           ItemHeight = 0
           ItemIndex = 1
           Items.Strings = (
@@ -97,37 +100,38 @@ object FddSettings: TFddSettings
         end
       end
       object panelFdd0Tracks: TPanel
-        Left = 269
-        Height = 86
+        Left = 128
+        Height = 29
         Top = 0
-        Width = 270
+        Width = 105
         BorderSpacing.Bottom = 4
         BevelOuter = bvNone
         ChildSizing.EnlargeHorizontal = crsHomogenousChildResize
         ChildSizing.EnlargeVertical = crsHomogenousChildResize
         ChildSizing.Layout = cclLeftToRightThenTopToBottom
         ChildSizing.ControlsPerLine = 2
-        ClientHeight = 86
-        ClientWidth = 270
+        ClientHeight = 29
+        ClientWidth = 105
         TabOrder = 1
         object labelFdd0Tracks: TLabel
           Left = 0
-          Height = 86
+          Height = 29
           Top = 0
-          Width = 106
+          Width = 49
           AutoSize = False
           Caption = ' Spuren: '
           Layout = tlCenter
           ParentColor = False
         end
         object comboboxFdd0Tracks: TComboBox
-          Left = 106
-          Height = 86
+          Left = 49
+          Height = 29
           Top = 0
-          Width = 156
+          Width = 48
           ArrowKeysTraverseList = False
           AutoSelect = False
           BorderSpacing.Right = 8
+          Constraints.MaxWidth = 48
           ItemHeight = 0
           ItemIndex = 0
           Items.Strings = (
@@ -141,37 +145,38 @@ object FddSettings: TFddSettings
         end
       end
       object panelFdd0Sectors: TPanel
-        Left = 539
-        Height = 86
+        Left = 257
+        Height = 29
         Top = 0
-        Width = 280
+        Width = 115
         BorderSpacing.Bottom = 4
         BevelOuter = bvNone
         ChildSizing.EnlargeHorizontal = crsHomogenousChildResize
         ChildSizing.EnlargeVertical = crsHomogenousChildResize
         ChildSizing.Layout = cclLeftToRightThenTopToBottom
         ChildSizing.ControlsPerLine = 2
-        ClientHeight = 86
-        ClientWidth = 280
+        ClientHeight = 29
+        ClientWidth = 115
         TabOrder = 2
         object labelFdd0Sectors: TLabel
           Left = 0
-          Height = 86
+          Height = 29
           Top = 0
-          Width = 116
+          Width = 59
           AutoSize = False
           Caption = ' Sektoren: '
           Layout = tlCenter
           ParentColor = False
         end
         object comboboxFdd0Sectors: TComboBox
-          Left = 116
-          Height = 86
+          Left = 59
+          Height = 29
           Top = 0
-          Width = 156
+          Width = 48
           ArrowKeysTraverseList = False
           AutoSelect = False
           BorderSpacing.Right = 8
+          Constraints.MaxWidth = 48
           ItemHeight = 0
           ItemIndex = 0
           Items.Strings = (
@@ -187,10 +192,10 @@ object FddSettings: TFddSettings
         end
       end
       object panelFdd0Size: TPanel
-        Left = 819
-        Height = 86
+        Left = 396
+        Height = 29
         Top = 0
-        Width = 236
+        Width = 101
         BorderSpacing.Right = 4
         BorderSpacing.Bottom = 4
         BevelOuter = bvNone
@@ -198,27 +203,28 @@ object FddSettings: TFddSettings
         ChildSizing.EnlargeVertical = crsHomogenousChildResize
         ChildSizing.Layout = cclLeftToRightThenTopToBottom
         ChildSizing.ControlsPerLine = 2
-        ClientHeight = 86
-        ClientWidth = 236
+        ClientHeight = 29
+        ClientWidth = 101
         TabOrder = 3
         object labelFdd0Size: TLabel
           Left = 0
-          Height = 86
+          Height = 29
           Top = 0
-          Width = 101
+          Width = 45
           AutoSize = False
           Caption = ' Größe: '
           Layout = tlCenter
           ParentColor = False
         end
         object editFdd0Size: TEdit
-          Left = 101
-          Height = 86
+          Left = 45
+          Height = 29
           Top = 0
-          Width = 135
+          Width = 56
           Alignment = taRightJustify
           AutoSize = False
           Color = cl3DLight
+          Constraints.MaxWidth = 56
           ReadOnly = True
           TabOrder = 0
         end
@@ -226,19 +232,19 @@ object FddSettings: TFddSettings
     end
     object groupboxFdd0Image: TGroupBox
       Left = 4
-      Height = 101
-      Top = 190
-      Width = 1061
+      Height = 51
+      Top = 76
+      Width = 503
       BorderSpacing.Bottom = 4
       Caption = ' Image Datei '
-      ClientHeight = 83
-      ClientWidth = 1059
+      ClientHeight = 33
+      ClientWidth = 501
       TabOrder = 1
       object editFdd0ImageFile: TFileNameEdit
         Left = 4
-        Height = 79
+        Height = 29
         Top = 0
-        Width = 1051
+        Width = 493
         DialogOptions = [ofPathMustExist, ofFileMustExist, ofNoNetworkButton, ofEnableSizing, ofViewDetail]
         Filter = 'Disketten Image Dateien (*.fdd , *.img)|*.fdd;*.FDD;*.img;*.IMG|Alle Dateien (*.*)|*.*'
         FilterIndex = 0
@@ -259,9 +265,9 @@ object FddSettings: TFddSettings
   end
   object groupboxFdd1: TGroupBox
     Left = 4
-    Height = 297
-    Top = 309
-    Width = 1071
+    Height = 133
+    Top = 141
+    Width = 513
     BorderSpacing.Left = 4
     BorderSpacing.Right = 4
     BorderSpacing.Bottom = 4
@@ -271,35 +277,36 @@ object FddSettings: TFddSettings
     ChildSizing.EnlargeVertical = crsHomogenousChildResize
     ChildSizing.Layout = cclLeftToRightThenTopToBottom
     ChildSizing.ControlsPerLine = 1
-    ClientHeight = 295
-    ClientWidth = 1069
+    ClientHeight = 131
+    ClientWidth = 511
     TabOrder = 1
     object labelFdd1: TLabel
       Left = 4
-      Height = 74
+      Height = 17
       Top = 0
-      Width = 1061
+      Width = 503
       Caption = ' Diskettenlaufwerk 1'
       ParentColor = False
     end
     object groupboxFdd1Geometrie: TGroupBox
       Left = 4
-      Height = 108
-      Top = 78
-      Width = 1061
+      Height = 51
+      Top = 21
+      Width = 503
       Caption = ' Geometrie '
+      ChildSizing.HorizontalSpacing = 24
       ChildSizing.EnlargeHorizontal = crsHomogenousChildResize
       ChildSizing.EnlargeVertical = crsHomogenousChildResize
       ChildSizing.Layout = cclLeftToRightThenTopToBottom
       ChildSizing.ControlsPerLine = 5
-      ClientHeight = 90
-      ClientWidth = 1059
+      ClientHeight = 33
+      ClientWidth = 501
       TabOrder = 0
       object panelFdd1Sides: TPanel
         Left = 4
-        Height = 86
+        Height = 29
         Top = 0
-        Width = 265
+        Width = 100
         BorderSpacing.Left = 4
         BorderSpacing.Bottom = 4
         BevelOuter = bvNone
@@ -307,27 +314,28 @@ object FddSettings: TFddSettings
         ChildSizing.EnlargeVertical = crsHomogenousChildResize
         ChildSizing.Layout = cclLeftToRightThenTopToBottom
         ChildSizing.ControlsPerLine = 2
-        ClientHeight = 86
-        ClientWidth = 265
+        ClientHeight = 29
+        ClientWidth = 100
         TabOrder = 0
         object labelFdd1Sides: TLabel
           Left = 0
-          Height = 86
+          Height = 29
           Top = 0
-          Width = 101
+          Width = 44
           AutoSize = False
           Caption = ' Seiten: '
           Layout = tlCenter
           ParentColor = False
         end
         object comboboxFdd1Sides: TComboBox
-          Left = 101
-          Height = 86
+          Left = 44
+          Height = 29
           Top = 0
-          Width = 156
+          Width = 48
           ArrowKeysTraverseList = False
           AutoSelect = False
           BorderSpacing.Right = 8
+          Constraints.MaxWidth = 48
           ItemHeight = 0
           ItemIndex = 1
           Items.Strings = (
@@ -341,37 +349,38 @@ object FddSettings: TFddSettings
         end
       end
       object panelFdd1Tracks: TPanel
-        Left = 269
-        Height = 86
+        Left = 128
+        Height = 29
         Top = 0
-        Width = 270
+        Width = 105
         BorderSpacing.Bottom = 4
         BevelOuter = bvNone
         ChildSizing.EnlargeHorizontal = crsHomogenousChildResize
         ChildSizing.EnlargeVertical = crsHomogenousChildResize
         ChildSizing.Layout = cclLeftToRightThenTopToBottom
         ChildSizing.ControlsPerLine = 2
-        ClientHeight = 86
-        ClientWidth = 270
+        ClientHeight = 29
+        ClientWidth = 105
         TabOrder = 1
         object labelFdd1Tracks: TLabel
           Left = 0
-          Height = 86
+          Height = 29
           Top = 0
-          Width = 106
+          Width = 49
           AutoSize = False
           Caption = ' Spuren: '
           Layout = tlCenter
           ParentColor = False
         end
         object comboboxFdd1Tracks: TComboBox
-          Left = 106
-          Height = 86
+          Left = 49
+          Height = 29
           Top = 0
-          Width = 156
+          Width = 48
           ArrowKeysTraverseList = False
           AutoSelect = False
           BorderSpacing.Right = 8
+          Constraints.MaxWidth = 48
           ItemHeight = 0
           ItemIndex = 0
           Items.Strings = (
@@ -385,37 +394,38 @@ object FddSettings: TFddSettings
         end
       end
       object panelFdd1Sectors: TPanel
-        Left = 539
-        Height = 86
+        Left = 257
+        Height = 29
         Top = 0
-        Width = 280
+        Width = 115
         BorderSpacing.Bottom = 4
         BevelOuter = bvNone
         ChildSizing.EnlargeHorizontal = crsHomogenousChildResize
         ChildSizing.EnlargeVertical = crsHomogenousChildResize
         ChildSizing.Layout = cclLeftToRightThenTopToBottom
         ChildSizing.ControlsPerLine = 2
-        ClientHeight = 86
-        ClientWidth = 280
+        ClientHeight = 29
+        ClientWidth = 115
         TabOrder = 2
         object labelFdd1Sectors: TLabel
           Left = 0
-          Height = 86
+          Height = 29
           Top = 0
-          Width = 116
+          Width = 59
           AutoSize = False
           Caption = ' Sektoren: '
           Layout = tlCenter
           ParentColor = False
         end
         object comboboxFdd1Sectors: TComboBox
-          Left = 116
-          Height = 86
+          Left = 59
+          Height = 29
           Top = 0
-          Width = 156
+          Width = 48
           ArrowKeysTraverseList = False
           AutoSelect = False
           BorderSpacing.Right = 8
+          Constraints.MaxWidth = 48
           ItemHeight = 0
           ItemIndex = 0
           Items.Strings = (
@@ -431,10 +441,10 @@ object FddSettings: TFddSettings
         end
       end
       object panelFdd1Size: TPanel
-        Left = 819
-        Height = 86
+        Left = 396
+        Height = 29
         Top = 0
-        Width = 236
+        Width = 101
         BorderSpacing.Right = 4
         BorderSpacing.Bottom = 4
         BevelOuter = bvNone
@@ -442,26 +452,27 @@ object FddSettings: TFddSettings
         ChildSizing.EnlargeVertical = crsHomogenousChildResize
         ChildSizing.Layout = cclLeftToRightThenTopToBottom
         ChildSizing.ControlsPerLine = 2
-        ClientHeight = 86
-        ClientWidth = 236
+        ClientHeight = 29
+        ClientWidth = 101
         TabOrder = 3
         object labelFdd1Size: TLabel
           Left = 0
-          Height = 86
+          Height = 29
           Top = 0
-          Width = 101
+          Width = 45
           AutoSize = False
           Caption = ' Größe: '
           Layout = tlCenter
           ParentColor = False
         end
         object editFdd1Size: TEdit
-          Left = 101
-          Height = 86
+          Left = 45
+          Height = 29
           Top = 0
-          Width = 135
+          Width = 56
           Alignment = taRightJustify
           Color = cl3DLight
+          Constraints.MaxWidth = 56
           ReadOnly = True
           TabOrder = 0
         end
@@ -469,19 +480,19 @@ object FddSettings: TFddSettings
     end
     object groupboxFdd1Image: TGroupBox
       Left = 4
-      Height = 101
-      Top = 190
-      Width = 1061
+      Height = 51
+      Top = 76
+      Width = 503
       BorderSpacing.Bottom = 4
       Caption = ' Image Datei '
-      ClientHeight = 83
-      ClientWidth = 1059
+      ClientHeight = 33
+      ClientWidth = 501
       TabOrder = 1
       object editFdd1ImageFile: TFileNameEdit
         Left = 4
-        Height = 79
+        Height = 29
         Top = 0
-        Width = 1051
+        Width = 493
         DialogOptions = [ofPathMustExist, ofFileMustExist, ofNoNetworkButton, ofEnableSizing, ofViewDetail]
         Filter = 'Disketten Image Dateien (*.fdd , *.img)|*.fdd;*.FDD;*.img;*.IMG|Alle Dateien (*.*)|*.*'
         FilterIndex = 0

@@ -28,14 +28,16 @@ type
         panelHddSize: TPanel;
         panelHddTracks: TPanel;
         editHddHeads: TEdit;
-        spineditHddSectors: TSpinEditEx;
-        spineditHddTracks: TSpinEditEx;
-        updownHeads: TUpDown;
+        editHddTracks: TEdit;
+        editHddSectors: TEdit;
+        updownHddSectors: TUpDown;
+        updownHddTracks: TUpDown;
+        updownHddHeads: TUpDown;
         procedure editHddImageFileChange(Sender: TObject);
         procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
         procedure FormShow(Sender: TObject);
         procedure OnHddSizeChange(Sender: TObject);
-        procedure updownHeadsClick(Sender: TObject; Button: TUDBtnType);
+        procedure updownHddHeadsClick(Sender: TObject; Button: TUDBtnType);
     private
     var
         oldTracks: integer;
@@ -73,13 +75,13 @@ begin
         SystemSettings.WriteString('Hdd', 'Heads', editHddHeads.Text);
         SystemHdc.setHddHeads(StrToInt(editHddHeads.Text));
     end;
-    if (oldTracks <> spineditHddTracks.Value) then begin
-        SystemSettings.WriteString('Hdd', 'Tracks', IntToStr(spineditHddTracks.Value));
-        SystemHdc.setHddTracks(spineditHddTracks.Value);
+    if (oldTracks <> StrToInt(editHddTracks.Text)) then begin
+        SystemSettings.WriteString('Hdd', 'Tracks', editHddTracks.Text);
+        SystemHdc.setHddTracks(StrToInt(editHddTracks.Text));
     end;
-    if (oldSectors <> spineditHddSectors.Value) then begin
-        SystemSettings.WriteString('Hdd', 'Sectors', IntToStr(spineditHddSectors.Value));
-        SystemHdc.setHddSectors(spineditHddSectors.Value);
+    if (oldSectors <> StrToInt(editHddSectors.Text)) then begin
+        SystemSettings.WriteString('Hdd', 'Sectors', editHddSectors.Text);
+        SystemHdc.setHddSectors(StrToInt(editHddSectors.Text));
     end;
     if (oldImageFile <> editHddImageFile.FileName) then begin
         SystemSettings.WriteString('Hdd', 'ImageFile', editHddImageFile.FileName);
@@ -108,12 +110,12 @@ begin
     Constraints.MaxHeight := Height;
 
     oldHeads := SystemSettings.ReadString('Hdd', 'Heads', '16').ToInteger;
-    updownHeads.Position := calcBitIndex(oldHeads);
-    editHddHeads.Text := IntToStr(1 shl updownHeads.Position);
+    updownHddHeads.Position := calcBitIndex(oldHeads);
+    editHddHeads.Text := IntToStr(1 shl updownHddHeads.Position);
     oldTracks := SystemSettings.ReadString('Hdd', 'Tracks', '246').ToInteger;
-    spineditHddTracks.Value := oldTracks;
+    editHddTracks.Text := IntToStr(oldTracks);
     oldSectors := SystemSettings.ReadString('Hdd', 'Sectors', '63').ToInteger;
-    spineditHddSectors.Value := oldSectors;
+    editHddSectors.Text := IntToStr(oldSectors);
     oldImageFile := SystemSettings.ReadString('Hdd', 'ImageFile', '');
     editHddImageFile.FileName := oldImageFile;
 
@@ -128,9 +130,9 @@ begin
 end;
 
 // --------------------------------------------------------------------------------
-procedure THddSettings.updownHeadsClick(Sender: TObject; Button: TUDBtnType);
+procedure THddSettings.updownHddHeadsClick(Sender: TObject; Button: TUDBtnType);
 begin
-    editHddHeads.Text := IntToStr(1 shl updownHeads.Position);
+    editHddHeads.Text := IntToStr(1 shl updownHddHeads.Position);
 end;
 
 // --------------------------------------------------------------------------------
@@ -139,8 +141,8 @@ var
     tracks, sectors, heads, size: integer;
     sizeView: string;
 begin
-    tracks := spineditHddTracks.Value;
-    sectors := spineditHddSectors.Value;
+    tracks := StrToInt(editHddTracks.Text);
+    sectors := StrToInt(editHddSectors.Text);
     TryStrToInt(editHddHeads.Text, heads);
     size := tracks * sectors * SECBYTES * heads;
     if ((size div 1048576) > 0) then begin

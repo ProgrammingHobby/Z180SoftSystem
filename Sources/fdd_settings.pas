@@ -216,24 +216,44 @@ end;
 procedure TFddSettings.calcFdd0Size;
 var
     tracks, sectors, sides, size: integer;
+    sizeView: string;
 begin
     tracks := comboboxFdd0Tracks.Items[comboboxFdd0Tracks.ItemIndex].ToInteger;
     sectors := comboboxFdd0Sectors.Items[comboboxFdd0Sectors.ItemIndex].ToInteger;
     sides := comboboxFdd0Sides.Items[comboboxFdd0Sides.ItemIndex].ToInteger;
     size := tracks * sectors * SECBYTES * sides;
-    editFdd0Size.Text := IntToStr(size div 1024) + 'KB';
+    if ((size div 1048576) > 0) then begin
+        sizeView := FloatToStrF((size / 1048576), ffNumber, 15, 1) + 'MB';
+    end
+    else if ((size div 1024) > 0) then begin
+        sizeView := FloatToStrF((size / 1024), ffNumber, 15, 0) + 'KB';
+    end
+    else begin
+        sizeView := IntToStr(size) + 'Byte';
+    end;
+    editFdd0Size.Text := sizeView;
 end;
 
 // --------------------------------------------------------------------------------
 procedure TFddSettings.calcFdd1Size;
 var
     tracks, sectors, sides, size: integer;
+    sizeView: string;
 begin
     tracks := comboboxFdd1Tracks.Items[comboboxFdd1Tracks.ItemIndex].ToInteger;
     sectors := comboboxFdd1Sectors.Items[comboboxFdd1Sectors.ItemIndex].ToInteger;
     sides := comboboxFdd1Sides.Items[comboboxFdd1Sides.ItemIndex].ToInteger;
     size := tracks * sectors * SECBYTES * sides;
-    editFdd1Size.Text := IntToStr(size div 1024) + 'KB';
+    if ((size div 1048576) > 0) then begin
+        sizeView := FloatToStrF((size / 1048576), ffNumber, 15, 1) + 'MB';
+    end
+    else if ((size div 1024) > 0) then begin
+        sizeView := FloatToStrF((size / 1024), ffNumber, 15, 0) + 'KB';
+    end
+    else begin
+        sizeView := IntToStr(size) + 'Byte';
+    end;
+    editFdd1Size.Text := sizeView;
 
 end;
 
