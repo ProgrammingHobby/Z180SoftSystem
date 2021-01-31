@@ -8,7 +8,7 @@
         <Filename Value="Z180SoftSystem.lpr"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
-        <CursorPos X="19" Y="8"/>
+        <CursorPos X="56" Y="16"/>
         <UsageCount Value="200"/>
       </Unit0>
       <Unit1>
@@ -18,8 +18,7 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="Main_Window"/>
-        <IsVisibleTab Value="True"/>
-        <UsageCount Value="20"/>
+        <UsageCount Value="21"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit1>
@@ -30,13 +29,13 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="Cpu_Register"/>
-        <UsageCount Value="20"/>
+        <UsageCount Value="21"/>
       </Unit2>
       <Unit3>
         <Filename Value="Sources/system_memory.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="System_Memory"/>
-        <UsageCount Value="20"/>
+        <UsageCount Value="21"/>
       </Unit3>
       <Unit4>
         <Filename Value="Sources/memory_editor.pas"/>
@@ -45,7 +44,7 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="Memory_Editor"/>
-        <UsageCount Value="20"/>
+        <UsageCount Value="21"/>
       </Unit4>
       <Unit5>
         <Filename Value="Sources/system_settings.pas"/>
@@ -54,19 +53,19 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="DataModule"/>
         <UnitName Value="System_Settings"/>
-        <UsageCount Value="20"/>
+        <UsageCount Value="21"/>
       </Unit5>
       <Unit6>
         <Filename Value="Sources/z180_cpu.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="Z180_CPU"/>
-        <UsageCount Value="20"/>
+        <UsageCount Value="21"/>
       </Unit6>
       <Unit7>
         <Filename Value="Sources/system_terminal.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="System_Terminal"/>
-        <UsageCount Value="20"/>
+        <UsageCount Value="21"/>
       </Unit7>
       <Unit8>
         <Filename Value="Sources/cpu_io_register.pas"/>
@@ -75,13 +74,13 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="Cpu_Io_Register"/>
-        <UsageCount Value="20"/>
+        <UsageCount Value="21"/>
       </Unit8>
       <Unit9>
         <Filename Value="Sources/system_fdc.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="System_Fdc"/>
-        <UsageCount Value="20"/>
+        <UsageCount Value="21"/>
       </Unit9>
       <Unit10>
         <Filename Value="Sources/memory_settings.pas"/>
@@ -90,13 +89,13 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="Memory_Settings"/>
-        <UsageCount Value="20"/>
+        <UsageCount Value="21"/>
       </Unit10>
       <Unit11>
         <Filename Value="Sources/system_inout.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="System_InOut"/>
-        <UsageCount Value="20"/>
+        <UsageCount Value="21"/>
       </Unit11>
       <Unit12>
         <Filename Value="Sources/fdd_settings.pas"/>
@@ -105,7 +104,13 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="Fdd_Settings"/>
-        <UsageCount Value="20"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="1"/>
+        <TopLine Value="215"/>
+        <CursorPos X="13" Y="256"/>
+        <UsageCount Value="21"/>
+        <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
       </Unit12>
       <Unit13>
         <Filename Value="Sources/terminal_settings.pas"/>
@@ -114,7 +119,7 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="Terminal_Settings"/>
-        <UsageCount Value="20"/>
+        <UsageCount Value="21"/>
       </Unit13>
       <Unit14>
         <Filename Value="Sources/about_window.pas"/>
@@ -123,19 +128,19 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="About_Window"/>
-        <UsageCount Value="20"/>
+        <UsageCount Value="21"/>
       </Unit14>
       <Unit15>
         <Filename Value="Sources/version_info.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="Version_Info"/>
-        <UsageCount Value="20"/>
+        <UsageCount Value="21"/>
       </Unit15>
       <Unit16>
         <Filename Value="Sources/system_hdc.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="System_Hdc"/>
-        <UsageCount Value="20"/>
+        <UsageCount Value="21"/>
       </Unit16>
       <Unit17>
         <Filename Value="Sources/hdd_settings.pas"/>
@@ -144,7 +149,10 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="Hdd_Settings"/>
-        <UsageCount Value="20"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="122"/>
+        <CursorPos X="31" Y="123"/>
+        <UsageCount Value="21"/>
       </Unit17>
       <Unit18>
         <Filename Value="Sources/hardware_info.pas"/>
@@ -153,13 +161,13 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="Hardware_Info"/>
-        <UsageCount Value="20"/>
+        <UsageCount Value="21"/>
       </Unit18>
       <Unit19>
         <Filename Value="Sources/system_rtc.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="System_Rtc"/>
-        <UsageCount Value="20"/>
+        <UsageCount Value="21"/>
       </Unit19>
       <Unit20>
         <Filename Value="main_window.pas"/>

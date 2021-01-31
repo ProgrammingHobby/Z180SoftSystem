@@ -1,3 +1,17 @@
+========== Z180SoftSystem V2.4.0 ==========
+- Die Disketten-Images können nun auch im 'Run'-Modus geändert werden. Das HDD-Image nur nach einem Reset im Stop-Modus.
+- Änderungen an den Disketten-Einstellungen werden nun sicher erkannt und als Disk-Changed markiert.
+- In der Z180CPU Unit wurde der DMA-Channel 0 Burst-Modus überarbeitet. Auch wurden die Z8S180 Register CCR und CMR
+  hinzugefügt. Damit wird die ASCI Taktgewinnung in der Emulation bei gesetztem Clock-Divider und Clock-Multiplier verbessert.
+- Beim Anhalten der CPU, wird nun evtl. gesetzter HALT oder SLEEP Modus gelöscht.
+- Register PC um 1Byte falsch auf den Stack bei OP-Code TRAP.
+- Im HDD Modul wurde das emulierte IDE-Verhalten optimiert.
+- In den Disketten-Einstellungen können nun auch 10 Sektoren / Track eingestellt werden.
+- Das Terminal kann auf 4 Anzeige Möglichkeiten eingestellt werden.
+- In der Terminal-Emulation wurde einige neue ESC-Sequenzen eingebaut. Die Anzeige wurde auf 80x30 Zeichen vergrößert.
+- Die Disketten- und Festplatten-Dialoge wurden optisch etwas nachgebessert.
+- Allgemeine kleine Fehlerkorrekturen.
+
 ========== Z180SoftSystem V2.3.0 ==========
 - Die Terminal-Emulation läuft nun in einem eigenen Thread und ist somit von der
   CPU-Emulation entkoppelt.

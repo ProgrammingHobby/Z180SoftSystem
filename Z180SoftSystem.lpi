@@ -19,9 +19,8 @@
       <UseVersionInfo Value="True"/>
       <AutoIncrementBuild Value="True"/>
       <MajorVersionNr Value="2"/>
-      <MinorVersionNr Value="3"/>
-      <RevisionNr Value="1"/>
-      <BuildNr Value="1223"/>
+      <MinorVersionNr Value="4"/>
+      <BuildNr Value="1603"/>
       <Language Value="0407"/>
       <StringTable FileDescription="Zilog Z180MPU Emulation" InternalName="Z180SoftSystem" LegalCopyright="Uwe Merker  2020" OriginalFilename="Z180SoftSystem"/>
     </VersionInfo>
@@ -35,6 +34,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
+            <OtherUnitFiles Value="Sources"/>
             <UnitOutputDirectory Value="$(TargetCPU)-$(TargetOS)_release/lib"/>
           </SearchPaths>
           <CodeGeneration>
