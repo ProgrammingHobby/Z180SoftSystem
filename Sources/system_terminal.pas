@@ -405,6 +405,7 @@ var
             end;
             $3C: begin  // ESC < (Enter ANSI Mode)
                 // ANSI-Mode ist immer aktiv.
+                termMode := STANDARD;
             end;
             $41: begin  // ESC A (Cursor up)
                 cursorUp;
@@ -584,6 +585,10 @@ var
                 resetEscParameter;
                 termMode := STANDARD;
             end;
+            $68: begin // ESC [ ? Pn h (Derzeit nicht unterstützt)
+                resetEscParameter;
+                termMode := STANDARD;
+            end;
             $6D: begin // ESC [ Pn (; Pn ...) m
                 for csiCounter := 1 to parCount do begin
                     case csiPar[csiCounter] of
@@ -697,6 +702,10 @@ var
             $30..$39: begin
                 Inc(parCount);
                 ansiEscapeModeParameter;
+                termMode := ANSI_ESC_PAR;
+            end;
+            $3F: begin  // ESC [ ? 
+                Inc(parCount);
                 termMode := ANSI_ESC_PAR;
             end;
             $41: begin  // ESC [ A (Cursor up one line)
