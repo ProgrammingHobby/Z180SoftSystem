@@ -10,8 +10,6 @@ uses
 
 type
 
-    { TformMainWindow }
-
     { TMainWindow }
 
     TMainWindow = class(TForm)
