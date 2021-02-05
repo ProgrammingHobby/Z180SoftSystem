@@ -5,7 +5,7 @@
   hinzugefügt. Damit wird die ASCI Taktgewinnung in der Emulation bei gesetztem Clock-Divider und Clock-Multiplier verbessert.
 - Beim Anhalten der CPU, wird nun evtl. gesetzter HALT oder SLEEP Modus gelöscht.
 - Register PC um 1Byte falsch auf den Stack bei OP-Code TRAP.
-- Im HDD Modul wurde das emulierte IDE-Verhalten optimiert.
+- Im HDD Modul wurde das Emulierte IDE-Verhalten optimiert.
 - In den Disketten-Einstellungen können nun auch 10 Sektoren / Track eingestellt werden.
 - Das Terminal kann auf 4 Anzeige Möglichkeiten eingestellt werden.
 - In der Terminal-Emulation wurde einige neue ESC-Sequenzen eingebaut. Die Anzeige wurde auf 80x30 Zeichen vergrößert.
