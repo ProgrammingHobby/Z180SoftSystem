@@ -1,6 +1,6 @@
 object HddSettings: THddSettings
   Left = 1520
-  Height = 139
+  Height = 133
   Top = 250
   Width = 553
   AutoSize = True
@@ -10,13 +10,13 @@ object HddSettings: THddSettings
   ChildSizing.EnlargeVertical = crsHomogenousChildResize
   ChildSizing.Layout = cclLeftToRightThenTopToBottom
   ChildSizing.ControlsPerLine = 1
-  ClientHeight = 139
+  ClientHeight = 133
   ClientWidth = 553
   OnClose = FormClose
   OnShow = FormShow
   object groupboxHddDrive: TGroupBox
     Left = 0
-    Height = 135
+    Height = 129
     Top = 4
     Width = 553
     BorderSpacing.Top = 4
@@ -26,7 +26,7 @@ object HddSettings: THddSettings
     ChildSizing.EnlargeVertical = crsHomogenousChildResize
     ChildSizing.Layout = cclLeftToRightThenTopToBottom
     ChildSizing.ControlsPerLine = 1
-    ClientHeight = 133
+    ClientHeight = 127
     ClientWidth = 551
     TabOrder = 0
     object labelHddDrive: TLabel
@@ -81,8 +81,8 @@ object HddSettings: THddSettings
         end
         object editHddHeads: TEdit
           Left = 41
-          Height = 29
-          Top = 1
+          Height = 23
+          Top = 4
           Width = 32
           Alignment = taRightJustify
           AutoSize = False
@@ -135,8 +135,8 @@ object HddSettings: THddSettings
         end
         object editHddTracks: TEdit
           Left = 49
-          Height = 29
-          Top = 1
+          Height = 23
+          Top = 4
           Width = 48
           Alignment = taRightJustify
           AutoSize = False
@@ -186,8 +186,8 @@ object HddSettings: THddSettings
         end
         object editHddSectors: TEdit
           Left = 59
-          Height = 29
-          Top = 1
+          Height = 23
+          Top = 4
           Width = 32
           Alignment = taRightJustify
           AutoSize = False
@@ -238,8 +238,8 @@ object HddSettings: THddSettings
         end
         object editHddSize: TEdit
           Left = 45
-          Height = 29
-          Top = 1
+          Height = 23
+          Top = 4
           Width = 80
           Alignment = taRightJustify
           AutoSize = False
@@ -253,21 +253,21 @@ object HddSettings: THddSettings
     end
     object groupboxHddImage: TGroupBox
       Left = 4
-      Height = 51
+      Height = 45
       Top = 78
       Width = 543
       BorderSpacing.Bottom = 4
       Caption = ' Image Datei '
-      ClientHeight = 33
+      ClientHeight = 27
       ClientWidth = 541
       TabOrder = 0
       object editHddImageFile: TFileNameEdit
         Left = 4
-        Height = 29
+        Height = 23
         Top = 0
         Width = 533
         DialogOptions = [ofPathMustExist, ofFileMustExist, ofNoNetworkButton, ofEnableSizing, ofViewDetail]
-        Filter = 'Festplatten Image Dateien (*.hdd , *.img)|*.hdd;*.HDD;*.img;*.IMG|Alle Dateien (*.*)|*.*'
+        Filter = 'Festplatten Image Dateien (*.hdd , *.dsk; *.img)|*.hdd;*.HDD;*.dsk;*.DSK;*.img;*.IMG|Alle Dateien (*.*)|*.*'
         FilterIndex = 0
         HideDirectories = False
         ButtonWidth = 23

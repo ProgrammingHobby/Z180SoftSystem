@@ -245,7 +245,7 @@ object FddSettings: TFddSettings
         Top = 0
         Width = 493
         DialogOptions = [ofPathMustExist, ofFileMustExist, ofNoNetworkButton, ofEnableSizing, ofViewDetail]
-        Filter = 'Disketten Image Dateien (*.fdd , *.img)|*.fdd;*.FDD;*.img;*.IMG|Alle Dateien (*.*)|*.*'
+        Filter = 'Disketten Image Dateien (*.fdd , *.dsk, *.img)|*.fdd;*.FDD;*.dsk;*.DSK;*.img;*.IMG|Alle Dateien (*.*)|*.*'
         FilterIndex = 0
         HideDirectories = False
         ButtonWidth = 23
@@ -492,7 +492,7 @@ object FddSettings: TFddSettings
         Top = 0
         Width = 493
         DialogOptions = [ofPathMustExist, ofFileMustExist, ofNoNetworkButton, ofEnableSizing, ofViewDetail]
-        Filter = 'Disketten Image Dateien (*.fdd , *.img)|*.fdd;*.FDD;*.img;*.IMG|Alle Dateien (*.*)|*.*'
+        Filter = 'Disketten Image Dateien (*.fdd , *.dsk, *.img)|*.fdd;*.FDD;*.dsk;*.DSK;*.img;*.IMG|Alle Dateien (*.*)|*.*'
         FilterIndex = 0
         HideDirectories = False
         ButtonWidth = 23
