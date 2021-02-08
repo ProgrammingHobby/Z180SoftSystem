@@ -2,7 +2,7 @@
 <CONFIG>
   <ProjectSession>
     <Version Value="11"/>
-    <BuildModes Active="Release"/>
+    <BuildModes Active="Debug"/>
     <Units Count="70">
       <Unit0>
         <Filename Value="Z180SoftSystem.lpr"/>
@@ -18,7 +18,6 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="Main_Window"/>
-        <IsVisibleTab Value="True"/>
         <CursorPos X="5" Y="11"/>
         <UsageCount Value="21"/>
         <Loaded Value="True"/>
@@ -67,10 +66,12 @@
         <Filename Value="Sources/system_terminal.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="System_Terminal"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="589"/>
-        <CursorPos Y="589"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="1"/>
+        <TopLine Value="279"/>
+        <CursorPos X="31" Y="308"/>
         <UsageCount Value="21"/>
+        <Loaded Value="True"/>
       </Unit7>
       <Unit8>
         <Filename Value="Sources/cpu_io_register.pas"/>
@@ -585,7 +586,12 @@
         <DefaultSyntaxHighlighter Value="LFM"/>
       </Unit69>
     </Units>
-    <JumpHistory HistoryIndex="-1"/>
+    <JumpHistory Count="1">
+      <Position1>
+        <Filename Value="Sources/system_terminal.pas"/>
+        <Caret Line="589" TopLine="432"/>
+      </Position1>
+    </JumpHistory>
     <RunParams>
       <FormatVersion Value="2"/>
       <Modes Count="0" ActiveMode=""/>

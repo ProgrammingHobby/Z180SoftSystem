@@ -299,11 +299,6 @@ end;
 // --------------------------------------------------------------------------------
 procedure TSystemTerminal.writeCharOnScreen(character: char);
 begin
-    charData[terminalCursor.row, terminalCursor.column] := character;
-    charColor[terminalCursor.row, terminalCursor.column] := fontColor;
-    backColor[terminalCursor.row, terminalCursor.column] := backgroundColor;
-    charStyle[terminalCursor.row, terminalCursor.column] := fontStyle;
-    Inc(terminalCursor.column);
     if (terminalCursor.column > terminalColumns) then begin
         terminalCursor.column := 1;
         Inc(terminalCursor.row);
@@ -311,6 +306,11 @@ begin
             scrollTerminalContentUp;
         end;
     end;
+    charData[terminalCursor.row, terminalCursor.column] := character;
+    charColor[terminalCursor.row, terminalCursor.column] := fontColor;
+    backColor[terminalCursor.row, terminalCursor.column] := backgroundColor;
+    charStyle[terminalCursor.row, terminalCursor.column] := fontStyle;
+    Inc(terminalCursor.column);
 end;
 
 // --------------------------------------------------------------------------------
