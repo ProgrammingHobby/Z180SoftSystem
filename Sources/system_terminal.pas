@@ -1,6 +1,7 @@
 unit System_Terminal;
 
 {$mode objfpc}{$H+}
+{ TODO : VT52 Emulation unter Multiplan fehlerhaft }
 
 //***********************************************************************
 //** unit System_Terminal                                              **
@@ -785,7 +786,7 @@ begin
                 ANSI_ESC_PAR: ansiEscapeModeParameter;
                 DCA_ROW: begin
                     if (character >= $20) then begin
-                        dcaRow := character - $20;
+                        dcaRow := character - $1F;
                         termMode := DCA_COLUMN;
                     end
                     else begin
@@ -794,7 +795,7 @@ begin
                 end;
                 DCA_COLUMN: begin
                     if (character >= $20) then begin
-                        setCursorPosition(dcaRow, character - $20);
+                        setCursorPosition(dcaRow, character - $1F);
                     end;
                     termMode := STANDARD;
                 end;
