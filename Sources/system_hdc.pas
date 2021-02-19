@@ -101,7 +101,6 @@ type
             Heads: byte;
             Tracks: word;
             Sectors: byte;
-            ImageFileName: string;
             Size: dword;
             Ready: boolean;
             HddStatus: TPanel;
@@ -543,7 +542,6 @@ end;
 // --------------------------------------------------------------------------------
 procedure TSystemHdc.setHddImage(fileName: string);
 var
-    imageFileSize: dword;
     hintString: string;
 begin
     hardDrive.Ready := False;
@@ -552,21 +550,16 @@ begin
         try
             AssignFile(hddData, FileName);
             Reset(hddData, 1);
-            imageFileSize := FileSize(hddData);
-            if ((FileName <> hardDrive.ImageFileName) or (imageFileSize <> hardDrive.Size)) then begin
-                hardDrive.ImageFileName := FileName;
-                hardDrive.Size := imageFileSize;
-                hintString := 'Image:  ' + ExtractFileName(fileName) + LineEnding + 'Größe:  ' + calcHddSize + LineEnding +
-                    'Köpfe:  ' + IntToStr(hardDrive.Heads) + LineEnding + 'Spuren:  ' + IntToStr(hardDrive.Tracks) +
-                    LineEnding + 'Sektoren:  ' + IntToStr(hardDrive.Sectors) + LineEnding + 'Bytes/Sektor:  ' + IntToStr(SECBYTES);
-            end;
+            hardDrive.Size := FileSize(hddData);
+            hintString := 'Image:  ' + ExtractFileName(fileName) + LineEnding + 'Größe:  ' + calcHddSize + LineEnding +
+                'Köpfe:  ' + IntToStr(hardDrive.Heads) + LineEnding + 'Spuren:  ' + IntToStr(hardDrive.Tracks) +
+                LineEnding + 'Sektoren:  ' + IntToStr(hardDrive.Sectors) + LineEnding + 'Bytes/Sektor:  ' + IntToStr(SECBYTES);
             hardDrive.Ready := True;
             Close(hddData);
         except;
         end;
     end
     else begin
-        hardDrive.ImageFileName := '';
         hardDrive.Size := 0;
     end;
     hardDrive.HddStatus.Hint := hintString;
