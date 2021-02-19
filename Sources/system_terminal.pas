@@ -1,7 +1,6 @@
 unit System_Terminal;
 
 {$mode objfpc}{$H+}
-{ TODO : VT52 Emulation unter Multiplan fehlerhaft }
 
 //***********************************************************************
 //** unit System_Terminal                                              **
@@ -163,6 +162,7 @@ var
     viewStyle: TFontStyles;
     charCol, backCol, tmpCol: TColor;
 begin
+    timerTerminalPageRefresh.Enabled := False;
     for row := 1 to terminalRows do begin
         posY := startTop + (charHeight * row);
         for column := 1 to terminalColumns do begin
@@ -171,7 +171,7 @@ begin
             backCol := backColor[row, column];
             if (posVisible and (row = terminalCursor.row) and (column = terminalCursor.column)) then begin
                 viewchar := terminalCursor.cursorChar;
-                viewStyle := [fsBold];
+                viewStyle := viewStyle + [fsBold];
             end
             else begin
                 viewchar := charData[row, column];
@@ -203,6 +203,7 @@ begin
             imagePage.Canvas.TextOut(posX, posY, viewChar);
         end;
     end;
+    timerTerminalPageRefresh.Enabled := True;
 end;
 
 // --------------------------------------------------------------------------------
@@ -236,11 +237,7 @@ begin
     timerFlash.Enabled := False;
 
     timerTerminalPageRefresh := TTimer.Create(terminalPanel);
-    {$ifdef Windows}
-    timerTerminalPageRefresh.Interval := 20;
-    {$else}
-    timerTerminalPageRefresh.Interval := 50;
-    {$endif}
+    timerTerminalPageRefresh.Interval := 40;
     timerTerminalPageRefresh.OnTimer := @timerTerminalPageRefreshTimer;
     timerTerminalPageRefresh.Enabled := False;
 
