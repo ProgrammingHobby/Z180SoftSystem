@@ -252,6 +252,7 @@ begin
     SystemFdc.setFdd0Sides(SystemSettings.ReadInteger('Fdd0', 'Sides', 2));
     SystemFdc.setFdd0Tracks(SystemSettings.ReadInteger('Fdd0', 'Tracks', 80));
     SystemFdc.setFdd0Sectors(SystemSettings.ReadInteger('Fdd0', 'Sectors', 9));
+    SystemFdc.setFdd0SectorBytes(SystemSettings.ReadInteger('Fdd0', 'SectorBytes', 512));
     ImageFile := SystemSettings.ReadString('Fdd0', 'ImageFile', '');
     if ((ImageFile <> '') and (not FileExists(ImageFile))) then begin
         SystemSettings.WriteString('Fdd0', 'ImageFile', '');
@@ -262,6 +263,7 @@ begin
     SystemFdc.setFdd1Sides(SystemSettings.ReadInteger('Fdd1', 'Sides', 2));
     SystemFdc.setFdd1Tracks(SystemSettings.ReadInteger('Fdd1', 'Tracks', 80));
     SystemFdc.setFdd1Sectors(SystemSettings.ReadInteger('Fdd1', 'Sectors', 9));
+    SystemFdc.setFdd1SectorBytes(SystemSettings.ReadInteger('Fdd1', 'SectorBytes', 512));
     ImageFile := SystemSettings.ReadString('Fdd1', 'ImageFile', '');
     if ((ImageFile <> '') and (not FileExists(ImageFile))) then begin
         SystemSettings.WriteString('Fdd1', 'ImageFile', '');

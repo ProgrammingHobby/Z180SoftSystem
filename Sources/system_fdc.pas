@@ -16,9 +16,6 @@ type
     private   // Attribute
 
     const
-        // Konstante für die Anzahl an Bytes / Sektor
-        SECBYTES = 512;
-
         // Konstanten fuer die 'fdcStatus' Bit-Adressen
         BUSY = 0; // When set, command is under execution.
         // When reset, no command is under execution.
@@ -61,29 +58,32 @@ type
         SS = 4; // Side selekt der Laufwerke. Gesetzt Seite 1, gelöscht Seite 0
 
         type
+        TByteArray = array of byte;
 
         TBitReg8 = bitpacked record
             case byte of
                 0: (Value: byte); // 8Bit Register Value
-                2: (bit: bitpacked array[0..7] of boolean); // Bit Data
+                1: (bit: bitpacked array[0..7] of boolean); // Bit Data
         end;
 
-        TDataMode = (SECTOR_READ, SECTOR_WRITE, NONE);
+        TDataMode = (SECTOR_READ, SECTOR_WRITE, ADDRESS_READ, NONE);
 
-        TFloppyDriveData = packed record
+        TFloppyDriveData = record
             Sides: byte;
             Tracks: byte;
             Sectors: byte;
-            ImageFileName: string;
+            SectorBytes: integer;
             Size: dword;
             Changed: boolean;
             MotorOn: boolean;
             Loaded: boolean;
             FddStatus: TPanel;
+            ImageData: file;
         end;
+        ptrFloppyDriveData = ^TFloppyDriveData;
 
     var
-        dataBuffer: array[0..SECBYTES - 1] of byte;
+        dataBuffer: TByteArray;
         dataCount: dword;
         dataMode: TDataMode;
         timerFddStatus: TTimer;
@@ -97,8 +97,8 @@ type
         stepForward: boolean;
         isMultiSectorCommand: boolean;
         canClearIntrq: boolean;
-        floppyDrive0, oldFDD0, floppyDrive1, oldFDD1, actualFloppyDrive: TFloppyDriveData;
-        fddData: file;
+        resetFloppyDrive, floppyDrive0, floppyDrive1: TFloppyDriveData;
+        actualFloppyDrive: ptrFloppyDriveData;
         filePos: DWord;
         resetState: boolean;
 
@@ -116,12 +116,14 @@ type
         procedure setFddOffState(Sender: TObject);
         procedure setFddReadState;
         procedure setFddWriteState;
-        procedure clearBusySetIntrqUpdateTrack;
+        procedure clearBusyUpdateTrack;
         procedure clearBusySetRecordNotFoundSetIntrq;
         procedure prepareReadSectors;
         procedure finishReadSectors;
         procedure prepareWriteSectors;
         procedure finishWriteSectors;
+        procedure prepareAddressRead;
+        procedure finishAddressRead;
 
     protected // Methoden
 
@@ -134,11 +136,13 @@ type
         procedure setFdd0Sides(sides: integer);
         procedure setFdd0Tracks(tracks: integer);
         procedure setFdd0Sectors(sectors: integer);
+        procedure setFdd0SectorBytes(sectorbytes: integer);
         procedure setFdd0Image(FileName: string);
         procedure setFdd0StatusPanel(var panel: TPanel);
         procedure setFdd1Sides(sides: integer);
         procedure setFdd1Tracks(tracks: integer);
         procedure setFdd1Sectors(sectors: integer);
+        procedure setFdd1SectorBytes(sectorbytes: integer);
         procedure setFdd1Image(FileName: string);
         procedure setFdd1StatusPanel(var panel: TPanel);
         function getData: byte;
@@ -165,16 +169,10 @@ begin
     timerFddStatus.Enabled := False;
     timerFddStatus.Interval := 50;
     timerFddStatus.OnTimer := @setFddOffState;
-    floppyDrive0.ImageFileName := '';
-    floppyDrive0.Size := 0;
-    floppyDrive0.Changed := False;
-    floppyDrive0.MotorOn := False;
-    floppyDrive0.Loaded := False;
-    floppyDrive1.ImageFileName := '';
-    floppyDrive1.Size := 0;
-    floppyDrive1.Changed := False;
-    floppyDrive1.MotorOn := False;
-    floppyDrive1.Loaded := False;
+    resetFloppyDrive.Size := 0;
+    resetFloppyDrive.Changed := False;
+    resetFloppyDrive.MotorOn := False;
+    resetFloppyDrive.Loaded := False;
     resetState := False;
 end;
 
@@ -192,7 +190,7 @@ end;
 // --------------------------------------------------------------------------------
 procedure TSystemFdc.doReset;
 begin
-    fdcStatus.Value := $20;
+    fdcStatus.Value := $21;
     tmpTrack := 79;
     fdcTrack := tmpTrack;
     fdcSector := 1;
@@ -202,22 +200,21 @@ begin
     isMultiSectorCommand := False;
     canClearIntrq := True;
     dataMode := NONE;
-    actualFloppyDrive.Changed := False;
-    actualFloppyDrive.MotorOn := False;
+    actualFloppyDrive := @resetFloppyDrive;
     resetState := True;
 end;
 
 // --------------------------------------------------------------------------------
 procedure TSystemFdc.calcFilePosition;
 begin
-    filePos := ((((fdcTrack * actualFloppyDrive.Sides) + fdcSide) * actualFloppyDrive.Sectors) + (fdcSector - 1));
+    filePos := ((((fdcTrack * actualFloppyDrive^.Sides) + fdcSide) * actualFloppyDrive^.Sectors) + (fdcSector - 1));
 end;
 
 // --------------------------------------------------------------------------------
 procedure TSystemFdc.setFddOffState(Sender: TObject);
 begin
     timerFddStatus.Enabled := False;
-    with actualFloppyDrive.FddStatus do begin
+    with actualFloppyDrive^.FddStatus do begin
         Canvas.Brush.Style := bsSolid;
         Canvas.Brush.Color := clDefault;
         Canvas.Pen.Style := psClear;
@@ -231,7 +228,7 @@ end;
 procedure TSystemFdc.setFddReadState;
 begin
     timerFddStatus.Enabled := False;
-    with actualFloppyDrive.FddStatus do begin
+    with actualFloppyDrive^.FddStatus do begin
         Canvas.Brush.Style := bsSolid;
         Canvas.Brush.Color := clLime;
         Canvas.Pen.Style := psSolid;
@@ -245,7 +242,7 @@ end;
 procedure TSystemFdc.setFddWriteState;
 begin
     timerFddStatus.Enabled := False;
-    with actualFloppyDrive.FddStatus do begin
+    with actualFloppyDrive^.FddStatus do begin
         Canvas.Brush.Style := bsSolid;
         Canvas.Brush.Color := clRed;
         Canvas.Pen.Style := psSolid;
@@ -256,20 +253,21 @@ begin
 end;
 
 // --------------------------------------------------------------------------------
-procedure TSystemFdc.clearBusySetIntrqUpdateTrack;
+procedure TSystemFdc.clearBusyUpdateTrack;
 begin
-    if (resetState or (not actualFloppyDrive.Loaded)) then
+    if (resetState or (not actualFloppyDrive^.Loaded)) then begin
         exit;
+    end;
     fdcTrack := tmpTrack;
-    //extStatus.bit[INTQ] := True;
     fdcStatus.bit[BUSY] := False;
 end;
 
 // --------------------------------------------------------------------------------
 procedure TSystemFdc.clearBusySetRecordNotFoundSetIntrq;
 begin
-    if (resetState or (not actualFloppyDrive.Loaded)) then
+    if (resetState or (not actualFloppyDrive^.Loaded)) then begin
         exit;
+    end;
     extStatus.bit[INTQ] := True;
     fdcStatus.bit[RNF] := True;
     fdcStatus.bit[BUSY] := False;
@@ -279,18 +277,18 @@ end;
 procedure TSystemFdc.prepareReadSectors;
 begin
     calcFilePosition;
-    if ((fdcSector > actualFloppyDrive.Sectors) or ((filePos > (actualFloppyDrive.Size - SECBYTES)) or (actualFloppyDrive.Size = 0) or
-        (fdcTrack >= actualFloppyDrive.Tracks))) then begin
+    if ((fdcSector > actualFloppyDrive^.Sectors) or ((filePos > (actualFloppyDrive^.Size - actualFloppyDrive^.SectorBytes)) or
+        (actualFloppyDrive^.Size = 0) or (fdcTrack >= actualFloppyDrive^.Tracks))) then begin
         // Sector nicht vorhanden oder Sector und/oder Track ausserhalb der Disk
         clearBusySetRecordNotFoundSetIntrq;
         exit;
     end
     else begin
         try
-            Reset(fddData, SECBYTES);
-            Seek(fddData, filePos);
-            BlockRead(fddData, dataBuffer[0], 1);
-            CloseFile(fddData);
+            Reset(actualFloppyDrive^.ImageData, actualFloppyDrive^.SectorBytes);
+            Seek(actualFloppyDrive^.ImageData, filePos);
+            BlockRead(actualFloppyDrive^.ImageData, dataBuffer[0], 1);
+            CloseFile(actualFloppyDrive^.ImageData);
         except
             extStatus.bit[INTQ] := True;
             fdcStatus.bit[BUSY] := False;
@@ -310,8 +308,8 @@ procedure TSystemFdc.finishReadSectors;
 begin
     fdcStatus.bit[DRQ] := False;
     extStatus.bit[DRQ] := False;
-    actualFloppyDrive.MotorOn := False;
-    if ((isMultiSectorCommand) and (fdcSector < actualFloppyDrive.Sectors)) then begin
+    actualFloppyDrive^.MotorOn := False;
+    if ((isMultiSectorCommand) and (fdcSector < actualFloppyDrive^.Sectors)) then begin
         Inc(fdcSector);
         prepareReadSectors;
     end
@@ -328,8 +326,8 @@ end;
 procedure TSystemFdc.prepareWriteSectors;
 begin
     calcFilePosition;
-    if ((fdcSector > actualFloppyDrive.Sectors) or ((filePos > (actualFloppyDrive.Size - SECBYTES)) or (actualFloppyDrive.Size = 0) or
-        (fdcTrack >= actualFloppyDrive.Tracks))) then begin
+    if ((fdcSector > actualFloppyDrive^.Sectors) or ((filePos > (actualFloppyDrive^.Size - actualFloppyDrive^.SectorBytes)) or
+        (actualFloppyDrive^.Size = 0) or (fdcTrack >= actualFloppyDrive^.Tracks))) then begin
         // Sector nicht vorhanden oder Sector und/oder Track ausserhalb der Disk
         clearBusySetRecordNotFoundSetIntrq;
         exit;
@@ -348,19 +346,19 @@ procedure TSystemFdc.finishWriteSectors;
 begin
     fdcStatus.bit[DRQ] := False;
     extStatus.bit[DRQ] := False;
-    actualFloppyDrive.MotorOn := False;
+    actualFloppyDrive^.MotorOn := False;
     try
-        Reset(fddData, SECBYTES);
-        Seek(fddData, filePos);
-        BlockWrite(fddData, dataBuffer[0], 1);
-        CloseFile(fddData);
+        Reset(actualFloppyDrive^.ImageData, actualFloppyDrive^.SectorBytes);
+        Seek(actualFloppyDrive^.ImageData, filePos);
+        BlockWrite(actualFloppyDrive^.ImageData, dataBuffer[0], 1);
+        CloseFile(actualFloppyDrive^.ImageData);
     except
         extStatus.bit[INTQ] := True;
         fdcStatus.bit[BUSY] := False;
         fdcStatus.bit[CRCERROR] := True;
         exit;
     end;
-    if ((isMultiSectorCommand) and (fdcSector < actualFloppyDrive.Sectors)) then begin
+    if ((isMultiSectorCommand) and (fdcSector < actualFloppyDrive^.Sectors)) then begin
         Inc(fdcSector);
         prepareWriteSectors;
     end
@@ -374,20 +372,57 @@ begin
 end;
 
 // --------------------------------------------------------------------------------
+procedure TSystemFdc.prepareAddressRead;
+begin
+    dataCount := 0;
+    dataBuffer[0] := actualFloppyDrive^.Tracks;
+    dataBuffer[1] := actualFloppyDrive^.Sides;
+    dataBuffer[2] := actualFloppyDrive^.Sectors;
+    case (actualFloppyDrive^.SectorBytes) of
+        128: dataBuffer[3] := 0;
+        256: dataBuffer[3] := 1;
+        512: dataBuffer[3] := 2;
+        1024: dataBuffer[3] := 3;
+        else dataBuffer[3] := $ff;
+    end;
+    if (actualFloppyDrive^.Loaded) then begin
+        dataBuffer[4] := $ff;
+    end
+    else begin
+        dataBuffer[4] := 00;
+    end;
+    dataBuffer[5] := $ff;
+    fdcStatus.bit[DRQ] := True;
+    extStatus.bit[DRQ] := True;
+    dataMode := ADDRESS_READ;
+    setFddReadState;
+end;
+
+// --------------------------------------------------------------------------------
+procedure TSystemFdc.finishAddressRead;
+begin
+    fdcStatus.bit[DRQ] := False;
+    extStatus.bit[DRQ] := False;
+    extStatus.bit[INTQ] := True;
+    fdcStatus.bit[BUSY] := False;
+    dataMode := NONE;
+    timerFddStatus.Enabled := True;
+end;
+
+// --------------------------------------------------------------------------------
 procedure TSystemFdc.setCommand(command: byte);
 var
     cmd: TbitReg8;
 begin
     cmd.Value := command;
     fdcStatus.bit[BUSY] := True;
-    actualFloppyDrive.Changed := False;
     resetState := False;
     case (cmd.Value and %11100000) of
         %00000000: begin    // Restore / Seek
             fdcStatus.bit[CRCERROR] := False;
             fdcStatus.bit[RNF] := False;
             fdcStatus.bit[DRQ] := False;
-            fdcStatus.bit[RTSU] := False;
+            fdcStatus.bit[RTSU] := True;
             extStatus.bit[DRQ] := False;
             fdcStatus.bit[LDB] := False;
             if (canClearIntrq) then begin
@@ -407,21 +442,21 @@ begin
                 else begin
                     stepForward := True;    // ansonsten Step-Direction forward
                 end;
-                if (fdcTrack > (actualFloppyDrive.Tracks - 1)) then begin // falls der angeforderte Track nicht erreichbar ist
+                if (fdcTrack > (actualFloppyDrive^.Tracks - 1)) then begin // falls der angeforderte Track nicht erreichbar ist
                     fdcStatus.bit[RNF] := True;   // 'Seek Error / Record not Found' Flag setzen
                     Exit;
                 end;
                 tmpTrack := fdcData;
             end;
-            actualFloppyDrive.MotorOn := True;
-            fdcStatus.bit[RTSU] := True;
-            clearBusySetIntrqUpdateTrack;
+            actualFloppyDrive^.MotorOn := True;
+            actualFloppyDrive^.Changed := False;
+            clearBusyUpdateTrack;
         end;    // Restore / Seek
         %00100000: begin    // Step
             fdcStatus.bit[CRCERROR] := False;
             fdcStatus.bit[RNF] := False;
             fdcStatus.bit[DRQ] := False;
-            fdcStatus.bit[RTSU] := False;
+            fdcStatus.bit[RTSU] := True;
             extStatus.bit[DRQ] := False;
             if (canClearIntrq) then begin
                 extStatus.bit[INTQ] := False;
@@ -435,15 +470,15 @@ begin
                     tmpTrack := tmpTrack - 1;
                 end;
             end;
-            actualFloppyDrive.MotorOn := True;
-            fdcStatus.bit[RTSU] := True;
-            clearBusySetIntrqUpdateTrack;
+            actualFloppyDrive^.MotorOn := True;
+            actualFloppyDrive^.Changed := False;
+            clearBusyUpdateTrack;
         end;    // Step
         %01000000: begin    // Step-in
             fdcStatus.bit[CRCERROR] := False;
             fdcStatus.bit[RNF] := False;
             fdcStatus.bit[DRQ] := False;
-            fdcStatus.bit[RTSU] := False;
+            fdcStatus.bit[RTSU] := True;
             extStatus.bit[DRQ] := False;
             if (canClearIntrq) then begin
                 extStatus.bit[INTQ] := False;
@@ -453,15 +488,15 @@ begin
             if (cmd.bit[4]) then begin    // Track-Register Update
                 tmpTrack := tmpTrack + 1;
             end;
-            actualFloppyDrive.MotorOn := True;
-            fdcStatus.bit[RTSU] := True;
-            clearBusySetIntrqUpdateTrack;
+            actualFloppyDrive^.MotorOn := True;
+            actualFloppyDrive^.Changed := False;
+            clearBusyUpdateTrack;
         end;    // Step-in
         %01100000: begin    // Step-out
             fdcStatus.bit[CRCERROR] := False;
             fdcStatus.bit[RNF] := False;
             fdcStatus.bit[DRQ] := False;
-            fdcStatus.bit[RTSU] := False;
+            fdcStatus.bit[RTSU] := True;
             extStatus.bit[DRQ] := False;
             if (canClearIntrq) then begin
                 extStatus.bit[INTQ] := False;
@@ -471,9 +506,9 @@ begin
             if (cmd.bit[4]) then begin    // Track-Register Update
                 tmpTrack := tmpTrack - 1;
             end;
-            actualFloppyDrive.MotorOn := True;
-            fdcStatus.bit[RTSU] := True;
-            clearBusySetIntrqUpdateTrack;
+            actualFloppyDrive^.MotorOn := True;
+            actualFloppyDrive^.Changed := False;
+            clearBusyUpdateTrack;
         end;    // Step-out
         %10000000: begin    // Read Sector
             fdcStatus.bit[DRQ] := False;
@@ -482,18 +517,19 @@ begin
             fdcStatus.bit[RTSU] := False;
             fdcStatus.bit[WP] := False;
             extStatus.bit[DRQ] := False;
-            if (canClearIntrq) then begin
-                extStatus.bit[INTQ] := False;
-            end;
             isMultiSectorCommand := False;
             if ((not cmd.bit[0]) and (not cmd.bit[1])) then begin    // Bit 0 und 1 muessen gelöscht sein
-                actualFloppyDrive.MotorOn := True;
+                if (canClearIntrq) then begin
+                    extStatus.bit[INTQ] := False;
+                end;
+                actualFloppyDrive^.MotorOn := True;
                 fdcStatus.bit[RTSU] := True;
                 if (cmd.bit[4]) then begin  // Bit 4 gesetzt, dann Multi-Sector Read
                     isMultiSectorCommand := True;
                 end;
                 prepareReadSectors;
             end;
+            actualFloppyDrive^.Changed := False;
         end;    // Read Sector
         %10100000: begin    // Write Sector
             fdcStatus.bit[DRQ] := False;
@@ -506,15 +542,16 @@ begin
                 extStatus.bit[INTQ] := False;
             end;
             isMultiSectorCommand := False;
-            actualFloppyDrive.MotorOn := True;
+            actualFloppyDrive^.MotorOn := True;
             fdcStatus.bit[RTSU] := True;
             if (cmd.bit[4]) then begin  // Bit 4 gesetzt, dann Multi-Sector Write
                 isMultiSectorCommand := True;
             end;
             prepareWriteSectors;
+            actualFloppyDrive^.Changed := False;
         end;    // Write Sector
-        %11000000: begin    // Force Interrupt
-            if (cmd.bit[4]) then begin   // Bit 4 muß gesetzt sein
+        %11000000: begin    // Read Address / Force Interrupt
+            if (cmd.bit[4]) then begin   // Bit 4 gesetzt - Force Interrupt
                 if ((cmd.Value and $0f) = $00) then begin   // Beendet alle Befehle ohne INTRQ
                     dataMode := NONE;
                     isMultiSectorCommand := False;
@@ -522,7 +559,7 @@ begin
                     extStatus.bit[DRQ] := False;
                     fdcStatus.bit[BUSY] := False;
                     fdcStatus.bit[RTSU] := False;
-                    actualFloppyDrive.MotorOn := True;
+                    actualFloppyDrive^.MotorOn := True;
                     canClearIntrq := True;
                 end;
                 if ((cmd.Value and $0f) = $08) then begin   // Beendet alle Befehle mit INTRQ
@@ -533,9 +570,19 @@ begin
                     fdcStatus.bit[BUSY] := False;
                     fdcStatus.bit[RTSU] := False;
                     extStatus.bit[INTQ] := True;
-                    actualFloppyDrive.MotorOn := True;
+                    actualFloppyDrive^.MotorOn := True;
                     canClearIntrq := False;
                 end;
+            end
+            else begin  // Bit 4 gelöscht - Read Address
+                fdcStatus.bit[DRQ] := False;
+                fdcStatus.bit[LDB] := False;
+                fdcStatus.bit[RNF] := False;
+                fdcStatus.bit[RTSU] := True;
+                fdcStatus.bit[WP] := False;
+                extStatus.bit[DRQ] := False;
+                actualFloppyDrive^.MotorOn := True;
+                prepareAddressRead;
             end;
         end;
     end;
@@ -544,16 +591,18 @@ end;
 // --------------------------------------------------------------------------------
 procedure TSystemFdc.setData(Data: byte);
 begin
-    if (dataMode = SECTOR_WRITE) then begin
-        timerFddStatus.Enabled := True;
-        dataBuffer[dataCount] := Data;
-        Inc(dataCount);
-        if (dataCount >= SECBYTES) then begin
-            finishWriteSectors;
+    case (dataMode) of
+        SECTOR_WRITE: begin
+            timerFddStatus.Enabled := True;
+            dataBuffer[dataCount] := Data;
+            Inc(dataCount);
+            if (dataCount >= actualFloppyDrive^.SectorBytes) then begin
+                finishWriteSectors;
+            end;
+        end
+        else begin
+            fdcData := Data;
         end;
-    end
-    else begin
-        fdcData := Data;
     end;
 end;
 
@@ -583,56 +632,29 @@ begin
         doReset;
     end;
     if ((extControl.bit[D0S]) and (not oldExtControl.bit[D0S])) then begin
-        if Assigned(actualFloppyDrive.FddStatus) then begin
+        if Assigned(actualFloppyDrive^.FddStatus) then begin
             setFddOffState(nil);
         end;
-        actualFloppyDrive := floppyDrive0;
-        AssignFile(fddData, floppyDrive0.ImageFileName);
-        if (not CompareMem(@oldFDD0, @floppyDrive0, SizeOf(TFloppyDriveData))) then begin
-            oldFDD0 := floppyDrive0;
-            actualFloppyDrive.Changed := True;
-            fdcStatus.Value := $00;
-            extStatus.Value := $00;
-        end
-        else begin
-            actualFloppyDrive.Changed := False;
-        end;
+        actualFloppyDrive := @floppyDrive0;
+        SetLength(dataBuffer, actualFloppyDrive^.SectorBytes);
     end;
     if ((extControl.bit[D1S]) and (not oldExtControl.bit[D1S])) then begin
-        if Assigned(actualFloppyDrive.FddStatus) then begin
+        if Assigned(actualFloppyDrive^.FddStatus) then begin
             setFddOffState(nil);
         end;
-        actualFloppyDrive := floppyDrive1;
-        AssignFile(fddData, floppyDrive1.ImageFileName);
-        if (not CompareMem(@oldFDD1, @floppyDrive1, SizeOf(TFloppyDriveData))) then begin
-            oldFDD1 := floppyDrive1;
-            actualFloppyDrive.Changed := True;
-            fdcStatus.Value := $00;
-            extStatus.Value := $00;
-        end
-        else begin
-            actualFloppyDrive.Changed := False;
-        end;
+        actualFloppyDrive := @floppyDrive1;
+        SetLength(dataBuffer, actualFloppyDrive^.SectorBytes);
     end;
     if (extControl.bit[D0S] or extControl.bit[D1S]) then begin
-        if (resetState and actualFloppyDrive.Loaded) then begin
-
-        end
-        else if (resetState and (not actualFloppyDrive.Loaded)) then begin
-
-        end
-        else if ((not resetState) and actualFloppyDrive.Loaded) then begin
+        if ((not resetState) and actualFloppyDrive^.Loaded) then begin
             fdcStatus.bit[LDB] := True;
-        end
-        else if ((not resetState) and (not actualFloppyDrive.Loaded)) then begin
-
         end;
-        actualFloppyDrive.MotorOn := True;
+        actualFloppyDrive^.MotorOn := True;
     end
     else begin
         fdcStatus.bit[LDB] := False;
     end;
-    if ((extControl.bit[SS]) and (actualFloppyDrive.Sides = 2)) then begin
+    if ((extControl.bit[SS]) and (actualFloppyDrive^.Sides = 2)) then begin
         fdcSide := 1;
     end
     else begin
@@ -659,33 +681,34 @@ begin
 end;
 
 // --------------------------------------------------------------------------------
+procedure TSystemFdc.setFdd0SectorBytes(sectorbytes: integer);
+begin
+    floppyDrive0.SectorBytes := sectorbytes;
+end;
+
+// --------------------------------------------------------------------------------
 procedure TSystemFdc.setFdd0Image(FileName: string);
 var
-    imageFileSize: integer;
     hintString: string;
 begin
-    floppyDrive0.Loaded := False;
     hintString := '';
+    floppyDrive0.Loaded := False;
+    floppyDrive0.Changed := True;
     if (FileExists(FileName)) then begin
         try
-            AssignFile(fddData, FileName);
-            Reset(fddData, 1);
-            imageFileSize := FileSize(fddData);
-            if ((FileName <> floppyDrive0.ImageFileName) or (imageFileSize <> floppyDrive0.Size)) then begin
-                floppyDrive0.ImageFileName := FileName;
-                floppyDrive0.Size := imageFileSize;
-                hintString := 'Image:  ' + ExtractFileName(FileName) + LineEnding + 'Größe:  ' + IntToStr(floppyDrive0.Size div 1024) +
-                    'KB' + LineEnding + 'Seiten:  ' + IntToStr(floppyDrive0.Sides) + LineEnding + 'Spuren:  ' +
-                    IntToStr(floppyDrive0.Tracks) + LineEnding + 'Sektoren:  ' + IntToStr(floppyDrive0.Sectors) + LineEnding +
-                    'Bytes/Sektor:  ' + IntToStr(SECBYTES);
-            end;
+            AssignFile(floppyDrive0.ImageData, FileName);
+            Reset(floppyDrive0.ImageData, 1);
+            floppyDrive0.Size := FileSize(floppyDrive0.ImageData);
+            hintString := 'Image:  ' + ExtractFileName(FileName) + LineEnding + 'Größe:  ' + IntToStr(floppyDrive0.Size div 1024) +
+                'KB' + LineEnding + 'Seiten:  ' + IntToStr(floppyDrive0.Sides) + LineEnding + 'Spuren:  ' +
+                IntToStr(floppyDrive0.Tracks) + LineEnding + 'Sektoren:  ' + IntToStr(floppyDrive0.Sectors) + LineEnding +
+                'Bytes/Sektor:  ' + IntToStr(floppyDrive0.SectorBytes);
             floppyDrive0.Loaded := True;
-            Close(fddData);
+            Close(floppyDrive0.ImageData);
         except
         end;
     end
     else begin
-        floppyDrive0.ImageFileName := '';
         floppyDrive0.Size := 0;
     end;
     floppyDrive0.FddStatus.Hint := hintString;
@@ -717,33 +740,34 @@ begin
 end;
 
 // --------------------------------------------------------------------------------
+procedure TSystemFdc.setFdd1SectorBytes(sectorbytes: integer);
+begin
+    floppyDrive1.SectorBytes := sectorbytes;
+end;
+
+// --------------------------------------------------------------------------------
 procedure TSystemFdc.setFdd1Image(FileName: string);
 var
-    imageFileSize: integer;
     hintString: string;
 begin
-    floppyDrive1.Loaded := False;
     hintString := '';
+    floppyDrive1.Loaded := False;
+    floppyDrive1.Changed := True;
     if (FileExists(FileName)) then begin
         try
-            AssignFile(fddData, FileName);
-            Reset(fddData, 1);
-            imageFileSize := FileSize(fddData);
-            if ((FileName <> floppyDrive1.ImageFileName) or (imageFileSize <> floppyDrive1.Size)) then begin
-                floppyDrive1.ImageFileName := FileName;
-                floppyDrive1.Size := imageFileSize;
-                hintString := 'Image:  ' + ExtractFileName(FileName) + LineEnding + 'Größe:  ' + IntToStr(floppyDrive1.Size div 1024) +
-                    'KB' + LineEnding + 'Seiten:  ' + IntToStr(floppyDrive1.Sides) + LineEnding + 'Spuren:  ' +
-                    IntToStr(floppyDrive1.Tracks) + LineEnding + 'Sektoren:  ' + IntToStr(floppyDrive1.Sectors) + LineEnding +
-                    'Bytes/Sektor:  ' + IntToStr(SECBYTES);
-            end;
+            AssignFile(floppyDrive1.ImageData, FileName);
+            Reset(floppyDrive1.ImageData, 1);
+            floppyDrive1.Size := FileSize(floppyDrive1.ImageData);
+            hintString := 'Image:  ' + ExtractFileName(FileName) + LineEnding + 'Größe:  ' + IntToStr(floppyDrive1.Size div 1024) +
+                'KB' + LineEnding + 'Seiten:  ' + IntToStr(floppyDrive1.Sides) + LineEnding + 'Spuren:  ' +
+                IntToStr(floppyDrive1.Tracks) + LineEnding + 'Sektoren:  ' + IntToStr(floppyDrive1.Sectors) + LineEnding +
+                'Bytes/Sektor:  ' + IntToStr(floppyDrive1.SectorBytes);
             floppyDrive1.Loaded := True;
-            Close(fddData);
+            Close(floppyDrive1.ImageData);
         except;
         end;
     end
     else begin
-        floppyDrive1.ImageFileName := '';
         floppyDrive1.Size := 0;
     end;
     floppyDrive1.FddStatus.Hint := hintString;
@@ -759,16 +783,26 @@ end;
 // --------------------------------------------------------------------------------
 function TSystemFdc.getData: byte;
 begin
-    if (dataMode = SECTOR_READ) then begin
-        timerFddStatus.Enabled := True;
-        Result := dataBuffer[dataCount];
-        Inc(dataCount);
-        if (dataCount >= SECBYTES) then begin
-            finishReadSectors;
+    case (dataMode) of
+        SECTOR_READ: begin
+            timerFddStatus.Enabled := True;
+            Result := dataBuffer[dataCount];
+            Inc(dataCount);
+            if (dataCount >= actualFloppyDrive^.SectorBytes) then begin
+                finishReadSectors;
+            end;
         end;
-    end
-    else begin
-        Result := fdcData;
+        ADDRESS_READ: begin
+            timerFddStatus.Enabled := True;
+            Result := dataBuffer[dataCount];
+            Inc(dataCount);
+            if (dataCount >= 6) then begin
+                finishAddressRead;
+            end;
+        end
+        else begin
+            Result := fdcData;
+        end;
     end;
 end;
 
@@ -779,10 +813,10 @@ begin
     //if (canClearIntrq) then begin
     //extStatus.bit[INTQ] := False; // beim Lesen des Status-Registers wird das Interrupt-Flag geloescht
     //end;
-    if (resetState and (not actualFloppyDrive.Loaded)) then begin
-        actualFloppyDrive.MotorOn := False;
+    if (resetState and (not actualFloppyDrive^.Loaded)) then begin
+        actualFloppyDrive^.MotorOn := False;
     end;
-    fdcStatus.bit[MON] := actualFloppyDrive.MotorOn;
+    fdcStatus.bit[MON] := actualFloppyDrive^.MotorOn;
     Result := fdcStatus.Value;
 end;
 
@@ -801,7 +835,7 @@ end;
 // --------------------------------------------------------------------------------
 function TSystemFdc.getExtStatus: byte;
 begin
-    extStatus.bit[DC] := actualFloppyDrive.Changed;
+    extStatus.bit[DC] := actualFloppyDrive^.Changed;
     Result := extStatus.Value;
 end;
 
