@@ -13,9 +13,14 @@ type
     { THddSettings }
 
     THddSettings = class(TForm)
+        editHddHeads: TEdit;
+        editHddSectors: TEdit;
+        editHddSize: TEdit;
+        editHddTracks: TEdit;
+        labelHddGeometrie: TLabel;
+        labelHddImage: TLabel;
         labelHddDrive: TLabel;
         editHddImageFile: TFileNameEdit;
-        editHddSize: TEdit;
         groupboxHddDrive: TGroupBox;
         groupboxHddGeometrie: TGroupBox;
         groupboxHddImage: TGroupBox;
@@ -23,16 +28,14 @@ type
         labelHddSectors: TLabel;
         labelHddSize: TLabel;
         labelHddTracks: TLabel;
+        panelHddGeometrie: TPanel;
         panelHddHeads: TPanel;
         panelHddSectors: TPanel;
         panelHddSize: TPanel;
         panelHddTracks: TPanel;
-        editHddHeads: TEdit;
-        editHddTracks: TEdit;
-        editHddSectors: TEdit;
+        updownHddHeads: TUpDown;
         updownHddSectors: TUpDown;
         updownHddTracks: TUpDown;
-        updownHddHeads: TUpDown;
         procedure editHddImageFileChange(Sender: TObject);
         procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
         procedure FormShow(Sender: TObject);
