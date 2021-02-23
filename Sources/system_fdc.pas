@@ -201,6 +201,8 @@ begin
     canClearIntrq := True;
     dataMode := NONE;
     actualFloppyDrive := @resetFloppyDrive;
+    floppyDrive0.MotorOn := False;
+    floppyDrive1.MotorOn := False;
     resetState := True;
 end;
 
@@ -431,6 +433,7 @@ begin
             if (not cmd.bit[4]) then begin  // Restore auf Track 0
                 if (fdcTrack > 0) then begin  //  wenn aktueller Track groesser 0
                     stepForward := False;   // Step-Direction auf backward setzen
+                    actualFloppyDrive^.Changed := False;
                 end;
                 tmpTrack := 0;
                 fdcStatus.bit[LDB] := True;
@@ -438,18 +441,18 @@ begin
             else begin  // Seek auf angeforderten Track
                 if (fdcTrack > fdcData) then begin  // wenn aktueller Track groesser angeforderter Track
                     stepForward := False;   // Step-Direction auf backward setzen
+                    actualFloppyDrive^.Changed := False;
                 end
                 else begin
                     stepForward := True;    // ansonsten Step-Direction forward
-                end;
-                if (fdcTrack > (actualFloppyDrive^.Tracks - 1)) then begin // falls der angeforderte Track nicht erreichbar ist
-                    fdcStatus.bit[RNF] := True;   // 'Seek Error / Record not Found' Flag setzen
-                    Exit;
+                    actualFloppyDrive^.Changed := False;
                 end;
                 tmpTrack := fdcData;
+                if (tmpTrack > (actualFloppyDrive^.Tracks - 1)) then begin // falls der angeforderte Track nicht erreichbar ist
+                    fdcStatus.bit[RNF] := True;   // 'Seek Error / Record not Found' Flag setzen
+                end;
             end;
             actualFloppyDrive^.MotorOn := True;
-            actualFloppyDrive^.Changed := False;
             clearBusyUpdateTrack;
         end;    // Restore / Seek
         %00100000: begin    // Step
@@ -462,16 +465,23 @@ begin
                 extStatus.bit[INTQ] := False;
             end;
             tmpTrack := fdcTrack;
-            if (cmd.bit[4]) then begin    // Track-Register Update
-                if (stepForward) then begin
-                    tmpTrack := tmpTrack + 1;
-                end
-                else begin
-                    tmpTrack := tmpTrack - 1;
+            if (stepForward) then begin
+                Inc(tmpTrack);
+                actualFloppyDrive^.Changed := False;
+                if (tmpTrack > (actualFloppyDrive^.Tracks - 1)) then begin // falls der angeforderte Track nicht erreichbar ist
+                    fdcStatus.bit[RNF] := True;   // 'Seek Error / Record not Found' Flag setzen
+                end;
+            end
+            else begin
+                if (tmpTrack > 0) then begin
+                    Dec(tmpTrack);
+                    actualFloppyDrive^.Changed := False;
                 end;
             end;
+            if (not cmd.bit[4]) then begin    // Track-Register Update
+                tmpTrack := fdcTrack;
+            end;
             actualFloppyDrive^.MotorOn := True;
-            actualFloppyDrive^.Changed := False;
             clearBusyUpdateTrack;
         end;    // Step
         %01000000: begin    // Step-in
@@ -485,11 +495,15 @@ begin
             end;
             tmpTrack := fdcTrack;
             stepForward := True;
-            if (cmd.bit[4]) then begin    // Track-Register Update
-                tmpTrack := tmpTrack + 1;
+            Inc(tmpTrack);
+            actualFloppyDrive^.Changed := False;
+            if (tmpTrack > (actualFloppyDrive^.Tracks - 1)) then begin // falls der angeforderte Track nicht erreichbar ist
+                fdcStatus.bit[RNF] := True;   // 'Seek Error / Record not Found' Flag setzen
+            end;
+            if (not cmd.bit[4]) then begin
+                tmpTrack := fdcTrack;
             end;
             actualFloppyDrive^.MotorOn := True;
-            actualFloppyDrive^.Changed := False;
             clearBusyUpdateTrack;
         end;    // Step-in
         %01100000: begin    // Step-out
@@ -503,11 +517,14 @@ begin
             end;
             tmpTrack := fdcTrack;
             stepForward := False;
-            if (cmd.bit[4]) then begin    // Track-Register Update
-                tmpTrack := tmpTrack - 1;
+            if (tmpTrack > 0) then begin
+                Dec(tmpTrack);
+                actualFloppyDrive^.Changed := False;
+            end;
+            if (not cmd.bit[4]) then begin
+                tmpTrack := fdcTrack;
             end;
             actualFloppyDrive^.MotorOn := True;
-            actualFloppyDrive^.Changed := False;
             clearBusyUpdateTrack;
         end;    // Step-out
         %10000000: begin    // Read Sector
@@ -529,7 +546,6 @@ begin
                 end;
                 prepareReadSectors;
             end;
-            actualFloppyDrive^.Changed := False;
         end;    // Read Sector
         %10100000: begin    // Write Sector
             fdcStatus.bit[DRQ] := False;
@@ -548,7 +564,6 @@ begin
                 isMultiSectorCommand := True;
             end;
             prepareWriteSectors;
-            actualFloppyDrive^.Changed := False;
         end;    // Write Sector
         %11000000: begin    // Read Address / Force Interrupt
             if (cmd.bit[4]) then begin   // Bit 4 gesetzt - Force Interrupt
@@ -694,6 +709,7 @@ begin
     hintString := '';
     floppyDrive0.Loaded := False;
     floppyDrive0.Changed := True;
+    floppyDrive0.MotorOn := False;
     if (FileExists(FileName)) then begin
         try
             AssignFile(floppyDrive0.ImageData, FileName);
@@ -753,6 +769,7 @@ begin
     hintString := '';
     floppyDrive1.Loaded := False;
     floppyDrive1.Changed := True;
+    floppyDrive1.MotorOn := False;
     if (FileExists(FileName)) then begin
         try
             AssignFile(floppyDrive1.ImageData, FileName);
