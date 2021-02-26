@@ -173,6 +173,9 @@ begin
     resetFloppyDrive.Changed := False;
     resetFloppyDrive.MotorOn := False;
     resetFloppyDrive.Loaded := False;
+    floppyDrive0 := resetFloppyDrive;
+    floppyDrive1 := resetFloppyDrive;
+    actualFloppyDrive := @resetFloppyDrive;
     resetState := False;
 end;
 
@@ -190,8 +193,8 @@ end;
 // --------------------------------------------------------------------------------
 procedure TSystemFdc.doReset;
 begin
-    fdcStatus.Value := $21;
-    tmpTrack := 79;
+    fdcStatus.Value := $20;
+    tmpTrack := 0;
     fdcTrack := tmpTrack;
     fdcSector := 1;
     fdcData := 0;
@@ -200,9 +203,6 @@ begin
     isMultiSectorCommand := False;
     canClearIntrq := True;
     dataMode := NONE;
-    actualFloppyDrive := @resetFloppyDrive;
-    floppyDrive0.MotorOn := False;
-    floppyDrive1.MotorOn := False;
     resetState := True;
 end;
 
@@ -397,7 +397,6 @@ begin
     fdcStatus.bit[DRQ] := True;
     extStatus.bit[DRQ] := True;
     dataMode := ADDRESS_READ;
-    setFddReadState;
 end;
 
 // --------------------------------------------------------------------------------
@@ -408,7 +407,6 @@ begin
     extStatus.bit[INTQ] := True;
     fdcStatus.bit[BUSY] := False;
     dataMode := NONE;
-    timerFddStatus.Enabled := True;
 end;
 
 // --------------------------------------------------------------------------------
@@ -441,16 +439,17 @@ begin
             else begin  // Seek auf angeforderten Track
                 if (fdcTrack > fdcData) then begin  // wenn aktueller Track groesser angeforderter Track
                     stepForward := False;   // Step-Direction auf backward setzen
-                    actualFloppyDrive^.Changed := False;
                 end
                 else begin
                     stepForward := True;    // ansonsten Step-Direction forward
+                end;
+                if (fdcTrack <> fdcData) then begin
                     actualFloppyDrive^.Changed := False;
                 end;
-                tmpTrack := fdcData;
-                if (tmpTrack > (actualFloppyDrive^.Tracks - 1)) then begin // falls der angeforderte Track nicht erreichbar ist
+                if (fdcData > (actualFloppyDrive^.Tracks - 1)) then begin // falls der angeforderte Track nicht erreichbar ist
                     fdcStatus.bit[RNF] := True;   // 'Seek Error / Record not Found' Flag setzen
                 end;
+                tmpTrack := fdcData;
             end;
             actualFloppyDrive^.MotorOn := True;
             clearBusyUpdateTrack;
@@ -660,6 +659,9 @@ begin
         actualFloppyDrive := @floppyDrive1;
         SetLength(dataBuffer, actualFloppyDrive^.SectorBytes);
     end;
+    if ((not resetState) and (not extControl.bit[D0S]) and (not extControl.bit[D1S])) then begin
+        actualFloppyDrive := @resetFloppyDrive;
+    end;
     if (extControl.bit[D0S] or extControl.bit[D1S]) then begin
         if ((not resetState) and actualFloppyDrive^.Loaded) then begin
             fdcStatus.bit[LDB] := True;
@@ -810,7 +812,6 @@ begin
             end;
         end;
         ADDRESS_READ: begin
-            timerFddStatus.Enabled := True;
             Result := dataBuffer[dataCount];
             Inc(dataCount);
             if (dataCount >= 6) then begin
@@ -830,7 +831,8 @@ begin
     //if (canClearIntrq) then begin
     //extStatus.bit[INTQ] := False; // beim Lesen des Status-Registers wird das Interrupt-Flag geloescht
     //end;
-    if (resetState and (not actualFloppyDrive^.Loaded)) then begin
+    //if (resetState and (not actualFloppyDrive^.Loaded)) then begin
+    if (resetState) then begin
         actualFloppyDrive^.MotorOn := False;
     end;
     fdcStatus.bit[MON] := actualFloppyDrive^.MotorOn;
