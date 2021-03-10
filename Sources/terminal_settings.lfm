@@ -3,7 +3,7 @@ object TerminalSettings: TTerminalSettings
   Height = 561
   Top = 250
   Width = 803
-  Caption = 'System-Terminal Settings'
+  Caption = 'System-Terminal Einstellungen'
   ChildSizing.EnlargeHorizontal = crsHomogenousChildResize
   ChildSizing.EnlargeVertical = crsHomogenousChildResize
   ChildSizing.Layout = cclLeftToRightThenTopToBottom
