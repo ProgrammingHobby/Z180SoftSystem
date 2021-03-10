@@ -93,7 +93,6 @@
         <Filename Value="Sources/system_fdc.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="System_Fdc"/>
-        <IsVisibleTab Value="True"/>
         <TopLine Value="444"/>
         <CursorPos X="28" Y="449"/>
         <UsageCount Value="41"/>
@@ -106,7 +105,11 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="Memory_Settings"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="1"/>
         <UsageCount Value="41"/>
+        <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
       </Unit10>
       <Unit11>
         <Filename Value="Sources/system_inout.pas"/>
@@ -136,7 +139,10 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="Terminal_Settings"/>
+        <EditorIndex Value="3"/>
         <UsageCount Value="41"/>
+        <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
       </Unit13>
       <Unit14>
         <Filename Value="Sources/about_window.pas"/>
@@ -169,10 +175,12 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="Hdd_Settings"/>
-        <EditorIndex Value="-1"/>
+        <EditorIndex Value="2"/>
         <TopLine Value="5"/>
         <CursorPos X="31" Y="21"/>
         <UsageCount Value="41"/>
+        <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
       </Unit17>
       <Unit18>
         <Filename Value="Sources/hardware_info.pas"/>
