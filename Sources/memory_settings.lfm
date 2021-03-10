@@ -3,31 +3,34 @@ object MemorySettings: TMemorySettings
   Height = 368
   Top = 250
   Width = 711
-  Caption = 'System Speicher-Einstellungen'
+  Caption = 'System-Speicher Einstellungen'
   ClientHeight = 368
   ClientWidth = 711
   OnClose = FormClose
   OnShow = FormShow
   object groupboxMemorySettings: TGroupBox
-    Left = 0
-    Height = 364
+    Left = 4
+    Height = 360
     Top = 4
-    Width = 711
+    Width = 703
     Align = alClient
     AutoSize = True
+    BorderSpacing.Left = 4
     BorderSpacing.Top = 4
+    BorderSpacing.Right = 4
+    BorderSpacing.Bottom = 4
     ChildSizing.EnlargeHorizontal = crsHomogenousChildResize
     ChildSizing.EnlargeVertical = crsHomogenousChildResize
     ChildSizing.Layout = cclLeftToRightThenTopToBottom
     ChildSizing.ControlsPerLine = 1
-    ClientHeight = 362
-    ClientWidth = 709
+    ClientHeight = 358
+    ClientWidth = 701
     TabOrder = 0
     object panelMemorySettings: TPanel
       Left = 0
-      Height = 187
+      Height = 181
       Top = 0
-      Width = 709
+      Width = 701
       BevelOuter = bvNone
       ChildSizing.LeftRightSpacing = 4
       ChildSizing.TopBottomSpacing = 4
@@ -36,14 +39,14 @@ object MemorySettings: TMemorySettings
       ChildSizing.EnlargeVertical = crsHomogenousChildResize
       ChildSizing.Layout = cclLeftToRightThenTopToBottom
       ChildSizing.ControlsPerLine = 3
-      ClientHeight = 187
-      ClientWidth = 709
+      ClientHeight = 181
+      ClientWidth = 701
       TabOrder = 1
       object groupBootRomSize: TGroupBox
         Left = 4
-        Height = 175
+        Height = 169
         Top = 4
-        Width = 151
+        Width = 148
         AutoSize = True
         BorderSpacing.Left = 4
         BorderSpacing.Top = 4
@@ -57,14 +60,14 @@ object MemorySettings: TMemorySettings
         ChildSizing.ShrinkVertical = crsScaleChilds
         ChildSizing.Layout = cclLeftToRightThenTopToBottom
         ChildSizing.ControlsPerLine = 2
-        ClientHeight = 157
-        ClientWidth = 149
+        ClientHeight = 151
+        ClientWidth = 146
         TabOrder = 0
         object comboboxRomSize: TComboBox
           Left = 6
-          Height = 149
+          Height = 143
           Top = 4
-          Width = 137
+          Width = 134
           BorderSpacing.Left = 4
           BorderSpacing.Top = 4
           BorderSpacing.Right = 4
@@ -86,10 +89,10 @@ object MemorySettings: TMemorySettings
         end
       end
       object groupSystemRamSize: TGroupBox
-        Left = 171
-        Height = 175
+        Left = 168
+        Height = 169
         Top = 4
-        Width = 178
+        Width = 175
         AutoSize = True
         BorderSpacing.Left = 8
         BorderSpacing.Top = 4
@@ -103,14 +106,14 @@ object MemorySettings: TMemorySettings
         ChildSizing.ShrinkVertical = crsScaleChilds
         ChildSizing.Layout = cclLeftToRightThenTopToBottom
         ChildSizing.ControlsPerLine = 2
-        ClientHeight = 157
-        ClientWidth = 176
+        ClientHeight = 151
+        ClientWidth = 173
         TabOrder = 1
         object comboboxRamSize: TComboBox
           Left = 6
-          Height = 149
+          Height = 143
           Top = 4
-          Width = 164
+          Width = 161
           BorderSpacing.Left = 4
           BorderSpacing.Top = 4
           BorderSpacing.Right = 4
@@ -131,10 +134,10 @@ object MemorySettings: TMemorySettings
         end
       end
       object checkboxReloadOnEnable: TCheckBox
-        Left = 365
-        Height = 175
+        Left = 359
+        Height = 169
         Top = 4
-        Width = 340
+        Width = 338
         BorderSpacing.Left = 4
         BorderSpacing.Right = 4
         Caption = 'Image erneut Laden wenn Boot-ROM aktiviert wird'
@@ -143,32 +146,32 @@ object MemorySettings: TMemorySettings
     end
     object panelBootRomFile: TPanel
       Left = 0
-      Height = 175
-      Top = 187
-      Width = 709
+      Height = 177
+      Top = 181
+      Width = 701
       BevelOuter = bvNone
-      ClientHeight = 175
-      ClientWidth = 709
+      ClientHeight = 177
+      ClientWidth = 701
       TabOrder = 0
       object groupBootRomFile: TGroupBox
         Left = 4
-        Height = 169
+        Height = 171
         Top = 2
-        Width = 701
+        Width = 693
         Align = alClient
         BorderSpacing.Left = 4
         BorderSpacing.Top = 2
         BorderSpacing.Right = 4
         BorderSpacing.Bottom = 4
         Caption = ' Boot-ROM Image Datei '
-        ClientHeight = 151
-        ClientWidth = 699
+        ClientHeight = 153
+        ClientWidth = 691
         TabOrder = 0
         object editBootRomImageFile: TFileNameEdit
           Left = 4
-          Height = 143
+          Height = 145
           Top = 4
-          Width = 643
+          Width = 629
           DialogTitle = 'Lade Boot-ROM Image'
           DialogOptions = [ofPathMustExist, ofFileMustExist, ofNoNetworkButton, ofEnableSizing, ofViewDetail]
           Filter = 'Binär Dateien (*.bin)|*.bin;*.BIN|Alle Dateien (*.*)|*.*'
@@ -188,10 +191,10 @@ object MemorySettings: TMemorySettings
           OnChange = editBootRomImageFileChange
         end
         object buttonReloadImage: TButton
-          Left = 651
-          Height = 143
+          Left = 637
+          Height = 145
           Top = 4
-          Width = 44
+          Width = 50
           Align = alRight
           AutoSize = True
           BorderSpacing.Left = 4
