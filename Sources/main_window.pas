@@ -6,7 +6,7 @@ interface
 
 uses
     Classes, SysUtils, Forms, Controls, Graphics, Dialogs, Menus, ExtCtrls,
-    StdCtrls, ComCtrls, ActnList;
+    StdCtrls, ComCtrls, ActnList, Buttons;
 
 type
 
@@ -30,6 +30,8 @@ type
         actionClose: TAction;
         actionLoadFileToRam: TAction;
         actionlistMainWindow: TActionList;
+        comboboxRun: TComboBox;
+        comboboxSlowRun: TComboBox;
         imagelistMainWindow: TImageList;
         menuCpuCoreRegister: TMenuItem;
         menuCpuIoRegister: TMenuItem;
@@ -39,16 +41,8 @@ type
         menuCopyCpmFiles: TMenuItem;
         menuCreateCpmDiscImages: TMenuItem;
         panelHdd: TPanel;
-        popup4Mhz: TMenuItem;
-        popup8Mhz: TMenuItem;
-        popup12Mhz: TMenuItem;
-        popup16Mhz: TMenuItem;
         panelFdd0: TPanel;
         panelFdd1: TPanel;
-        popup1Ops: TMenuItem;
-        popup2Ops: TMenuItem;
-        popup5Ops: TMenuItem;
-        popup10Ops: TMenuItem;
         menuTerminalSettings: TMenuItem;
         menuTools: TMenuItem;
         menuReset: TMenuItem;
@@ -72,17 +66,16 @@ type
         FileOpenDialog: TOpenDialog;
         cpuRun: TTimer;
         panelSystemTerminal: TPanel;
-        popupmenuRunSpeed: TPopupMenu;
-        popupmenuSlowRunSpeed: TPopupMenu;
         statusbarMainWindow: TPanel;
         toolbarMainWindow: TToolBar;
+        toolbuttonSeparator4: TToolButton;
+        toolbuttonSlowRun: TToolButton;
         toolbuttonTerminal: TToolButton;
         toolbuttonSeparator5: TToolButton;
         toolbuttonSeparator1: TToolButton;
         toolbuttonMemoryEditor: TToolButton;
         toolbuttonReset: TToolButton;
         toolbuttonSingleStep: TToolButton;
-        toolbuttonSlowRun: TToolButton;
         toolbuttonRun: TToolButton;
         toolbuttonCpuCoreRegister: TToolButton;
         toolbuttonCpuIoRegister: TToolButton;
@@ -108,6 +101,8 @@ type
         procedure actionSlowRunExecute(Sender: TObject);
         procedure actionStopExecute(Sender: TObject);
         procedure actionTerminalSettingsExecute(Sender: TObject);
+        procedure comboboxRunChange(Sender: TObject);
+        procedure comboboxSlowRunChange(Sender: TObject);
         procedure cpuRunTimer(Sender: TObject);
         procedure cpuSlowRunTimer(Sender: TObject);
         procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
@@ -117,17 +112,12 @@ type
         procedure panelFdd0Paint(Sender: TObject);
         procedure panelFdd1Paint(Sender: TObject);
         procedure panelHddPaint(Sender: TObject);
-        procedure popupRunSpeedClick(Sender: TObject);
-        procedure popupSlowRunSpeedClick(Sender: TObject);
-
     private
         bootRomEnabled: boolean;
         runSpeedValue: integer;
         {$ifndef Windows}
         isKeyAltGr: boolean;
         {$endif}
-        procedure setSlowRunSpeed;
-        procedure setRunSpeed;
     public
 
     end;
@@ -236,59 +226,10 @@ begin
     Constraints.MaxHeight := Constraints.MinHeight;
 
     SystemMemory := TSystemMemory.Create;
-    SystemMemory.setBootRomSize(SystemSettings.ReadString('Memory', 'RomSize', '8KB'));
-    SystemMemory.setSystemRamSize(SystemSettings.ReadString('Memory', 'RamSize', '64KB'));
-    SystemMemory.EnableReloadImageOnEnable(SystemSettings.ReadBoolean('Memory', 'ReloadOnEnable', False));
-    ImageFile := SystemSettings.ReadString('Memory', 'RomImageFile', '');
-    if ((ImageFile <> '') and (not FileExists(ImageFile))) then begin
-        SystemSettings.WriteString('Memory', 'RomImageFile', '');
-        ImageFile := '';
-    end;
-    SystemMemory.SetRomImageFile(ImageFile);
     bootRomEnabled := SystemMemory.isRomFileValid;
-
-    SystemFdc := TSystemFdc.Create;
-    SystemFdc.setFdd0StatusPanel(panelFdd0);
-    SystemFdc.setFdd0Sides(SystemSettings.ReadInteger('Fdd0', 'Sides', 2));
-    SystemFdc.setFdd0Tracks(SystemSettings.ReadInteger('Fdd0', 'Tracks', 80));
-    SystemFdc.setFdd0Sectors(SystemSettings.ReadInteger('Fdd0', 'Sectors', 9));
-    SystemFdc.setFdd0SectorBytes(SystemSettings.ReadInteger('Fdd0', 'SectorBytes', 512));
-    ImageFile := SystemSettings.ReadString('Fdd0', 'ImageFile', '');
-    if ((ImageFile <> '') and (not FileExists(ImageFile))) then begin
-        SystemSettings.WriteString('Fdd0', 'ImageFile', '');
-        ImageFile := '';
-    end;
-    SystemFdc.setFdd0Image(ImageFile);
-    SystemFdc.setFdd1StatusPanel(panelFdd1);
-    SystemFdc.setFdd1Sides(SystemSettings.ReadInteger('Fdd1', 'Sides', 2));
-    SystemFdc.setFdd1Tracks(SystemSettings.ReadInteger('Fdd1', 'Tracks', 80));
-    SystemFdc.setFdd1Sectors(SystemSettings.ReadInteger('Fdd1', 'Sectors', 9));
-    SystemFdc.setFdd1SectorBytes(SystemSettings.ReadInteger('Fdd1', 'SectorBytes', 512));
-    ImageFile := SystemSettings.ReadString('Fdd1', 'ImageFile', '');
-    if ((ImageFile <> '') and (not FileExists(ImageFile))) then begin
-        SystemSettings.WriteString('Fdd1', 'ImageFile', '');
-        ImageFile := '';
-    end;
-    SystemFdc.setFdd1Image(ImageFile);
-
-    SystemHdc := TSystemHdc.Create;
-    SystemHdc.setHddStatusPanel(panelHdd);
-    SystemHdc.setHddHeads(SystemSettings.ReadInteger('Hdd', 'Heads', 16));
-    SystemHdc.setHddTracks(SystemSettings.ReadInteger('Hdd', 'Tracks', 246));
-    SystemHdc.setHddSectors(SystemSettings.ReadInteger('Hdd', 'Sectors', 63));
-    ImageFile := SystemSettings.ReadString('Hdd', 'ImageFile', '');
-    if ((ImageFile <> '') and (not FileExists(ImageFile))) then begin
-        SystemSettings.WriteString('Hdd', 'ImageFile', '');
-        ImageFile := '';
-    end;
-    SystemHdc.setHddImage(ImageFile);
-
+    SystemFdc := TSystemFdc.Create(panelFdd0, panelFdd1);
+    SystemHdc := TSystemHdc.Create(panelHdd);
     SystemTerminal := TSystemTerminal.Create(panelSystemTerminal, False);
-    SystemTerminal.setCrLF(SystemSettings.ReadBoolean('Terminal', 'UseCRLF', False));
-    SystemTerminal.setLocalEcho(SystemSettings.ReadBoolean('Terminal', 'LocalEcho', False));
-    SystemTerminal.setLogging(SystemSettings.ReadBoolean('Terminal', 'Loggin', False));
-    SystemTerminal.setColorType(SystemSettings.ReadInteger('Terminal', 'ColorType', 0));
-
     SystemRtc := TSystemRtc.Create;
     SystemInOut := TSystemInOut.Create;
     Z180Cpu := TZ180Cpu.Create;
@@ -297,9 +238,12 @@ begin
     isKeyAltGr := False;
     {$endif}
 
-    setSlowRunSpeed;
-    setRunSpeed;
+    comboboxRun.ItemIndex := SystemSettings.ReadInteger('Emulation', 'RunSpeed', 0);
+    comboboxRunChange(nil);
+    comboboxSlowRun.ItemIndex := SystemSettings.ReadInteger('Emulation', 'SlowRunSpeed', 2);
+    comboboxSlowRunChange(nil);
     actionResetExecute(nil);
+    panelSystemTerminal.SetFocus;
 end;
 
 // --------------------------------------------------------------------------------
@@ -332,110 +276,6 @@ begin
     end
     else begin
         imagelistMainWindow.Draw(panelHdd.Canvas, 0, 1, 24);
-    end;
-end;
-
-// --------------------------------------------------------------------------------
-procedure TMainWindow.popupRunSpeedClick(Sender: TObject);
-begin
-    if (Sender = popup4Mhz) then begin
-        runSpeedValue := RUNSPEED_4MHZ;
-        SystemSettings.WriteInteger('Emulation', 'RunSpeed', 0);
-    end
-    else if (Sender = popup8Mhz) then begin
-        runSpeedValue := RUNSPEED_8MHZ;
-        SystemSettings.WriteInteger('Emulation', 'RunSpeed', 1);
-    end
-    else if (Sender = popup12Mhz) then begin
-        runSpeedValue := RUNSPEED_12MHZ;
-        SystemSettings.WriteInteger('Emulation', 'RunSpeed', 2);
-    end
-    else if (Sender = popup16Mhz) then begin
-        runSpeedValue := RUNSPEED_16MHZ;
-        SystemSettings.WriteInteger('Emulation', 'RunSpeed', 3);
-    end
-    else begin
-        runSpeedValue := RUNSPEED_4MHZ;
-        SystemSettings.WriteInteger('Emulation', 'RunSpeed', 0);
-    end;
-end;
-
-// --------------------------------------------------------------------------------
-procedure TMainWindow.popupSlowRunSpeedClick(Sender: TObject);
-begin
-    if (Sender = popup1Ops) then begin
-        cpuRun.Interval := SLOWSPEED_1OPS;
-        SystemSettings.WriteInteger('Emulation', 'SlowRunSpeed', 0);
-    end
-    else if (Sender = popup2Ops) then begin
-        cpuRun.Interval := SLOWSPEED_2OPS;
-        SystemSettings.WriteInteger('Emulation', 'SlowRunSpeed', 1);
-    end
-    else if (Sender = popup5Ops) then begin
-        cpuRun.Interval := SLOWSPEED_5OPS;
-        SystemSettings.WriteInteger('Emulation', 'SlowRunSpeed', 2);
-    end
-    else if (Sender = popup10Ops) then begin
-        cpuRun.Interval := SLOWSPEED_10OPS;
-        SystemSettings.WriteInteger('Emulation', 'SlowRunSpeed', 3);
-    end
-    else begin
-        cpuRun.Interval := SLOWSPEED_5OPS;
-        SystemSettings.WriteInteger('Emulation', 'SlowRunSpeed', 2);
-    end;
-end;
-
-// --------------------------------------------------------------------------------
-procedure TMainWindow.setSlowRunSpeed;
-begin
-    case (SystemSettings.ReadInteger('Emulation', 'SlowRunSpeed', 2)) of
-        0: begin
-            popup1Ops.Checked := True;
-            cpuRun.Interval := SLOWSPEED_1OPS;
-        end;
-        1: begin
-            popup2Ops.Checked := True;
-            cpuRun.Interval := SLOWSPEED_2OPS;
-        end;
-        2: begin
-            popup5Ops.Checked := True;
-            cpuRun.Interval := SLOWSPEED_5OPS;
-        end;
-        3: begin
-            popup10Ops.Checked := True;
-            cpuRun.Interval := SLOWSPEED_10OPS;
-        end;
-        else begin
-            popup5Ops.Checked := True;
-            cpuRun.Interval := SLOWSPEED_5OPS;
-        end;
-    end;
-end;
-
-// --------------------------------------------------------------------------------
-procedure TMainWindow.setRunSpeed;
-begin
-    case (SystemSettings.ReadInteger('Emulation', 'RunSpeed', 0)) of
-        0: begin
-            popup4Mhz.Checked := True;
-            runSpeedValue := RUNSPEED_4MHZ;
-        end;
-        1: begin
-            popup8Mhz.Checked := True;
-            runSpeedValue := RUNSPEED_8MHZ;
-        end;
-        2: begin
-            popup12Mhz.Checked := True;
-            runSpeedValue := RUNSPEED_12MHZ;
-        end;
-        3: begin
-            popup16Mhz.Checked := True;
-            runSpeedValue := RUNSPEED_16MHZ;
-        end;
-        else begin
-            popup4Mhz.Checked := True;
-            runSpeedValue := RUNSPEED_4MHZ;
-        end;
     end;
 end;
 
@@ -531,7 +371,7 @@ begin
         cpuRun.OnTimer := nil;
     end;
     cpuRun.OnTimer := @cpuRunTimer;
-    setRunSpeed;
+    //setRunSpeed;
     cpuRun.Interval := 2;
     cpuRun.Enabled := True;
     actionMemorySettings.Enabled := False;
@@ -569,7 +409,7 @@ begin
         cpuRun.OnTimer := nil;
     end;
     cpuRun.OnTimer := @cpuSlowRunTimer;
-    setSlowRunSpeed;
+    //setSlowRunSpeed;
     cpuRun.Enabled := True;
     actionMemorySettings.Enabled := False;
     actionHddDrive.Enabled := False;
@@ -605,6 +445,33 @@ var
 begin
     Application.CreateForm(TTerminalSettings, dialog);
     dialog.ShowModal;
+end;
+
+// --------------------------------------------------------------------------------
+procedure TMainWindow.comboboxRunChange(Sender: TObject);
+begin
+
+    case (comboboxRun.ItemIndex) of
+        0: runSpeedValue := RUNSPEED_4MHZ;
+        1: runSpeedValue := RUNSPEED_8MHZ;
+        2: runSpeedValue := RUNSPEED_12MHZ;
+        3: runSpeedValue := RUNSPEED_16MHZ;
+        else runSpeedValue := RUNSPEED_4MHZ;
+    end;
+    SystemSettings.WriteInteger('Emulation', 'RunSpeed', comboboxRun.ItemIndex);
+end;
+
+// --------------------------------------------------------------------------------
+procedure TMainWindow.comboboxSlowRunChange(Sender: TObject);
+begin
+    case (comboboxSlowRun.ItemIndex) of
+        0: cpuRun.Interval := SLOWSPEED_1OPS;
+        1: cpuRun.Interval := SLOWSPEED_2OPS;
+        2: cpuRun.Interval := SLOWSPEED_5OPS;
+        3: cpuRun.Interval := SLOWSPEED_10OPS;
+        else cpuRun.Interval := SLOWSPEED_5OPS;
+    end;
+    SystemSettings.WriteInteger('Emulation', 'SlowRunSpeed', comboboxSlowRun.ItemIndex);
 end;
 
 // --------------------------------------------------------------------------------

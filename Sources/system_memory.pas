@@ -24,7 +24,7 @@ type
         sysMemSize: DWord;
         bootRomSize: DWord;
         bootRomFileName: string;
-        isLoaded: boolean;
+        bootRomLoaded: boolean;
 
     protected // Attribute
 
@@ -42,15 +42,15 @@ type
         function Read(addr: DWord): byte;
         procedure Write(addr: DWord; Data: byte);
         procedure EnableBootRom(enable: boolean);
-        procedure EnableReloadImageOnEnable(reload: boolean);
+        procedure setReloadImageOnEnable(reload: boolean);
         function GetSystemMemorySize: DWord;
         function GetBootRomSize: DWord;
         function IsRomEnabled: boolean;
         procedure SetRomImageFile(FileName: string);
-        function LoadRamFile(FileName: string): boolean;
-        function LoadRomFile: boolean;
-        procedure setBootRomSize(size: string);
-        procedure setSystemRamSize(size: string);
+        procedure LoadRamFile(FileName: string);
+        procedure LoadRomFile;
+        procedure setBootRomSize(size: integer);
+        procedure setSystemRamSize(size: integer);
         function isRomFileValid: boolean;
     end;
 
@@ -59,14 +59,21 @@ var
 
 implementation
 
+uses System_Settings;
+
 // --------------------------------------------------------------------------------
 constructor TSystemMemory.Create;
 begin
     inherited Create;
-    sysMemSize := 0;
-    bootRomSize := 0;
-    bootRomEnabled := False;
-    reloadOnEnable := False;
+    setBootRomSize(SystemSettings.ReadInteger('Memory', 'RomSize', 0));
+    setSystemRamSize(SystemSettings.ReadInteger('Memory', 'RamSize', 0));
+    setReloadImageOnEnable(SystemSettings.ReadBoolean('Memory', 'ReloadOnEnable', False));
+    bootRomFileName := SystemSettings.ReadString('Memory', 'RomImageFile', '');
+    if ((bootRomFileName <> '') and (not FileExists(bootRomFileName))) then begin
+        SystemSettings.WriteString('Memory', 'RomImageFile', '');
+        bootRomFileName := '';
+    end;
+    LoadRomFile;
 end;
 
 // --------------------------------------------------------------------------------
@@ -107,7 +114,7 @@ begin
 end;
 
 // --------------------------------------------------------------------------------
-procedure TSystemMemory.EnableReloadImageOnEnable(reload: boolean);
+procedure TSystemMemory.setReloadImageOnEnable(reload: boolean);
 begin
     reloadOnEnable := reload;
 end;
@@ -138,12 +145,14 @@ begin
 end;
 
 // --------------------------------------------------------------------------------
-function TSystemMemory.LoadRomFile: boolean;
+procedure TSystemMemory.LoadRomFile;
 var
     inFile: TFileStream;
     addr: integer;
 begin
-    isLoaded := False;
+    bootRomEnabled := False;
+    bootRomLoaded := False;
+
     if (bootRomFileName = '') then begin
         for addr := 0 to bootRomSize - 1 do begin
             bootRom[addr] := 0;
@@ -160,21 +169,20 @@ begin
                 inFile.Read(bootRom[0], bootRomSize);
             end;
             bootRomEnabled := True;
-            isLoaded := True;
+            bootRomLoaded := True;
         finally
             inFile.Free;
         end;
     end;
-    Result := isLoaded;
 end;
 
 // --------------------------------------------------------------------------------
-function TSystemMemory.LoadRamFile(FileName: string): boolean;
+procedure TSystemMemory.LoadRamFile(FileName: string);
 var
     inFile: TFileStream;
     addr: integer;
 begin
-    isLoaded := False;
+
     if (FileName = '') then begin
         for addr := 0 to sysMemSize - 1 do begin
             sysMem[addr] := 0;
@@ -191,55 +199,53 @@ begin
                 inFile.Read(sysMem[0], sysMemSize);
             end;
             bootRomEnabled := False;
-            isLoaded := True;
         finally
             inFile.Free;
         end;
     end;
-    Result := isLoaded;
 end;
 
 // --------------------------------------------------------------------------------
-procedure TSystemMemory.setBootRomSize(size: string);
+procedure TSystemMemory.setBootRomSize(size: integer);
 var
-    romSize: DWord;
+    newSize: DWord;
 begin
-    case size of
-        '8KB': romSize := $2000; //  8KB
-        '16KB': romSize := $4000; // 16KB
-        '32KB': romSize := $8000; // 32KB
-        '64KB': romSize := $10000; //  64KB
-        else romSize := $2000;
+    case (size) of
+        0: newSize := $2000; //  8KB
+        1: newSize := $4000; // 16KB
+        2: newSize := $8000; // 32KB
+        3: newSize := $10000; // 64KB
+        else newSize := $2000;
     end;
-    if (bootRomSize <> romSize) then begin
-        SetLength(bootRom, romSize);
-        bootRomSize := romSize;
+    if (bootRomSize <> newSize) then begin
+        SetLength(bootRom, newSize);
+        bootRomSize := newSize;
     end;
 end;
 
 // --------------------------------------------------------------------------------
-procedure TSystemMemory.setSystemRamSize(size: string);
+procedure TSystemMemory.setSystemRamSize(size: integer);
 var
-    ramSize: DWord;
+    newSize: DWord;
 begin
     case size of
-        '64KB': ramSize := $10000;  //  64KB
-        '128KB': ramSize := $20000;  // 128KB
-        '256KB': ramSize := $40000;  // 256KB
-        '512KB': ramSize := $80000;  // 512KB
-        '1024KB': ramSize := $100000; //   1MB
-        else ramSize := $10000;
+        0: newSize := $10000;  //  64KB
+        1: newSize := $20000;  // 128KB
+        2: newSize := $40000;  // 256KB
+        3: newSize := $80000;  // 512KB
+        4: newSize := $100000; //   1MB
+        else newSize := $10000;
     end;
-    if (sysMemSize <> ramSize) then begin
-        SetLength(sysMem, ramSize);
-        sysMemSize := ramSize;
+    if (sysMemSize <> newSize) then begin
+        SetLength(sysMem, newSize);
+        sysMemSize := newSize;
     end;
 end;
 
 // --------------------------------------------------------------------------------
 function TSystemMemory.isRomFileValid: boolean;
 begin
-    Result := isLoaded;
+    Result := bootRomLoaded;
 end;
 
 // --------------------------------------------------------------------------------

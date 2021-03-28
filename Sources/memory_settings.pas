@@ -30,11 +30,9 @@ type
         procedure FormShow(Sender: TObject);
 
     private
-        settingsLoaded: boolean;
-        oldRomSize: string;
-        oldRamSize: string;
+        oldRomSize: integer;
+        oldRamSize: integer;
         oldImageFile: string;
-        oldAdressDecode: boolean;
         oldReloadOnEnable: boolean;
         instantlyReload: boolean;
 
@@ -55,9 +53,9 @@ uses UscaleDPI, System_Settings, System_Memory, Memory_Editor;
 procedure TMemorySettings.FormClose(Sender: TObject; var CloseAction: TCloseAction);
 begin
     SystemSettings.saveFormState(TForm(self));
-    if (oldRomSize <> comboboxRomSize.Items[comboboxRomSize.ItemIndex]) then begin
-        SystemSettings.WriteString('Memory', 'RomSize', comboboxRomSize.Items[comboboxRomSize.ItemIndex]);
-        SystemMemory.setBootRomSize(comboboxRomSize.Items[comboboxRomSize.ItemIndex]);
+    if (oldRomSize <> comboboxRomSize.ItemIndex) then begin
+        SystemSettings.WriteInteger('Memory', 'RomSize', comboboxRomSize.ItemIndex);
+        SystemMemory.setBootRomSize(comboboxRomSize.ItemIndex);
         if Assigned(MemoryEditor) then begin
             MemoryEditor.memoryChanged;
         end;
@@ -69,16 +67,16 @@ begin
             MemoryEditor.showMemoryData;
         end;
     end;
-    if (oldRamSize <> comboboxRamSize.Items[comboboxRamSize.ItemIndex]) then begin
-        SystemSettings.WriteString('Memory', 'RamSize', comboboxRamSize.Items[comboboxRamSize.ItemIndex]);
-        SystemMemory.setSystemRamSize(comboboxRamSize.Items[comboboxRamSize.ItemIndex]);
+    if (oldRamSize <> comboboxRamSize.ItemIndex) then begin
+        SystemSettings.WriteInteger('Memory', 'RamSize', comboboxRamSize.ItemIndex);
+        SystemMemory.setSystemRamSize(comboboxRamSize.ItemIndex);
         if Assigned(MemoryEditor) then begin
             MemoryEditor.memoryChanged;
         end;
     end;
     if (oldReloadOnEnable <> checkboxReloadOnEnable.Checked) then begin
         SystemSettings.WriteBoolean('Memory', 'ReloadOnEnable', checkboxReloadOnEnable.Checked);
-        SystemMemory.EnableReloadImageOnEnable(checkboxReloadOnEnable.Checked);
+        SystemMemory.setReloadImageOnEnable(checkboxReloadOnEnable.Checked);
     end;
     if (instantlyReload) then begin
         SystemMemory.LoadRomFile;
@@ -95,6 +93,7 @@ begin
     instantlyReload := True;
 end;
 
+// --------------------------------------------------------------------------------
 procedure TMemorySettings.comboboxDrawItem(Control: TWinControl; Index: integer; ARect: TRect; State: TOwnerDrawState);
 var
     offset, posX, posY: integer;
@@ -121,8 +120,6 @@ end;
 
 // --------------------------------------------------------------------------------
 procedure TMemorySettings.FormShow(Sender: TObject);
-var
-    ItemIndex: integer;
 begin
     SystemSettings.restoreFormState(TForm(self));
     ScaleDPI(self, 96);
@@ -132,26 +129,15 @@ begin
     Constraints.MinHeight := Height;
     Constraints.MaxHeight := Height;
     editBootRomImageFile.InitialDir := GetUserDir;
-    settingsLoaded := False;
-    oldRomSize := Trim(SystemSettings.ReadString('Memory', 'RomSize', '8KB'));
-    ItemIndex := comboboxRomSize.Items.IndexOf(oldRomSize);
-    if (ItemIndex = -1) then begin
-        ItemIndex := 0;
-    end;
-    comboboxRomSize.ItemIndex := ItemIndex;
+    oldRomSize := SystemSettings.ReadInteger('Memory', 'RomSize', 0);
+    comboboxRomSize.ItemIndex := oldRomSize;
     oldImageFile := SystemSettings.ReadString('Memory', 'RomImageFile', '');
     editBootRomImageFile.FileName := oldImageFile;
-    oldRamSize := Trim(SystemSettings.ReadString('Memory', 'RamSize', '64KB'));
-    ItemIndex := comboboxRamSize.Items.IndexOf(oldRamSize);
-    if (ItemIndex = -1) then begin
-        ItemIndex := 0;
-    end;
-    comboboxRamSize.ItemIndex := ItemIndex;
+    oldRamSize := SystemSettings.ReadInteger('Memory', 'RamSize', 0);
+    comboboxRamSize.ItemIndex := oldRamSize;
     oldReloadOnEnable := SystemSettings.ReadBoolean('Memory', 'ReloadOnEnable', False);
     checkboxReloadOnEnable.Checked := oldReloadOnEnable;
-    oldAdressDecode := SystemSettings.ReadBoolean('Memory', 'FullAdressDecode', True);
     instantlyReload := False;
-    settingsLoaded := True;
 
     groupboxMemorySettings.SetFocus;
 end;

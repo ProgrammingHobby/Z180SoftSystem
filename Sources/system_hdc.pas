@@ -129,7 +129,7 @@ type
     public    // Attribute
 
     public  // Konstruktor/Destruktor
-        constructor Create; overload;
+        constructor Create(var panel: TPanel);
         destructor Destroy; override;
 
     private   // Methode
@@ -156,7 +156,6 @@ type
         procedure setHddTracks(tracks: word);
         procedure setHddSectors(sectors: byte);
         procedure setHddImage(fileName: string);
-        procedure setHddStatusPanel(var panel: TPanel);
         procedure setDataLow(Value: byte);
         procedure setDataHigh(Value: byte);
         procedure setTrackLow(Value: byte);
@@ -185,8 +184,12 @@ implementation
 
 { TSystemHdc }
 
+uses System_Settings;
+
 // --------------------------------------------------------------------------------
-constructor TSystemHdc.Create;
+constructor TSystemHdc.Create(var panel: TPanel);
+var
+    ImageFile: string;
 begin
     inherited Create;
     timerHddStatus := TTimer.Create(nil);
@@ -194,6 +197,18 @@ begin
     timerHddStatus.Interval := 50;
     timerHddStatus.OnTimer := @setHddOffState;
     hardDrive.Ready := False;
+    hardDrive.HddStatus := panel;
+
+    setHddHeads(SystemSettings.ReadInteger('Hdd', 'Heads', 16));
+    setHddTracks(SystemSettings.ReadInteger('Hdd', 'Tracks', 246));
+    setHddSectors(SystemSettings.ReadInteger('Hdd', 'Sectors', 63));
+    ImageFile := SystemSettings.ReadString('Hdd', 'ImageFile', '');
+    if ((ImageFile <> '') and (not FileExists(ImageFile))) then begin
+        SystemSettings.WriteString('Hdd', 'ImageFile', '');
+        ImageFile := '';
+    end;
+    setHddImage(ImageFile);
+
     doReset;
 end;
 
@@ -567,12 +582,6 @@ begin
     hdcStatus.bit[DSC] := hardDrive.Ready;
     hdcStatus.bit[BSY] := not hardDrive.Ready;
     hardDrive.HddStatus.Enabled := hardDrive.Ready;
-end;
-
-// --------------------------------------------------------------------------------
-procedure TSystemHdc.setHddStatusPanel(var panel: TPanel);
-begin
-    hardDrive.HddStatus := panel;
 end;
 
 // --------------------------------------------------------------------------------

@@ -40,7 +40,7 @@ type
         startLeft = -7;  // -10 + 3
         startTop = -17;   // -20 + 3
         {$else}
-        charHeight = 19;
+        charHeight = 19; //19
         charWidth = 10;
         startLeft = -7;  // -10 + 3
         startTop = -16;   // -19 + 3
@@ -148,6 +148,8 @@ implementation
 
 { TSystemTerminal }
 
+uses System_Settings;
+
 // --------------------------------------------------------------------------------
 procedure TSystemTerminal.timerFlashTimer(Sender: TObject);
 begin
@@ -216,7 +218,7 @@ begin
     terminalPanel.Font.Size := 13;
     pageWidth := ((charWidth + 2) * terminalColumns) + charWidth;
     {$else}
-    terminalPanel.Font.Name := 'Monospace';
+    terminalPanel.Font.Name := 'DejaVu Sans Mono';
     terminalPanel.Font.Size := 12;
     pageWidth := (charWidth * terminalColumns) + charWidth;
     {$endif}
@@ -241,10 +243,10 @@ begin
     timerTerminalPageRefresh.OnTimer := @timerTerminalPageRefreshTimer;
     timerTerminalPageRefresh.Enabled := False;
 
-    enableCrLf := False;
-    enableLocalEcho := False;
-    monochromTerminal := False;
-    setLogging(False);
+    setCrLF(SystemSettings.ReadBoolean('Terminal', 'UseCRLF', False));
+    setLocalEcho(SystemSettings.ReadBoolean('Terminal', 'LocalEcho', False));
+    setLogging(SystemSettings.ReadBoolean('Terminal', 'Loggin', False));
+    setColorType(SystemSettings.ReadInteger('Terminal', 'ColorType', 0));
     terminalReset;
 
     FreeOnTerminate := False;

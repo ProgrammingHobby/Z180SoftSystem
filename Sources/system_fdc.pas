@@ -107,7 +107,7 @@ type
     public    // Attribute
 
     public  // Konstruktor/Destruktor
-        constructor Create; overload;
+        constructor Create(var panel0: TPanel; var panel1: TPanel);
         destructor Destroy; override;
 
     private   // Methoden
@@ -138,13 +138,11 @@ type
         procedure setFdd0Sectors(sectors: integer);
         procedure setFdd0SectorBytes(sectorbytes: integer);
         procedure setFdd0Image(FileName: string);
-        procedure setFdd0StatusPanel(var panel: TPanel);
         procedure setFdd1Sides(sides: integer);
         procedure setFdd1Tracks(tracks: integer);
         procedure setFdd1Sectors(sectors: integer);
         procedure setFdd1SectorBytes(sectorbytes: integer);
         procedure setFdd1Image(FileName: string);
-        procedure setFdd1StatusPanel(var panel: TPanel);
         function getData: byte;
         function getStatus: byte;
         function getTrack: byte;
@@ -161,8 +159,12 @@ implementation
 
 { TSystemFdc }
 
+uses System_Settings;
+
 // --------------------------------------------------------------------------------
-constructor TSystemFdc.Create;
+constructor TSystemFdc.Create(var panel0: TPanel; var panel1: TPanel);
+var
+    ImageFile: string;
 begin
     inherited Create;
     timerFddStatus := TTimer.Create(nil);
@@ -177,6 +179,31 @@ begin
     floppyDrive1 := resetFloppyDrive;
     actualFloppyDrive := @resetFloppyDrive;
     resetState := False;
+    floppyDrive0.FddStatus := panel0;
+    floppyDrive1.FddStatus := panel1;
+
+    setFdd0Sides(SystemSettings.ReadInteger('Fdd0', 'Sides', 2));
+    setFdd0Tracks(SystemSettings.ReadInteger('Fdd0', 'Tracks', 80));
+    setFdd0Sectors(SystemSettings.ReadInteger('Fdd0', 'Sectors', 9));
+    setFdd0SectorBytes(SystemSettings.ReadInteger('Fdd0', 'SectorBytes', 512));
+    ImageFile := SystemSettings.ReadString('Fdd0', 'ImageFile', '');
+    if ((ImageFile <> '') and (not FileExists(ImageFile))) then begin
+        SystemSettings.WriteString('Fdd0', 'ImageFile', '');
+        ImageFile := '';
+    end;
+    setFdd0Image(ImageFile);
+
+    setFdd1Sides(SystemSettings.ReadInteger('Fdd1', 'Sides', 2));
+    setFdd1Tracks(SystemSettings.ReadInteger('Fdd1', 'Tracks', 80));
+    setFdd1Sectors(SystemSettings.ReadInteger('Fdd1', 'Sectors', 9));
+    setFdd1SectorBytes(SystemSettings.ReadInteger('Fdd1', 'SectorBytes', 512));
+    ImageFile := SystemSettings.ReadString('Fdd1', 'ImageFile', '');
+    if ((ImageFile <> '') and (not FileExists(ImageFile))) then begin
+        SystemSettings.WriteString('Fdd1', 'ImageFile', '');
+        ImageFile := '';
+    end;
+    setFdd1Image(ImageFile);
+
 end;
 
 // --------------------------------------------------------------------------------
@@ -734,12 +761,6 @@ begin
 end;
 
 // --------------------------------------------------------------------------------
-procedure TSystemFdc.setFdd0StatusPanel(var panel: TPanel);
-begin
-    floppyDrive0.FddStatus := panel;
-end;
-
-// --------------------------------------------------------------------------------
 procedure TSystemFdc.setFdd1Sides(sides: integer);
 begin
     floppyDrive1.Sides := sides;
@@ -791,12 +812,6 @@ begin
     end;
     floppyDrive1.FddStatus.Hint := hintString;
     floppyDrive1.FddStatus.Enabled := floppyDrive1.Loaded;
-end;
-
-// --------------------------------------------------------------------------------
-procedure TSystemFdc.setFdd1StatusPanel(var panel: TPanel);
-begin
-    floppyDrive1.FddStatus := panel;
 end;
 
 // --------------------------------------------------------------------------------

@@ -8,6 +8,7 @@ object MemorySettings: TMemorySettings
   ClientWidth = 711
   OnClose = FormClose
   OnShow = FormShow
+  LCLVersion = '2.0.12.0'
   object groupboxMemorySettings: TGroupBox
     Left = 4
     Height = 360
@@ -23,7 +24,7 @@ object MemorySettings: TMemorySettings
     ChildSizing.EnlargeVertical = crsHomogenousChildResize
     ChildSizing.Layout = cclLeftToRightThenTopToBottom
     ChildSizing.ControlsPerLine = 1
-    ClientHeight = 358
+    ClientHeight = 340
     ClientWidth = 701
     TabOrder = 0
     object panelMemorySettings: TPanel
@@ -60,7 +61,7 @@ object MemorySettings: TMemorySettings
         ChildSizing.ShrinkVertical = crsScaleChilds
         ChildSizing.Layout = cclLeftToRightThenTopToBottom
         ChildSizing.ControlsPerLine = 2
-        ClientHeight = 151
+        ClientHeight = 149
         ClientWidth = 146
         TabOrder = 0
         object comboboxRomSize: TComboBox
@@ -106,7 +107,7 @@ object MemorySettings: TMemorySettings
         ChildSizing.ShrinkVertical = crsScaleChilds
         ChildSizing.Layout = cclLeftToRightThenTopToBottom
         ChildSizing.ControlsPerLine = 2
-        ClientHeight = 151
+        ClientHeight = 149
         ClientWidth = 173
         TabOrder = 1
         object comboboxRamSize: TComboBox
@@ -164,7 +165,7 @@ object MemorySettings: TMemorySettings
         BorderSpacing.Right = 4
         BorderSpacing.Bottom = 4
         Caption = ' Boot-ROM Image Datei '
-        ClientHeight = 153
+        ClientHeight = 151
         ClientWidth = 691
         TabOrder = 0
         object editBootRomImageFile: TFileNameEdit
