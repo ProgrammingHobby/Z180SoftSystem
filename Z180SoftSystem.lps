@@ -18,9 +18,10 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="Main_Window"/>
-        <TopLine Value="216"/>
-        <CursorPos X="74" Y="232"/>
-        <UsageCount Value="47"/>
+        <IsVisibleTab Value="True"/>
+        <TopLine Value="230"/>
+        <CursorPos Y="246"/>
+        <UsageCount Value="50"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit1>
@@ -34,7 +35,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="279"/>
         <CursorPos X="53" Y="285"/>
-        <UsageCount Value="47"/>
+        <UsageCount Value="50"/>
       </Unit2>
       <Unit3>
         <Filename Value="Sources/system_memory.pas"/>
@@ -43,7 +44,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="52"/>
         <CursorPos X="17" Y="76"/>
-        <UsageCount Value="47"/>
+        <UsageCount Value="50"/>
       </Unit3>
       <Unit4>
         <Filename Value="Sources/memory_editor.pas"/>
@@ -52,7 +53,7 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="Memory_Editor"/>
-        <UsageCount Value="47"/>
+        <UsageCount Value="50"/>
       </Unit4>
       <Unit5>
         <Filename Value="Sources/system_settings.pas"/>
@@ -61,7 +62,7 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="DataModule"/>
         <UnitName Value="System_Settings"/>
-        <UsageCount Value="47"/>
+        <UsageCount Value="50"/>
       </Unit5>
       <Unit6>
         <Filename Value="Sources/z180_cpu.pas"/>
@@ -70,17 +71,16 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="2228"/>
         <CursorPos X="11" Y="2035"/>
-        <UsageCount Value="47"/>
+        <UsageCount Value="50"/>
       </Unit6>
       <Unit7>
         <Filename Value="Sources/system_terminal.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="System_Terminal"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
         <TopLine Value="207"/>
         <CursorPos X="51" Y="221"/>
-        <UsageCount Value="47"/>
+        <UsageCount Value="50"/>
         <Loaded Value="True"/>
       </Unit7>
       <Unit8>
@@ -90,7 +90,7 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="Cpu_Io_Register"/>
-        <UsageCount Value="47"/>
+        <UsageCount Value="50"/>
       </Unit8>
       <Unit9>
         <Filename Value="Sources/system_fdc.pas"/>
@@ -99,7 +99,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="147"/>
         <CursorPos Y="161"/>
-        <UsageCount Value="47"/>
+        <UsageCount Value="50"/>
       </Unit9>
       <Unit10>
         <Filename Value="Sources/memory_settings.pas"/>
@@ -111,7 +111,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="98"/>
         <CursorPos X="45" Y="133"/>
-        <UsageCount Value="47"/>
+        <UsageCount Value="50"/>
       </Unit10>
       <Unit11>
         <Filename Value="Sources/system_inout.pas"/>
@@ -120,7 +120,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="167"/>
         <CursorPos Y="182"/>
-        <UsageCount Value="47"/>
+        <UsageCount Value="50"/>
       </Unit11>
       <Unit12>
         <Filename Value="Sources/fdd_settings.pas"/>
@@ -132,7 +132,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="62"/>
         <CursorPos X="95" Y="276"/>
-        <UsageCount Value="47"/>
+        <UsageCount Value="50"/>
       </Unit12>
       <Unit13>
         <Filename Value="Sources/terminal_settings.pas"/>
@@ -142,7 +142,7 @@
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="Terminal_Settings"/>
         <EditorIndex Value="-1"/>
-        <UsageCount Value="47"/>
+        <UsageCount Value="50"/>
       </Unit13>
       <Unit14>
         <Filename Value="Sources/about_window.pas"/>
@@ -151,13 +151,13 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="About_Window"/>
-        <UsageCount Value="47"/>
+        <UsageCount Value="50"/>
       </Unit14>
       <Unit15>
         <Filename Value="Sources/version_info.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="Version_Info"/>
-        <UsageCount Value="47"/>
+        <UsageCount Value="50"/>
       </Unit15>
       <Unit16>
         <Filename Value="Sources/system_hdc.pas"/>
@@ -166,7 +166,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="572"/>
         <CursorPos X="5" Y="585"/>
-        <UsageCount Value="47"/>
+        <UsageCount Value="50"/>
       </Unit16>
       <Unit17>
         <Filename Value="Sources/hdd_settings.pas"/>
@@ -178,7 +178,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="5"/>
         <CursorPos X="31" Y="21"/>
-        <UsageCount Value="47"/>
+        <UsageCount Value="50"/>
       </Unit17>
       <Unit18>
         <Filename Value="Sources/hardware_info.pas"/>
@@ -187,13 +187,13 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="Hardware_Info"/>
-        <UsageCount Value="47"/>
+        <UsageCount Value="50"/>
       </Unit18>
       <Unit19>
         <Filename Value="Sources/system_rtc.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="System_Rtc"/>
-        <UsageCount Value="47"/>
+        <UsageCount Value="50"/>
       </Unit19>
       <Unit20>
         <Filename Value="main_window.pas"/>
@@ -612,123 +612,123 @@
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
         <Filename Value="Sources/main_window.pas"/>
-        <Caret Line="499" Column="20" TopLine="486"/>
+        <Caret Line="232" Column="74" TopLine="216"/>
       </Position1>
       <Position2>
         <Filename Value="Sources/main_window.pas"/>
-        <Caret Line="517" Column="78" TopLine="491"/>
+        <Caret Line="231" Column="74" TopLine="215"/>
       </Position2>
       <Position3>
         <Filename Value="Sources/main_window.pas"/>
-        <Caret Line="512" Column="48" TopLine="496"/>
+        <Caret Line="232" Column="74" TopLine="216"/>
       </Position3>
       <Position4>
-        <Filename Value="Sources/system_terminal.pas"/>
-        <Caret Line="228" Column="11" TopLine="205"/>
+        <Filename Value="Sources/main_window.pas"/>
+        <Caret Line="231" Column="74" TopLine="215"/>
       </Position4>
       <Position5>
-        <Filename Value="Sources/system_terminal.pas"/>
-        <Caret Line="226" TopLine="205"/>
+        <Filename Value="Sources/main_window.pas"/>
+        <Caret Line="232" Column="74" TopLine="216"/>
       </Position5>
       <Position6>
-        <Filename Value="Sources/system_terminal.pas"/>
-        <Caret Line="228" TopLine="205"/>
+        <Filename Value="Sources/main_window.pas"/>
+        <Caret Line="231" Column="74" TopLine="215"/>
       </Position6>
       <Position7>
-        <Filename Value="Sources/system_terminal.pas"/>
-        <Caret Line="226" Column="8" TopLine="211"/>
+        <Filename Value="Sources/main_window.pas"/>
+        <Caret Line="232" Column="74" TopLine="216"/>
       </Position7>
       <Position8>
-        <Filename Value="Sources/system_terminal.pas"/>
-        <Caret Line="224" TopLine="211"/>
+        <Filename Value="Sources/main_window.pas"/>
+        <Caret Line="231" Column="74" TopLine="215"/>
       </Position8>
       <Position9>
-        <Filename Value="Sources/system_terminal.pas"/>
-        <Caret Line="225" TopLine="211"/>
+        <Filename Value="Sources/main_window.pas"/>
+        <Caret Line="232" Column="74" TopLine="216"/>
       </Position9>
       <Position10>
-        <Filename Value="Sources/system_terminal.pas"/>
-        <Caret Line="226" TopLine="211"/>
+        <Filename Value="Sources/main_window.pas"/>
+        <Caret Line="231" Column="74" TopLine="215"/>
       </Position10>
       <Position11>
-        <Filename Value="Sources/system_terminal.pas"/>
-        <Caret Line="227" TopLine="211"/>
+        <Filename Value="Sources/main_window.pas"/>
+        <Caret Line="232" Column="74" TopLine="216"/>
       </Position11>
       <Position12>
-        <Filename Value="Sources/system_terminal.pas"/>
-        <Caret Line="229" Column="52" TopLine="211"/>
+        <Filename Value="Sources/main_window.pas"/>
+        <Caret Line="231" Column="74" TopLine="215"/>
       </Position12>
       <Position13>
-        <Filename Value="Sources/system_terminal.pas"/>
-        <Caret Line="223" TopLine="211"/>
+        <Filename Value="Sources/main_window.pas"/>
+        <Caret Line="232" Column="74" TopLine="216"/>
       </Position13>
       <Position14>
-        <Filename Value="Sources/system_terminal.pas"/>
-        <Caret Line="224" TopLine="211"/>
+        <Filename Value="Sources/main_window.pas"/>
+        <Caret Line="231" Column="74" TopLine="215"/>
       </Position14>
       <Position15>
-        <Filename Value="Sources/system_terminal.pas"/>
-        <Caret Line="225" TopLine="211"/>
+        <Filename Value="Sources/main_window.pas"/>
+        <Caret Line="232" Column="74" TopLine="216"/>
       </Position15>
       <Position16>
-        <Filename Value="Sources/system_terminal.pas"/>
-        <Caret Line="226" TopLine="211"/>
+        <Filename Value="Sources/main_window.pas"/>
+        <Caret Line="231" Column="74" TopLine="215"/>
       </Position16>
       <Position17>
-        <Filename Value="Sources/system_terminal.pas"/>
-        <Caret Line="227" TopLine="211"/>
+        <Filename Value="Sources/main_window.pas"/>
+        <Caret Line="232" Column="74" TopLine="216"/>
       </Position17>
       <Position18>
-        <Filename Value="Sources/system_terminal.pas"/>
-        <Caret Line="229" TopLine="211"/>
+        <Filename Value="Sources/main_window.pas"/>
+        <Caret Line="231" Column="74" TopLine="215"/>
       </Position18>
       <Position19>
-        <Filename Value="Sources/system_terminal.pas"/>
-        <Caret Line="225" Column="60" TopLine="211"/>
+        <Filename Value="Sources/main_window.pas"/>
+        <Caret Line="232" Column="74" TopLine="216"/>
       </Position19>
       <Position20>
-        <Filename Value="Sources/system_terminal.pas"/>
-        <Caret Line="228" Column="62" TopLine="207"/>
+        <Filename Value="Sources/main_window.pas"/>
+        <Caret Line="231" Column="74" TopLine="215"/>
       </Position20>
       <Position21>
-        <Filename Value="Sources/system_terminal.pas"/>
-        <Caret Line="225" Column="60" TopLine="207"/>
+        <Filename Value="Sources/main_window.pas"/>
+        <Caret Line="230" Column="74" TopLine="214"/>
       </Position21>
       <Position22>
-        <Filename Value="Sources/system_terminal.pas"/>
-        <Caret Line="228" Column="22" TopLine="210"/>
+        <Filename Value="Sources/main_window.pas"/>
+        <Caret Line="229" Column="74" TopLine="213"/>
       </Position22>
       <Position23>
-        <Filename Value="Sources/system_terminal.pas"/>
-        <Caret Line="223" TopLine="210"/>
+        <Filename Value="Sources/main_window.pas"/>
+        <Caret Line="228" Column="74" TopLine="212"/>
       </Position23>
       <Position24>
-        <Filename Value="Sources/system_terminal.pas"/>
-        <Caret Line="224" TopLine="210"/>
+        <Filename Value="Sources/main_window.pas"/>
+        <Caret Line="227" Column="74" TopLine="211"/>
       </Position24>
       <Position25>
-        <Filename Value="Sources/system_terminal.pas"/>
-        <Caret Line="225" TopLine="210"/>
+        <Filename Value="Sources/main_window.pas"/>
+        <Caret Line="228" Column="74" TopLine="212"/>
       </Position25>
       <Position26>
-        <Filename Value="Sources/system_terminal.pas"/>
-        <Caret Line="226" TopLine="210"/>
+        <Filename Value="Sources/main_window.pas"/>
+        <Caret Line="229" Column="74" TopLine="213"/>
       </Position26>
       <Position27>
-        <Filename Value="Sources/system_terminal.pas"/>
-        <Caret Line="228" TopLine="210"/>
+        <Filename Value="Sources/main_window.pas"/>
+        <Caret Line="230" Column="74" TopLine="214"/>
       </Position27>
       <Position28>
-        <Filename Value="Sources/system_terminal.pas"/>
-        <Caret Line="205" Column="56" TopLine="186"/>
+        <Filename Value="Sources/main_window.pas"/>
+        <Caret Line="231" Column="74" TopLine="215"/>
       </Position28>
       <Position29>
-        <Filename Value="Sources/system_terminal.pas"/>
-        <Caret Line="231" Column="42" TopLine="205"/>
+        <Filename Value="Sources/main_window.pas"/>
+        <Caret Line="232" Column="74" TopLine="216"/>
       </Position29>
       <Position30>
-        <Filename Value="Sources/system_terminal.pas"/>
-        <Caret Line="205" Column="35" TopLine="178"/>
+        <Filename Value="Sources/main_window.pas"/>
+        <Caret Line="242" Column="61" TopLine="217"/>
       </Position30>
     </JumpHistory>
     <RunParams>
