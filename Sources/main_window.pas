@@ -132,7 +132,7 @@ implementation
 
 uses UscaleDPI, System_Settings, Cpu_Register, Cpu_Io_Register, Memory_Editor, Memory_Settings,
     System_Memory, System_InOut, Z180_CPU, System_Terminal, System_Fdc, Fdd_Settings, Terminal_Settings,
-    About_Window, System_Hdc, Hdd_Settings, Hardware_Info, System_Rtc;
+    About_Window, System_Hdc, Hdd_Settings, Hardware_Info, System_Rtc, Types;
 
 { TformMainWindow }
 
@@ -156,8 +156,7 @@ const
 // --------------------------------------------------------------------------------
 procedure TMainWindow.FormClose(Sender: TObject; var CloseAction: TCloseAction);
 begin
-    if (cpuRun.Enabled = True) then
-    begin
+    if (cpuRun.Enabled = True) then begin
         cpuRun.Enabled := False;
         cpuRun.OnTimer := nil;
     end;
@@ -184,16 +183,13 @@ var
 {$endif}
 begin
     {$ifndef Windows}
-    if ((Key = 235) and (Shift = [SSALT])) then
-    begin
+    if ((Key = 235) and (Shift = [SSALT])) then begin
         isKeyAltGr := True;
     end;
-    if (isKeyAltGr) then
-    begin
+    if (isKeyAltGr) then begin
         termShift := [ssAlt..ssCtrl];
     end
-    else
-    begin
+    else begin
         termShift := Shift;
     end;
     SystemTerminal.getKeyBoardInput(Key, termShift);
@@ -206,8 +202,7 @@ end;
 procedure TMainWindow.FormKeyUp(Sender: TObject; var Key: word; Shift: TShiftState);
 begin
     {$ifndef Windows}
-    if ((Key = 235) and (Shift = [])) then
-    begin
+    if ((Key = 235) and (Shift = [])) then begin
         isKeyAltGr := False;
     end;
     {$endif}
@@ -215,19 +210,12 @@ end;
 
 // --------------------------------------------------------------------------------
 procedure TMainWindow.FormShow(Sender: TObject);
+var
+    size: TSize;
 begin
     SystemSettings.restoreFormState(TForm(self));
     self.SetAutoSize(True);
     ScaleDPI(self, 96);
-    {$ifdef Windows}
-    Constraints.MinWidth := 886;  // 880 + 6
-    Constraints.MinHeight := 678; // 672 + 6
-    {$else}
-    Constraints.MinWidth := 806;   // 800 + 6
-    Constraints.MinHeight := 659;  // 653 + 6
-    {$endif}
-    Constraints.MaxWidth := Constraints.MinWidth;
-    Constraints.MaxHeight := Constraints.MinHeight;
 
     SystemMemory := TSystemMemory.Create;
     bootRomEnabled := SystemMemory.isRomFileValid;
@@ -238,11 +226,15 @@ begin
     SystemInOut := TSystemInOut.Create;
     Z180Cpu := TZ180Cpu.Create;
 
-    {$ifndef Windows}
-    isKeyAltGr := False;
-    {$endif}
+    panelButtons.Constraints.MaxHeight := ((statusbarMainWindow.Height div 4) * 6);
+    panelButtons.Constraints.MinHeight := panelButtons.Constraints.MaxHeight;
 
-    panelButtons.Constraints.MaxHeight := ((statusbarMainWindow.Height div 3) * 4);
+    size := SystemTerminal.getDisplaySize;
+
+    Constraints.MinWidth := size.Width;
+    Constraints.MinHeight := size.Height + panelButtons.Height + statusbarMainWindow.Height + menuMainWindow.Height;
+    Constraints.MaxWidth := Constraints.MinWidth;
+    Constraints.MaxHeight := Constraints.MinHeight;
 
     comboboxRun.ItemIndex := SystemSettings.ReadInteger('Emulation', 'RunSpeed', 0);
     comboboxRunChange(nil);
@@ -250,17 +242,19 @@ begin
     comboboxSlowRunChange(nil);
     actionResetExecute(nil);
     panelSystemTerminal.SetFocus;
+
+    {$ifndef Windows}
+    isKeyAltGr := False;
+    {$endif}
 end;
 
 // --------------------------------------------------------------------------------
 procedure TMainWindow.panelFdd0Paint(Sender: TObject);
 begin
-    if (panelFdd0.Enabled) then
-    begin
+    if (panelFdd0.Enabled) then begin
         imagelistMainWindow.Draw(panelFdd0.Canvas, 0, 1, 20);
     end
-    else
-    begin
+    else begin
         imagelistMainWindow.Draw(panelFdd0.Canvas, 0, 1, 22);
     end;
 end;
@@ -268,12 +262,10 @@ end;
 // --------------------------------------------------------------------------------
 procedure TMainWindow.panelFdd1Paint(Sender: TObject);
 begin
-    if (panelFdd1.Enabled) then
-    begin
+    if (panelFdd1.Enabled) then begin
         imagelistMainWindow.Draw(panelFdd1.Canvas, 0, 1, 21);
     end
-    else
-    begin
+    else begin
         imagelistMainWindow.Draw(panelFdd1.Canvas, 0, 1, 23);
     end;
 end;
@@ -281,12 +273,10 @@ end;
 // --------------------------------------------------------------------------------
 procedure TMainWindow.panelHddPaint(Sender: TObject);
 begin
-    if (panelHdd.Enabled) then
-    begin
+    if (panelHdd.Enabled) then begin
         imagelistMainWindow.Draw(panelHdd.Canvas, 0, 1, 5);
     end
-    else
-    begin
+    else begin
         imagelistMainWindow.Draw(panelHdd.Canvas, 0, 1, 24);
     end;
 end;
@@ -303,16 +293,13 @@ end;
 procedure TMainWindow.cpuSlowRunTimer(Sender: TObject);
 begin
     Z180Cpu.exec(1);
-    if Assigned(MemoryEditor) then
-    begin
+    if Assigned(MemoryEditor) then begin
         MemoryEditor.showMemoryData;
     end;
-    if Assigned(CpuRegister) then
-    begin
+    if Assigned(CpuRegister) then begin
         CpuRegister.showRegisterData;
     end;
-    if Assigned(CpuIoRegister) then
-    begin
+    if Assigned(CpuIoRegister) then begin
         CpuIoRegister.showRegisterData;
     end;
 end;
@@ -323,12 +310,10 @@ begin
     FileOpenDialog.Title := 'Lade Binär-Datei ins RAM';
     FileOpenDialog.Filter := 'Binär Dateien (*.bin)|*.bin;*.BIN|Alle Dateien (*.*)|*.*|';
     FileOpenDialog.InitialDir := GetUserDir;
-    if (FileOpenDialog.Execute) then
-    begin
+    if (FileOpenDialog.Execute) then begin
         SystemMemory.LoadRamFile(FileOpenDialog.FileName);
         bootRomEnabled := False;
-        if Assigned(MemoryEditor) then
-        begin
+        if Assigned(MemoryEditor) then begin
             MemoryEditor.showMemoryData;
         end;
     end;
@@ -337,17 +322,14 @@ end;
 // --------------------------------------------------------------------------------
 procedure TMainWindow.actionMemoryEditorExecute(Sender: TObject);
 begin
-    if not Assigned(MemoryEditor) then
-    begin
+    if not Assigned(MemoryEditor) then begin
         Application.CreateForm(TMemoryEditor, MemoryEditor);
     end;
 
-    if ((MemoryEditor.IsVisible) and (MemoryEditor.WindowState <> wsMinimized)) then
-    begin
+    if ((MemoryEditor.IsVisible) and (MemoryEditor.WindowState <> wsMinimized)) then begin
         MemoryEditor.Close;
     end
-    else
-    begin
+    else begin
         MemoryEditor.Show;
     end;
 end;
@@ -369,20 +351,16 @@ begin
     SystemTerminal.terminalReset;
     SystemMemory.EnableBootRom(bootRomEnabled);
     SystemHdc.doReset;
-    if (not cpuRun.Enabled) then
-    begin
+    if (not cpuRun.Enabled) then begin
         actionHddDrive.Enabled := True;
     end;
-    if Assigned(MemoryEditor) then
-    begin
+    if Assigned(MemoryEditor) then begin
         MemoryEditor.showMemoryData;
     end;
-    if Assigned(CpuRegister) then
-    begin
+    if Assigned(CpuRegister) then begin
         CpuRegister.showRegisterData;
     end;
-    if Assigned(CpuIoRegister) then
-    begin
+    if Assigned(CpuIoRegister) then begin
         CpuIoRegister.showRegisterData;
     end;
 end;
@@ -390,8 +368,7 @@ end;
 // --------------------------------------------------------------------------------
 procedure TMainWindow.actionRunExecute(Sender: TObject);
 begin
-    if (cpuRun.Enabled = True) then
-    begin
+    if (cpuRun.Enabled = True) then begin
         cpuRun.Enabled := False;
         cpuRun.OnTimer := nil;
     end;
@@ -407,22 +384,18 @@ end;
 // --------------------------------------------------------------------------------
 procedure TMainWindow.actionSingleStepExecute(Sender: TObject);
 begin
-    if (cpuRun.Enabled = True) then
-    begin
+    if (cpuRun.Enabled = True) then begin
         cpuRun.Enabled := False;
         cpuRun.OnTimer := nil;
     end;
     Z180Cpu.exec(1);
-    if Assigned(MemoryEditor) then
-    begin
+    if Assigned(MemoryEditor) then begin
         MemoryEditor.showMemoryData;
     end;
-    if Assigned(CpuRegister) then
-    begin
+    if Assigned(CpuRegister) then begin
         CpuRegister.showRegisterData;
     end;
-    if Assigned(CpuIoRegister) then
-    begin
+    if Assigned(CpuIoRegister) then begin
         CpuIoRegister.showRegisterData;
     end;
     actionMemorySettings.Enabled := True;
@@ -433,8 +406,7 @@ end;
 // --------------------------------------------------------------------------------
 procedure TMainWindow.actionSlowRunExecute(Sender: TObject);
 begin
-    if (cpuRun.Enabled = True) then
-    begin
+    if (cpuRun.Enabled = True) then begin
         cpuRun.Enabled := False;
         cpuRun.OnTimer := nil;
     end;
@@ -449,21 +421,17 @@ end;
 // --------------------------------------------------------------------------------
 procedure TMainWindow.actionStopExecute(Sender: TObject);
 begin
-    if (cpuRun.Enabled = True) then
-    begin
+    if (cpuRun.Enabled = True) then begin
         cpuRun.Enabled := False;
         cpuRun.OnTimer := nil;
     end;
-    if Assigned(MemoryEditor) then
-    begin
+    if Assigned(MemoryEditor) then begin
         MemoryEditor.showMemoryData;
     end;
-    if Assigned(CpuRegister) then
-    begin
+    if Assigned(CpuRegister) then begin
         CpuRegister.showRegisterData;
     end;
-    if Assigned(CpuIoRegister) then
-    begin
+    if Assigned(CpuIoRegister) then begin
         CpuIoRegister.showRegisterData;
     end;
     Z180Cpu.clrSlpHalt;
@@ -526,17 +494,14 @@ end;
 // --------------------------------------------------------------------------------
 procedure TMainWindow.actionCpuCoreRegisterExecute(Sender: TObject);
 begin
-    if not Assigned(CpuRegister) then
-    begin
+    if not Assigned(CpuRegister) then begin
         Application.CreateForm(TCpuRegister, CpuRegister);
     end;
 
-    if ((CpuRegister.IsVisible) and (CpuRegister.WindowState <> wsMinimized)) then
-    begin
+    if ((CpuRegister.IsVisible) and (CpuRegister.WindowState <> wsMinimized)) then begin
         CpuRegister.Close;
     end
-    else
-    begin
+    else begin
         CpuRegister.Show;
     end;
 end;
@@ -544,17 +509,14 @@ end;
 // --------------------------------------------------------------------------------
 procedure TMainWindow.actionCpuIoRegisterExecute(Sender: TObject);
 begin
-    if not Assigned(CpuIoRegister) then
-    begin
+    if not Assigned(CpuIoRegister) then begin
         Application.CreateForm(TCpuIoRegister, CpuIoRegister);
     end;
 
-    if ((CpuIoRegister.IsVisible) and (CpuIoRegister.WindowState <> wsMinimized)) then
-    begin
+    if ((CpuIoRegister.IsVisible) and (CpuIoRegister.WindowState <> wsMinimized)) then begin
         CpuIoRegister.Close;
     end
-    else
-    begin
+    else begin
         CpuIoRegister.Show;
     end;
 end;
@@ -571,17 +533,14 @@ end;
 // --------------------------------------------------------------------------------
 procedure TMainWindow.actionHardwareInfoExecute(Sender: TObject);
 begin
-    if not Assigned(HardwareInfo) then
-    begin
+    if not Assigned(HardwareInfo) then begin
         Application.CreateForm(THardwareInfo, HardwareInfo);
     end;
 
-    if ((HardwareInfo.IsVisible) and (HardwareInfo.WindowState <> wsMinimized)) then
-    begin
+    if ((HardwareInfo.IsVisible) and (HardwareInfo.WindowState <> wsMinimized)) then begin
         HardwareInfo.Close;
     end
-    else
-    begin
+    else begin
         HardwareInfo.Show;
     end;
 end;

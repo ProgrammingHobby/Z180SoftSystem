@@ -2,14 +2,14 @@ object MainWindow: TMainWindow
   Left = 52
   Height = 503
   Top = 250
-  Width = 1141
+  Width = 778
   HorzScrollBar.Page = 463
   HorzScrollBar.Range = 463
   VertScrollBar.Page = 108
   VertScrollBar.Range = 108
   Caption = 'Z180SoftSystem   (c) Uwe Merker 2020'
   ClientHeight = 503
-  ClientWidth = 1141
+  ClientWidth = 778
   KeyPreview = True
   Menu = menuMainWindow
   OnClose = FormClose
@@ -19,9 +19,9 @@ object MainWindow: TMainWindow
   LCLVersion = '2.0.12.0'
   object panelSystemTerminal: TPanel
     Left = 0
-    Height = 451
-    Top = 28
-    Width = 1141
+    Height = 448
+    Top = 31
+    Width = 778
     Align = alClient
     BevelOuter = bvNone
     Font.CharSet = ANSI_CHARSET
@@ -38,21 +38,21 @@ object MainWindow: TMainWindow
     Left = 0
     Height = 24
     Top = 479
-    Width = 1141
+    Width = 778
     Align = alBottom
     BevelOuter = bvNone
     ClientHeight = 24
-    ClientWidth = 1141
+    ClientWidth = 778
     Constraints.MaxHeight = 24
     Constraints.MinHeight = 24
     ParentColor = False
     ParentShowHint = False
     TabOrder = 1
     object panelFdd0: TPanel
-      Left = 1021
+      Left = 682
       Height = 24
       Top = 0
-      Width = 40
+      Width = 32
       Align = alRight
       BevelOuter = bvNone
       Enabled = False
@@ -63,11 +63,12 @@ object MainWindow: TMainWindow
       OnPaint = panelFdd0Paint
     end
     object panelFdd1: TPanel
-      Left = 1061
+      Left = 714
       Height = 24
       Top = 0
-      Width = 40
+      Width = 32
       Align = alRight
+      Anchors = [akTop, akBottom]
       BevelOuter = bvNone
       Enabled = False
       ParentColor = False
@@ -77,11 +78,13 @@ object MainWindow: TMainWindow
       OnPaint = panelFdd1Paint
     end
     object panelHdd: TPanel
-      Left = 1101
+      AnchorSideRight.Side = asrBottom
+      Left = 746
       Height = 24
       Top = 0
-      Width = 40
+      Width = 32
       Align = alRight
+      Anchors = [akTop, akBottom]
       BevelOuter = bvNone
       Enabled = False
       ParentShowHint = False
@@ -92,9 +95,9 @@ object MainWindow: TMainWindow
   end
   object panelButtons: TPanel
     Left = 0
-    Height = 28
+    Height = 31
     Top = 0
-    Width = 1141
+    Width = 778
     Align = alTop
     AutoSize = True
     BevelOuter = bvNone
@@ -104,27 +107,27 @@ object MainWindow: TMainWindow
     ChildSizing.EnlargeVertical = crsHomogenousChildResize
     ChildSizing.Layout = cclLeftToRightThenTopToBottom
     ChildSizing.ControlsPerLine = 6
-    ClientHeight = 28
-    ClientWidth = 1141
+    ClientHeight = 31
+    ClientWidth = 778
     TabOrder = 2
     object panelCpuDataView: TPanel
       Left = 2
-      Height = 28
+      Height = 31
       Top = 0
-      Width = 229
+      Width = 138
       BevelOuter = bvNone
       ChildSizing.HorizontalSpacing = 4
       ChildSizing.EnlargeHorizontal = crsHomogenousSpaceResize
       ChildSizing.EnlargeVertical = crsHomogenousSpaceResize
       ChildSizing.Layout = cclLeftToRightThenTopToBottom
       ChildSizing.ControlsPerLine = 3
-      ClientHeight = 28
-      ClientWidth = 229
+      ClientHeight = 31
+      ClientWidth = 138
       TabOrder = 0
       object buttonMemoryEditor: TSpeedButton
-        Left = 39
+        Left = 16
         Height = 28
-        Top = 0
+        Top = 2
         Width = 28
         Action = actionMemoryEditor
         AutoSize = True
@@ -135,9 +138,9 @@ object MainWindow: TMainWindow
         ParentShowHint = False
       end
       object buttonCpuCoreRegister: TSpeedButton
-        Left = 106
+        Left = 60
         Height = 28
-        Top = 0
+        Top = 2
         Width = 28
         Action = actionCpuCoreRegister
         AutoSize = True
@@ -148,9 +151,9 @@ object MainWindow: TMainWindow
         ParentShowHint = False
       end
       object buttonCpuIoRegister: TSpeedButton
-        Left = 173
+        Left = 104
         Height = 28
-        Top = 0
+        Top = 2
         Width = 28
         Action = actionCpuIoRegister
         BorderSpacing.Around = -2
@@ -161,23 +164,23 @@ object MainWindow: TMainWindow
       end
     end
     object panelSystemData: TPanel
-      Left = 239
-      Height = 28
+      Left = 148
+      Height = 31
       Top = 0
-      Width = 229
+      Width = 138
       BevelOuter = bvNone
       ChildSizing.HorizontalSpacing = 4
       ChildSizing.EnlargeHorizontal = crsHomogenousSpaceResize
       ChildSizing.EnlargeVertical = crsHomogenousSpaceResize
       ChildSizing.Layout = cclLeftToRightThenTopToBottom
       ChildSizing.ControlsPerLine = 3
-      ClientHeight = 28
-      ClientWidth = 229
+      ClientHeight = 31
+      ClientWidth = 138
       TabOrder = 1
       object buttonMemorySettings: TSpeedButton
-        Left = 39
+        Left = 16
         Height = 28
-        Top = 0
+        Top = 2
         Width = 28
         Action = actionMemorySettings
         AutoSize = True
@@ -187,9 +190,9 @@ object MainWindow: TMainWindow
         ParentShowHint = False
       end
       object buttonFloppyImages: TSpeedButton
-        Left = 106
+        Left = 60
         Height = 28
-        Top = 0
+        Top = 2
         Width = 28
         Action = actionFloppyDrive
         AutoSize = True
@@ -199,9 +202,9 @@ object MainWindow: TMainWindow
         ParentShowHint = False
       end
       object buttonHddImage: TSpeedButton
-        Left = 173
+        Left = 104
         Height = 28
-        Top = 0
+        Top = 2
         Width = 28
         Action = actionHddDrive
         AutoSize = True
@@ -212,22 +215,22 @@ object MainWindow: TMainWindow
       end
     end
     object panelCpuControl: TPanel
-      Left = 476
-      Height = 28
+      Left = 294
+      Height = 31
       Top = 0
-      Width = 493
+      Width = 402
       BevelOuter = bvNone
       ChildSizing.HorizontalSpacing = 4
       ChildSizing.EnlargeHorizontal = crsHomogenousSpaceResize
       ChildSizing.EnlargeVertical = crsHomogenousSpaceResize
       ChildSizing.Layout = cclLeftToRightThenTopToBottom
       ChildSizing.ControlsPerLine = 5
-      ClientHeight = 28
-      ClientWidth = 493
+      ClientHeight = 31
+      ClientWidth = 402
       TabOrder = 2
       object buttonStop: TSpeedButton
-        Left = 27
-        Height = 28
+        Left = 12
+        Height = 31
         Top = 0
         Width = 28
         Action = actionStop
@@ -238,8 +241,8 @@ object MainWindow: TMainWindow
         ParentShowHint = False
       end
       object buttonReset: TSpeedButton
-        Left = 82
-        Height = 28
+        Left = 52
+        Height = 31
         Hint = 'Prozessor Reset.'
         Top = 0
         Width = 28
@@ -251,8 +254,8 @@ object MainWindow: TMainWindow
         ParentShowHint = False
       end
       object buttonSingleStep: TSpeedButton
-        Left = 137
-        Height = 28
+        Left = 92
+        Height = 31
         Top = 0
         Width = 28
         Action = actionSingleStep
@@ -263,8 +266,8 @@ object MainWindow: TMainWindow
         ParentShowHint = False
       end
       object panelSlowRun: TPanel
-        Left = 192
-        Height = 28
+        Left = 132
+        Height = 31
         Top = 0
         Width = 128
         BevelOuter = bvNone
@@ -272,12 +275,12 @@ object MainWindow: TMainWindow
         ChildSizing.EnlargeVertical = crsHomogenousSpaceResize
         ChildSizing.Layout = cclLeftToRightThenTopToBottom
         ChildSizing.ControlsPerLine = 2
-        ClientHeight = 28
+        ClientHeight = 31
         ClientWidth = 128
         TabOrder = 0
         object buttonSlowRun: TSpeedButton
           Left = 0
-          Height = 28
+          Height = 31
           Top = 0
           Width = 28
           Action = actionSlowRun
@@ -288,13 +291,14 @@ object MainWindow: TMainWindow
         end
         object comboboxSlowRun: TComboBox
           Left = 28
-          Height = 22
-          Top = 3
+          Height = 31
+          Top = 0
           Width = 100
           AutoSelect = False
           AutoSize = False
           BorderSpacing.CellAlignVertical = ccaCenter
-          ItemHeight = 14
+          DoubleBuffered = False
+          ItemHeight = 0
           ItemIndex = 0
           Items.Strings = (
             '1 Op/s'
@@ -303,14 +307,15 @@ object MainWindow: TMainWindow
             '10 Op/s'
           )
           OnChange = comboboxSlowRunChange
+          ParentDoubleBuffered = False
           Style = csDropDownList
           TabOrder = 0
           Text = '1 Op/s'
         end
       end
       object panelRun: TPanel
-        Left = 347
-        Height = 28
+        Left = 272
+        Height = 31
         Top = 0
         Width = 128
         BevelOuter = bvNone
@@ -318,12 +323,12 @@ object MainWindow: TMainWindow
         ChildSizing.EnlargeVertical = crsHomogenousSpaceResize
         ChildSizing.Layout = cclLeftToRightThenTopToBottom
         ChildSizing.ControlsPerLine = 2
-        ClientHeight = 28
+        ClientHeight = 31
         ClientWidth = 128
         TabOrder = 1
         object buttonRun: TSpeedButton
           Left = 0
-          Height = 28
+          Height = 31
           Top = 0
           Width = 28
           Action = actionRun
@@ -335,13 +340,13 @@ object MainWindow: TMainWindow
         end
         object comboboxRun: TComboBox
           Left = 28
-          Height = 22
-          Top = 3
+          Height = 31
+          Top = 0
           Width = 100
           AutoSelect = False
           AutoSize = False
           BorderSpacing.CellAlignVertical = ccaCenter
-          ItemHeight = 14
+          ItemHeight = 0
           ItemIndex = 0
           Items.Strings = (
             '4 MHz'
@@ -357,22 +362,22 @@ object MainWindow: TMainWindow
       end
     end
     object panelMiscellaneous: TPanel
-      Left = 977
-      Height = 28
+      Left = 704
+      Height = 31
       Top = 0
-      Width = 162
+      Width = 72
       BevelOuter = bvNone
       ChildSizing.EnlargeHorizontal = crsHomogenousSpaceResize
       ChildSizing.EnlargeVertical = crsHomogenousSpaceResize
       ChildSizing.Layout = cclLeftToRightThenTopToBottom
       ChildSizing.ControlsPerLine = 5
-      ClientHeight = 28
-      ClientWidth = 162
+      ClientHeight = 31
+      ClientWidth = 72
       TabOrder = 3
       object buttonTerminal: TSpeedButton
-        Left = 67
+        Left = 22
         Height = 28
-        Top = 0
+        Top = 2
         Width = 28
         Action = actionTerminalSettings
         Flat = True

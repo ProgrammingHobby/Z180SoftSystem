@@ -18,7 +18,7 @@ unit System_Terminal;
 interface
 
 uses
-    Classes, SysUtils, Controls, ExtCtrls, Graphics;
+    Classes, SysUtils, Controls, ExtCtrls, Graphics, Types;
 
 type
 
@@ -34,17 +34,16 @@ type
     const
         terminalColumns = 80;
         terminalRows = 30;
+        screenBorder = 2;
         {$ifdef Windows}
         charHeight = 20;
-        charWidth = 9;
-        startLeft = -7;  // -10 + 3
-        startTop = -17;   // -20 + 3
+        charWidth = 12;
         {$else}
-        charHeight = 19; //19
+        charHeight = 19;
         charWidth = 10;
-        startLeft = -7;  // -10 + 3
-        startTop = -16;   // -19 + 3
         {$endif}
+        startLeft = -charWidth + screenBorder;
+        startTop = -charHeight + screenBorder;
         maxKeyboardBuffer = 16;
         maxCharacterBuffer = 1024;
 
@@ -138,6 +137,7 @@ type
         function readCharacter: byte;
         function terminalReadable: boolean;
         procedure getKeyBoardInput(key: word; shift: TShiftState);
+        function getDisplaySize: TSize;
 
     end;
 
@@ -168,6 +168,7 @@ begin
     for row := 1 to terminalRows do begin
         posY := startTop + (charHeight * row);
         for column := 1 to terminalColumns do begin
+            posX := startLeft + (charWidth * column);
             viewStyle := charStyle[row, column];
             charCol := charColor[row, column];
             backCol := backColor[row, column];
@@ -194,11 +195,6 @@ begin
                 charCol := backCol;
                 backCol := tmpCol;
             end;
-            {$ifdef Windows}
-            posX := startLeft + ((charWidth + 2) * column);
-            {$else}
-            posX := startLeft + (charWidth * column);
-            {$endif}
             imagePage.Canvas.Brush.Color := backCol;
             imagePage.Canvas.Font.Color := charCol;
             imagePage.Canvas.Font.Style := viewStyle;
@@ -214,15 +210,14 @@ var
     pageWidth, pageHeight: integer;
 begin
     {$ifdef Windows}
-    terminalPanel.Font.Name := 'Consolas';
-    terminalPanel.Font.Size := 13;
-    pageWidth := ((charWidth + 2) * terminalColumns) + charWidth;
+    terminalPanel.Font.Name := 'Courier';
+    terminalPanel.Font.Size := 15;
     {$else}
     terminalPanel.Font.Name := 'DejaVu Sans Mono';
     terminalPanel.Font.Size := 12;
-    pageWidth := (charWidth * terminalColumns) + charWidth;
     {$endif}
-    pageHeight := (charHeight * terminalRows) + charHeight;
+    pageWidth := (charWidth * terminalColumns) + (2 * screenBorder);
+    pageHeight := (charHeight * terminalRows) + (2 * screenBorder);
 
     imagePage := TImage.Create(terminalPanel);
     with (imagePage) do begin
@@ -1367,6 +1362,16 @@ begin
             writeCharacter(character);
         end;
     end;
+end;
+
+// --------------------------------------------------------------------------------
+function TSystemTerminal.getDisplaySize: TSize;
+var
+    size: TSize;
+begin
+    size.Width := imagePage.Width;
+    size.Height := imagePage.Height;
+    Result := size;
 end;
 
 // --------------------------------------------------------------------------------
