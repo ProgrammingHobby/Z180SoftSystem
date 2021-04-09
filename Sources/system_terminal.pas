@@ -35,20 +35,12 @@ type
         terminalColumns = 80;
         terminalRows = 30;
         screenBorder = 2;
-        {$ifdef Windows}
-        charHeight = 20;
-        charWidth = 12;
-        {$else}
-        charHeight = 19;
-        charWidth = 10;
-        {$endif}
-        startLeft = -charWidth + screenBorder;
-        startTop = -charHeight + screenBorder;
         maxKeyboardBuffer = 16;
         maxCharacterBuffer = 1024;
 
     var
         imagePage: TImage;
+        terminalPanel: TPanel;
         timerTerminalPageRefresh: TTimer;
         timerFlash: TTimer;
         charData: array[1..terminalRows, 1..terminalColumns] of char;
@@ -67,6 +59,9 @@ type
             charCol: TColor;
             backCol: TColor;
         end;
+        charWidth, charHeight, charSize: integer;
+        csiPar: array[1..8] of word;
+        parCount: word;
         keyboardBuffer: array[1..maxKeyboardBuffer] of byte;
         keyboardReadIndex, keyboardWriteIndex: integer;
         characterBuffer: array[1..maxCharacterBuffer] of byte;
@@ -78,9 +73,6 @@ type
         fontColor, backgroundColor: TColor;
         fontStyle: TFontStyles;
         termMode: TTermMode;
-        dcaRow: word;
-        csiPar: array[1..8] of word;
-        parCount: word;
         defaultCharColor, defaultBackColor: TColor;
         posVisible: boolean;
         monochromTerminal: boolean;
@@ -92,7 +84,7 @@ type
     public    // Attribute
 
     public  // Konstruktor/Destruktor
-        constructor Create(terminalPanel: TPanel; CreateSuspended: boolean); overload;
+        constructor Create(panel: TPanel; CreateSuspended: boolean); overload;
         destructor Destroy; override;
 
     private   // Methoden
@@ -133,6 +125,7 @@ type
         procedure setLocalEcho(enable: boolean);
         procedure setLogging(enable: boolean);
         procedure setColorType(colorType: integer);
+        procedure SetCharSize(size: integer);
         procedure writeCharacter(character: byte);
         function readCharacter: byte;
         function terminalReadable: boolean;
@@ -165,10 +158,10 @@ var
     charCol, backCol, tmpCol: TColor;
 begin
     timerTerminalPageRefresh.Enabled := False;
+    posY := screenBorder;
     for row := 1 to terminalRows do begin
-        posY := startTop + (charHeight * row);
+        posX := screenBorder;
         for column := 1 to terminalColumns do begin
-            posX := startLeft + (charWidth * column);
             viewStyle := charStyle[row, column];
             charCol := charColor[row, column];
             backCol := backColor[row, column];
@@ -199,34 +192,27 @@ begin
             imagePage.Canvas.Font.Color := charCol;
             imagePage.Canvas.Font.Style := viewStyle;
             imagePage.Canvas.TextOut(posX, posY, viewChar);
+            posX := (posX + charWidth);
         end;
+        posY := (posY + charHeight);
     end;
     timerTerminalPageRefresh.Enabled := True;
 end;
 
 // --------------------------------------------------------------------------------
-constructor TSystemTerminal.Create(terminalPanel: TPanel; CreateSuspended: boolean);
-var
-    pageWidth, pageHeight: integer;
+constructor TSystemTerminal.Create(panel: TPanel; CreateSuspended: boolean);
 begin
+    terminalPanel := panel;
     {$ifdef Windows}
     terminalPanel.Font.Name := 'Courier';
-    terminalPanel.Font.Size := 15;
     {$else}
     terminalPanel.Font.Name := 'DejaVu Sans Mono';
-    terminalPanel.Font.Size := 12;
     {$endif}
-    pageWidth := (charWidth * terminalColumns) + (2 * screenBorder);
-    pageHeight := (charHeight * terminalRows) + (2 * screenBorder);
-
-    imagePage := TImage.Create(terminalPanel);
-    with (imagePage) do begin
-        SetBounds(0, 0, pageWidth, pageHeight);
-        Canvas.Font := terminalPanel.Font;
-        Parent := terminalPanel;
-        Enabled := True;
-        Visible := True;
-    end;
+    setCrLF(SystemSettings.ReadBoolean('Terminal', 'UseCRLF', False));
+    setLocalEcho(SystemSettings.ReadBoolean('Terminal', 'LocalEcho', False));
+    setLogging(SystemSettings.ReadBoolean('Terminal', 'Loggin', False));
+    SetCharSize(SystemSettings.ReadInteger('Terminal', 'CharacterSize', 10));
+    setColorType(SystemSettings.ReadInteger('Terminal', 'ColorType', 0));
 
     timerFlash := TTimer.Create(terminalPanel);
     timerFlash.Interval := 500;
@@ -234,14 +220,10 @@ begin
     timerFlash.Enabled := False;
 
     timerTerminalPageRefresh := TTimer.Create(terminalPanel);
-    timerTerminalPageRefresh.Interval := 40;
+    timerTerminalPageRefresh.Interval := 50;
     timerTerminalPageRefresh.OnTimer := @timerTerminalPageRefreshTimer;
     timerTerminalPageRefresh.Enabled := False;
 
-    setCrLF(SystemSettings.ReadBoolean('Terminal', 'UseCRLF', False));
-    setLocalEcho(SystemSettings.ReadBoolean('Terminal', 'LocalEcho', False));
-    setLogging(SystemSettings.ReadBoolean('Terminal', 'Loggin', False));
-    setColorType(SystemSettings.ReadInteger('Terminal', 'ColorType', 0));
     terminalReset;
 
     FreeOnTerminate := False;
@@ -322,6 +304,7 @@ end;
 procedure TSystemTerminal.Execute;
 var
     character: byte;
+    dcaRow: word;
 
     // ----------------------------------------
     procedure normalTerminalMode;
@@ -466,7 +449,7 @@ var
         case (character) of
             $30..$39: begin
                 if (parCount < 9) then begin // maximal 8 numerische Parameter möglich
-                    csiPar[parCount] := (csiPar[parCount] * 10) + (character - $30);
+                    csiPar[parCount] := ((csiPar[parCount] * 10) + (character - $30));
                 end;
             end;
             $3B: begin // ESC [ Pn1 ; (weiteren Parameter abfragen)
@@ -476,8 +459,8 @@ var
             end;
             $41: begin // ESC [ Pn A (Cursor up Pn lines)
                 if (parCount = 1) then begin
-                    if terminalCursor.row > csiPar[1] then begin
-                        terminalCursor.row := terminalCursor.row - csiPar[1];
+                    if (terminalCursor.row >= csiPar[1]) then begin
+                        terminalCursor.row := (terminalCursor.row - csiPar[1]);
                     end
                     else begin
                         terminalCursor.row := 1;
@@ -488,8 +471,8 @@ var
             end;
             $42: begin // ESC [ Pn B (Cursor down Pn lines)
                 if (parCount = 1) then begin
-                    if (terminalCursor.row + csiPar[1]) < terminalRows then begin
-                        terminalCursor.row := terminalCursor.row + csiPar[1];
+                    if ((terminalCursor.row + csiPar[1]) <= terminalRows) then begin
+                        terminalCursor.row := (terminalCursor.row + csiPar[1]);
                     end
                     else begin
                         terminalCursor.row := terminalRows;
@@ -500,8 +483,8 @@ var
             end;
             $43: begin // ESC [ Pn C (Cursor right Pn columns)
                 if (parCount = 1) then begin
-                    if (terminalCursor.column + csiPar[1]) < terminalColumns then begin
-                        terminalCursor.column := terminalCursor.column + csiPar[1];
+                    if ((terminalCursor.column + csiPar[1]) <= terminalColumns) then begin
+                        terminalCursor.column := (terminalCursor.column + csiPar[1]);
                     end
                     else begin
                         terminalCursor.column := terminalColumns;
@@ -523,8 +506,8 @@ var
             end;
             $44: begin // ESC [ Pn D (Cursor left Pn columns)
                 if (parCount = 1) then begin
-                    if terminalCursor.column > csiPar[1] then begin
-                        terminalCursor.column := terminalCursor.column - csiPar[1];
+                    if (terminalCursor.column >= csiPar[1]) then begin
+                        terminalCursor.column := (terminalCursor.column - csiPar[1]);
                     end
                     else begin
                         terminalCursor.column := 1;
@@ -564,7 +547,7 @@ var
             end;
             $4C: begin // ESC [ Pn L (Insert Pn lines from cursor position)
                 if (parCount = 1) then begin
-                    for csiCounter := 0 to csiPar[1] - 1 do begin
+                    for csiCounter := 1 to csiPar[1] do begin
                         insertLineAndScroll;
                     end;
                 end;
@@ -573,7 +556,7 @@ var
             end;
             $4D: begin // ESC [ Pn M (Delete Pn lines from cursor position)
                 if (parCount = 1) then begin
-                    for csiCounter := 0 to csiPar[1] - 1 do begin
+                    for csiCounter := 1 to csiPar[1] do begin
                         deleteLineAndScroll;
                     end;
                 end;
@@ -789,7 +772,7 @@ begin
                 end;
                 DCA_COLUMN: begin
                     if (character >= $20) then begin
-                        setCursorPosition(dcaRow, character - $1F);
+                        setCursorPosition(dcaRow, (character - $1F));
                     end;
                     termMode := STANDARD;
                 end;
@@ -895,20 +878,10 @@ end;
 
 // --------------------------------------------------------------------------------
 procedure TSystemTerminal.clearScreen;
-var
-    row, column: integer;
 begin
-    for row := 1 to terminalRows do begin
-        for column := 1 to terminalColumns do begin
-            charData[row, column] := ' ';
-            charColor[row, column] := defaultCharColor;
-            backColor[row, column] := defaultBackColor;
-            charStyle[row, column] := [];
-        end;
-    end;
+    eraseScreen;
     terminalCursor.column := 1;
     terminalCursor.row := 1;
-    dcaRow := 0;
 end;
 
 // --------------------------------------------------------------------------------
@@ -1210,6 +1183,27 @@ begin
     end;
     fontColor := defaultCharColor;
     backgroundColor := defaultBackColor;
+end;
+
+// --------------------------------------------------------------------------------
+procedure TSystemTerminal.SetCharSize(size: integer);
+var
+    pageWidth, pageHeight: integer;
+begin
+    charSize := size;
+    terminalPanel.Font.Size := charSize;
+    terminalPanel.Canvas.GetTextSize(' ', charWidth, charHeight);
+    pageWidth := (charWidth * terminalColumns) + (2 * screenBorder);
+    pageHeight := (charHeight * terminalRows) + (2 * screenBorder);
+
+    imagePage := TImage.Create(terminalPanel);
+    with (imagePage) do begin
+        SetBounds(0, 0, pageWidth, pageHeight);
+        Canvas.Font := terminalPanel.Font;
+        Parent := terminalPanel;
+        Enabled := True;
+        Visible := True;
+    end;
 end;
 
 // --------------------------------------------------------------------------------

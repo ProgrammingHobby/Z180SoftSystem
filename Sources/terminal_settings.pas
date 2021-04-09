@@ -5,7 +5,7 @@ unit Terminal_Settings;
 interface
 
 uses
-    Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls;
+    Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, ComCtrls, ExtCtrls, Spin, SpinEx;
 
 type
 
@@ -16,17 +16,26 @@ type
         checkboxEnableLocalEcho: TCheckBox;
         checkboxEnableCrLf: TCheckBox;
         comboboxColorType: TComboBox;
+        labelUpDownCharacterSize: TLabel;
         groupboxColorType: TGroupBox;
+        groupboxCharacterSize: TGroupBox;
         groupboxLogging: TGroupBox;
         groupboxLocalEcho: TGroupBox;
         groupboxCrLf: TGroupBox;
+        labelCharacterSize: TLabel;
+        labelTerminalType: TLabel;
+        panelLabelUpDown: TPanel;
+        panelCharacterSize: TPanel;
+        updownCharacterSize: TUpDown;
         procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
         procedure FormShow(Sender: TObject);
+        procedure updownCharacterSizeClick(Sender: TObject; Button: TUDBtnType);
     private
         oldEnableCrLf: boolean;
         oldEnableLocalEcho: boolean;
         oldEnableLogging: boolean;
         oldColorType: integer;
+        oldCharSize: integer;
 
     public
 
@@ -63,6 +72,10 @@ begin
         SystemSettings.WriteInteger('Terminal', 'ColorType', comboboxColorType.ItemIndex);
         SystemTerminal.setColorType(comboboxColorType.ItemIndex);
     end;
+    if (updownCharacterSize.Position <> oldCharSize) then begin
+        SystemSettings.WriteInteger('Terminal', 'CharacterSize', updownCharacterSize.Position);
+        SystemTerminal.SetCharSize(updownCharacterSize.Position);
+    end;
     CloseAction := caFree;
 end;
 
@@ -76,6 +89,7 @@ begin
     Constraints.MaxWidth := Width;
     Constraints.MinHeight := Height;
     Constraints.MaxHeight := Height;
+    panelLabelUpDown.Width := ((panelLabelUpDown.Height div 10) * 12);
     oldEnableCrLf := SystemSettings.ReadBoolean('Terminal', 'UseCRLF', False);
     checkboxEnableCrLf.Checked := oldEnableCrLf;
     oldEnableLocalEcho := SystemSettings.ReadBoolean('Terminal', 'LocalEcho', False);
@@ -84,6 +98,15 @@ begin
     checkboxEnableLogging.Checked := oldEnableLogging;
     oldColorType := SystemSettings.ReadInteger('Terminal', 'ColorType', 0);
     comboboxColorType.ItemIndex := oldColorType;
+    oldCharSize := SystemSettings.ReadInteger('Terminal', 'CharacterSize', 10);
+    updownCharacterSize.Position := oldCharSize;
+    labelUpDownCharacterSize.Caption := IntToStr(oldCharSize);
+end;
+
+// --------------------------------------------------------------------------------
+procedure TTerminalSettings.updownCharacterSizeClick(Sender: TObject; Button: TUDBtnType);
+begin
+    labelUpDownCharacterSize.Caption := IntToStr(updownCharacterSize.Position);
 end;
 
 // --------------------------------------------------------------------------------

@@ -12,24 +12,24 @@ object TerminalSettings: TTerminalSettings
   ClientWidth = 803
   OnClose = FormClose
   OnShow = FormShow
-  LCLVersion = '2.0.10.0'
+  LCLVersion = '2.0.12.0'
   object groupboxCrLf: TGroupBox
     Left = 2
-    Height = 134
+    Height = 107
     Top = 4
     Width = 799
     BorderSpacing.Left = 2
     BorderSpacing.Top = 4
     BorderSpacing.Right = 2
     BorderSpacing.Bottom = 4
-    ClientHeight = 116
+    ClientHeight = 87
     ClientWidth = 797
     TabOrder = 0
     object checkboxEnableCrLf: TCheckBox
       Left = 8
-      Height = 124
+      Height = 80
       Top = 4
-      Width = 781
+      Width = 779
       Align = alClient
       BorderSpacing.Left = 8
       BorderSpacing.Top = 4
@@ -41,21 +41,21 @@ object TerminalSettings: TTerminalSettings
   end
   object groupboxLocalEcho: TGroupBox
     Left = 2
-    Height = 134
-    Top = 142
+    Height = 107
+    Top = 115
     Width = 799
     BorderSpacing.Left = 2
     BorderSpacing.Top = 4
     BorderSpacing.Right = 2
     BorderSpacing.Bottom = 2
-    ClientHeight = 116
+    ClientHeight = 87
     ClientWidth = 797
     TabOrder = 1
     object checkboxEnableLocalEcho: TCheckBox
       Left = 8
-      Height = 124
+      Height = 80
       Top = 4
-      Width = 781
+      Width = 779
       Align = alClient
       BorderSpacing.Left = 8
       BorderSpacing.Top = 4
@@ -67,21 +67,21 @@ object TerminalSettings: TTerminalSettings
   end
   object groupboxLogging: TGroupBox
     Left = 2
-    Height = 134
-    Top = 280
+    Height = 107
+    Top = 226
     Width = 799
     BorderSpacing.Left = 2
     BorderSpacing.Top = 4
     BorderSpacing.Right = 2
     BorderSpacing.Bottom = 2
-    ClientHeight = 116
+    ClientHeight = 87
     ClientWidth = 797
     TabOrder = 2
     object checkboxEnableLogging: TCheckBox
       Left = 8
-      Height = 124
+      Height = 80
       Top = 4
-      Width = 781
+      Width = 779
       Align = alClient
       BorderSpacing.Left = 8
       BorderSpacing.Top = 4
@@ -93,29 +93,42 @@ object TerminalSettings: TTerminalSettings
   end
   object groupboxColorType: TGroupBox
     Left = 2
-    Height = 141
-    Top = 418
+    Height = 107
+    Top = 335
     Width = 799
     BorderSpacing.Left = 2
-    BorderSpacing.Top = 4
     BorderSpacing.Right = 2
-    BorderSpacing.Bottom = 2
-    ChildSizing.LeftRightSpacing = 4
-    ChildSizing.TopBottomSpacing = 4
-    ChildSizing.EnlargeHorizontal = crsHomogenousChildResize
-    ChildSizing.EnlargeVertical = crsHomogenousChildResize
-    ChildSizing.Layout = cclLeftToRightThenTopToBottom
-    ChildSizing.ControlsPerLine = 1
-    ClientHeight = 123
+    ChildSizing.TopBottomSpacing = 2
+    ChildSizing.ControlsPerLine = 2
+    ClientHeight = 87
     ClientWidth = 797
     TabOrder = 3
+    object labelTerminalType: TLabel
+      Left = 8
+      Height = 84
+      Top = 2
+      Width = 25
+      Align = alLeft
+      BorderSpacing.Left = 8
+      BorderSpacing.Right = 2
+      Caption = 'Typ:'
+      Layout = tlCenter
+      ParentColor = False
+      ParentFont = False
+    end
     object comboboxColorType: TComboBox
-      Left = 4
-      Height = 131
-      Top = 4
-      Width = 789
-      AutoDropDown = True
-      ItemHeight = 0
+      Left = 37
+      Height = 22
+      Top = 2
+      Width = 756
+      Align = alClient
+      AutoSelect = False
+      AutoSize = False
+      BorderSpacing.Left = 4
+      BorderSpacing.Right = 2
+      BorderSpacing.CellAlignHorizontal = ccaCenter
+      BorderSpacing.CellAlignVertical = ccaCenter
+      ItemHeight = 14
       ItemIndex = 0
       Items.Strings = (
         'Farbe: schwarz auf weiss'
@@ -126,6 +139,82 @@ object TerminalSettings: TTerminalSettings
       Style = csDropDownList
       TabOrder = 0
       Text = 'Farbe: schwarz auf weiss'
+    end
+  end
+  object groupboxCharacterSize: TGroupBox
+    Left = 2
+    Height = 113
+    Top = 446
+    Width = 799
+    BorderSpacing.Left = 2
+    BorderSpacing.Top = 4
+    BorderSpacing.Right = 2
+    BorderSpacing.Bottom = 2
+    ChildSizing.TopBottomSpacing = 2
+    ClientHeight = 93
+    ClientWidth = 797
+    TabOrder = 4
+    object labelCharacterSize: TLabel
+      Left = 8
+      Height = 90
+      Top = 2
+      Width = 79
+      Align = alLeft
+      BorderSpacing.Left = 8
+      BorderSpacing.Right = 2
+      Caption = 'Zeichengröße:'
+      Layout = tlCenter
+      ParentColor = False
+    end
+    object panelCharacterSize: TPanel
+      Left = 91
+      Height = 90
+      Top = 2
+      Width = 170
+      Align = alLeft
+      BorderSpacing.Left = 4
+      BevelOuter = bvNone
+      ClientHeight = 90
+      ClientWidth = 170
+      TabOrder = 0
+      object panelLabelUpDown: TPanel
+        Left = 0
+        Height = 86
+        Top = 2
+        Width = 7
+        Align = alLeft
+        BorderSpacing.Top = 2
+        BorderSpacing.Bottom = 2
+        BevelOuter = bvNone
+        BorderStyle = bsSingle
+        ClientHeight = 86
+        ClientWidth = 7
+        TabOrder = 1
+        object labelUpDownCharacterSize: TLabel
+          Left = 0
+          Height = 82
+          Top = 0
+          Width = 0
+          Align = alClient
+          Alignment = taRightJustify
+          AutoSize = False
+          BorderSpacing.Right = 4
+          Layout = tlCenter
+          ParentColor = False
+        end
+      end
+      object updownCharacterSize: TUpDown
+        Left = 7
+        Height = 90
+        Top = 0
+        Width = 17
+        Align = alLeft
+        Max = 18
+        Min = 8
+        OnClick = updownCharacterSizeClick
+        Position = 8
+        TabOrder = 0
+      end
     end
   end
 end

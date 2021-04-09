@@ -106,6 +106,7 @@ type
         procedure comboboxSlowRunChange(Sender: TObject);
         procedure cpuRunTimer(Sender: TObject);
         procedure cpuSlowRunTimer(Sender: TObject);
+        procedure FormActivate(Sender: TObject);
         procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
         procedure FormKeyDown(Sender: TObject; var Key: word; Shift: TShiftState);
         procedure FormKeyUp(Sender: TObject; var Key: word; Shift: TShiftState);
@@ -210,11 +211,8 @@ end;
 
 // --------------------------------------------------------------------------------
 procedure TMainWindow.FormShow(Sender: TObject);
-var
-    size: TSize;
 begin
     SystemSettings.restoreFormState(TForm(self));
-    self.SetAutoSize(True);
     ScaleDPI(self, 96);
 
     SystemMemory := TSystemMemory.Create;
@@ -228,13 +226,10 @@ begin
 
     panelButtons.Constraints.MaxHeight := ((statusbarMainWindow.Height div 4) * 6);
     panelButtons.Constraints.MinHeight := panelButtons.Constraints.MaxHeight;
-
-    size := SystemTerminal.getDisplaySize;
-
-    Constraints.MinWidth := size.Width;
-    Constraints.MinHeight := size.Height + panelButtons.Height + statusbarMainWindow.Height + menuMainWindow.Height;
-    Constraints.MaxWidth := Constraints.MinWidth;
-    Constraints.MaxHeight := Constraints.MinHeight;
+    {$ifdef Windows}
+    comboboxRun.BorderSpacing.Top := 3;
+    comboboxSlowRun.BorderSpacing.Top := 3;
+    {$endif}
 
     comboboxRun.ItemIndex := SystemSettings.ReadInteger('Emulation', 'RunSpeed', 0);
     comboboxRunChange(nil);
@@ -242,6 +237,7 @@ begin
     comboboxSlowRunChange(nil);
     actionResetExecute(nil);
     panelSystemTerminal.SetFocus;
+    FormActivate(nil);
 
     {$ifndef Windows}
     isKeyAltGr := False;
@@ -284,9 +280,9 @@ end;
 // --------------------------------------------------------------------------------
 procedure TMainWindow.cpuRunTimer(Sender: TObject);
 begin
-    //cpuRun.Enabled := False;
+    cpuRun.Enabled := False;
     Z180Cpu.exec(runSpeedValue);
-    //cpuRun.Enabled := True;
+    cpuRun.Enabled := True;
 end;
 
 // --------------------------------------------------------------------------------
@@ -302,6 +298,18 @@ begin
     if Assigned(CpuIoRegister) then begin
         CpuIoRegister.showRegisterData;
     end;
+end;
+
+// --------------------------------------------------------------------------------
+procedure TMainWindow.FormActivate(Sender: TObject);
+var
+    size: TSize;
+begin
+    size := SystemTerminal.getDisplaySize;
+    Constraints.MinWidth := size.Width;
+    Constraints.MinHeight := size.Height + panelButtons.Height + statusbarMainWindow.Height + (Height - ClientHeight);
+    Constraints.MaxWidth := Constraints.MinWidth;
+    Constraints.MaxHeight := Constraints.MinHeight;
 end;
 
 // --------------------------------------------------------------------------------
@@ -373,7 +381,6 @@ begin
         cpuRun.OnTimer := nil;
     end;
     cpuRun.OnTimer := @cpuRunTimer;
-    //setRunSpeed;
     cpuRun.Interval := 2;
     cpuRun.Enabled := True;
     actionMemorySettings.Enabled := False;
@@ -411,7 +418,6 @@ begin
         cpuRun.OnTimer := nil;
     end;
     cpuRun.OnTimer := @cpuSlowRunTimer;
-    //setSlowRunSpeed;
     cpuRun.Enabled := True;
     actionMemorySettings.Enabled := False;
     actionHddDrive.Enabled := False;
@@ -447,12 +453,12 @@ var
 begin
     Application.CreateForm(TTerminalSettings, dialog);
     dialog.ShowModal;
+    self.Activate;
 end;
 
 // --------------------------------------------------------------------------------
 procedure TMainWindow.comboboxRunChange(Sender: TObject);
 begin
-
     case (comboboxRun.ItemIndex) of
         0: runSpeedValue := RUNSPEED_4MHZ;
         1: runSpeedValue := RUNSPEED_8MHZ;
@@ -461,6 +467,7 @@ begin
         else runSpeedValue := RUNSPEED_4MHZ;
     end;
     SystemSettings.WriteInteger('Emulation', 'RunSpeed', comboboxRun.ItemIndex);
+    panelSystemTerminal.SetFocus;
 end;
 
 // --------------------------------------------------------------------------------
@@ -474,6 +481,7 @@ begin
         else cpuRun.Interval := SLOWSPEED_5OPS;
     end;
     SystemSettings.WriteInteger('Emulation', 'SlowRunSpeed', comboboxSlowRun.ItemIndex);
+    panelSystemTerminal.SetFocus;
 end;
 
 // --------------------------------------------------------------------------------
