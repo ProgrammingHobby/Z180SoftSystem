@@ -117,6 +117,7 @@ type
     private
         bootRomEnabled: boolean;
         runSpeedValue: integer;
+        slowRunSpeedValue: integer;
         {$ifndef Windows}
         isKeyAltGr: boolean;
         {$endif}
@@ -236,8 +237,8 @@ begin
     comboboxSlowRun.ItemIndex := SystemSettings.ReadInteger('Emulation', 'SlowRunSpeed', 2);
     comboboxSlowRunChange(nil);
     actionResetExecute(nil);
+    self.Activate;
     panelSystemTerminal.SetFocus;
-    FormActivate(nil);
 
     {$ifndef Windows}
     isKeyAltGr := False;
@@ -371,6 +372,11 @@ begin
     if Assigned(CpuIoRegister) then begin
         CpuIoRegister.showRegisterData;
     end;
+    actionMemorySettings.Enabled := True;
+    actionFloppyDrive.Enabled := True;
+    actionLoadFileToRam.Enabled := True;
+    comboboxRun.Enabled := True;
+    comboboxSlowRun.Enabled := True;
 end;
 
 // --------------------------------------------------------------------------------
@@ -386,6 +392,8 @@ begin
     actionMemorySettings.Enabled := False;
     actionHddDrive.Enabled := False;
     actionLoadFileToRam.Enabled := False;
+    comboboxRun.Enabled := True;
+    comboboxSlowRun.Enabled := False;
 end;
 
 // --------------------------------------------------------------------------------
@@ -418,10 +426,13 @@ begin
         cpuRun.OnTimer := nil;
     end;
     cpuRun.OnTimer := @cpuSlowRunTimer;
+    cpuRun.Interval := slowRunSpeedValue;
     cpuRun.Enabled := True;
     actionMemorySettings.Enabled := False;
     actionHddDrive.Enabled := False;
     actionLoadFileToRam.Enabled := False;
+    comboboxRun.Enabled := False;
+    comboboxSlowRun.Enabled := True;
 end;
 
 // --------------------------------------------------------------------------------
@@ -444,6 +455,8 @@ begin
     actionMemorySettings.Enabled := True;
     actionFloppyDrive.Enabled := True;
     actionLoadFileToRam.Enabled := True;
+    comboboxRun.Enabled := True;
+    comboboxSlowRun.Enabled := True;
 end;
 
 // --------------------------------------------------------------------------------
@@ -474,13 +487,14 @@ end;
 procedure TMainWindow.comboboxSlowRunChange(Sender: TObject);
 begin
     case (comboboxSlowRun.ItemIndex) of
-        0: cpuRun.Interval := SLOWSPEED_1OPS;
-        1: cpuRun.Interval := SLOWSPEED_2OPS;
-        2: cpuRun.Interval := SLOWSPEED_5OPS;
-        3: cpuRun.Interval := SLOWSPEED_10OPS;
-        else cpuRun.Interval := SLOWSPEED_5OPS;
+        0: slowRunSpeedValue := SLOWSPEED_1OPS;
+        1: slowRunSpeedValue := SLOWSPEED_2OPS;
+        2: slowRunSpeedValue := SLOWSPEED_5OPS;
+        3: slowRunSpeedValue := SLOWSPEED_10OPS;
+        else slowRunSpeedValue := SLOWSPEED_5OPS;
     end;
     SystemSettings.WriteInteger('Emulation', 'SlowRunSpeed', comboboxSlowRun.ItemIndex);
+    cpuRun.Interval := slowRunSpeedValue;
     panelSystemTerminal.SetFocus;
 end;
 
