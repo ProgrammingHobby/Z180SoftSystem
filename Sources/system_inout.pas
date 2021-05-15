@@ -16,8 +16,6 @@ type
     TSystemInOut = class
 
     private   // Attribute
-        read0Data: byte;
-        newRead0Data: boolean;
         read1Data: byte;
         newRead1Data: boolean;
 
@@ -56,8 +54,6 @@ uses System_Terminal, System_Memory, System_Fdc, System_Hdc, System_Rtc;
 constructor TSystemInOut.Create;
 begin
     inherited Create;
-    read0Data := $00;
-    newRead0Data := False;
     read1Data := $00;
     newRead1Data := False;
 end;
