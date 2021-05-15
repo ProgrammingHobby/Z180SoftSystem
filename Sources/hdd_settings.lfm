@@ -1,8 +1,8 @@
 object HddSettings: THddSettings
   Left = 1520
-  Height = 151
+  Height = 158
   Top = 250
-  Width = 561
+  Width = 583
   AutoSize = True
   Caption = 'Festplatten Laufwerk'
   ChildSizing.VerticalSpacing = 8
@@ -10,15 +10,15 @@ object HddSettings: THddSettings
   ChildSizing.EnlargeVertical = crsHomogenousChildResize
   ChildSizing.Layout = cclLeftToRightThenTopToBottom
   ChildSizing.ControlsPerLine = 1
-  ClientHeight = 151
-  ClientWidth = 561
+  ClientHeight = 158
+  ClientWidth = 583
   OnClose = FormClose
   OnShow = FormShow
   object groupboxHddDrive: TGroupBox
     Left = 4
-    Height = 139
+    Height = 146
     Top = 8
-    Width = 553
+    Width = 575
     BorderSpacing.Left = 4
     BorderSpacing.Top = 8
     BorderSpacing.Right = 4
@@ -30,14 +30,14 @@ object HddSettings: THddSettings
     ChildSizing.EnlargeVertical = crsHomogenousChildResize
     ChildSizing.Layout = cclLeftToRightThenTopToBottom
     ChildSizing.ControlsPerLine = 1
-    ClientHeight = 137
-    ClientWidth = 551
+    ClientHeight = 144
+    ClientWidth = 573
     TabOrder = 0
     object labelHddDrive: TLabel
       Left = 4
       Height = 17
       Top = 4
-      Width = 543
+      Width = 565
       Caption = ' IDE-Festplattenlaufwerk'
       ParentColor = False
     end
@@ -45,7 +45,7 @@ object HddSettings: THddSettings
       Left = 4
       Height = 54
       Top = 25
-      Width = 543
+      Width = 565
       BorderSpacing.Left = 4
       BorderSpacing.Right = 4
       BorderSpacing.Bottom = 4
@@ -55,13 +55,13 @@ object HddSettings: THddSettings
       ChildSizing.Layout = cclLeftToRightThenTopToBottom
       ChildSizing.ControlsPerLine = 1
       ClientHeight = 52
-      ClientWidth = 541
+      ClientWidth = 563
       TabOrder = 1
       object labelHddGeometrie: TLabel
         Left = 0
         Height = 17
         Top = 0
-        Width = 541
+        Width = 563
         Caption = '  Geometrie '
         ParentColor = False
       end
@@ -69,7 +69,7 @@ object HddSettings: THddSettings
         Left = 0
         Height = 31
         Top = 17
-        Width = 541
+        Width = 563
         BorderSpacing.Bottom = 4
         BevelOuter = bvNone
         ChildSizing.HorizontalSpacing = 32
@@ -78,13 +78,13 @@ object HddSettings: THddSettings
         ChildSizing.Layout = cclLeftToRightThenTopToBottom
         ChildSizing.ControlsPerLine = 4
         ClientHeight = 31
-        ClientWidth = 541
+        ClientWidth = 563
         TabOrder = 0
         object panelHddHeads: TPanel
           Left = 4
           Height = 31
           Top = 0
-          Width = 90
+          Width = 96
           BorderSpacing.Left = 4
           BevelOuter = bvNone
           ChildSizing.EnlargeHorizontal = crsHomogenousChildResize
@@ -92,13 +92,13 @@ object HddSettings: THddSettings
           ChildSizing.Layout = cclTopToBottomThenLeftToRight
           ChildSizing.ControlsPerLine = 1
           ClientHeight = 31
-          ClientWidth = 90
+          ClientWidth = 96
           TabOrder = 0
           object labelHddHeads: TLabel
             Left = 0
             Height = 17
             Top = 7
-            Width = 41
+            Width = 47
             AutoSize = False
             BorderSpacing.CellAlignVertical = ccaCenter
             Caption = ' Köpfe: '
@@ -106,9 +106,9 @@ object HddSettings: THddSettings
             ParentColor = False
           end
           object editHddHeads: TEdit
-            Left = 41
-            Height = 23
-            Top = 4
+            Left = 47
+            Height = 30
+            Top = 0
             Width = 32
             Alignment = taRightJustify
             AutoSize = False
@@ -121,7 +121,7 @@ object HddSettings: THddSettings
             TabOrder = 0
           end
           object updownHddHeads: TUpDown
-            Left = 73
+            Left = 79
             Height = 31
             Top = 0
             Width = 17
@@ -135,32 +135,32 @@ object HddSettings: THddSettings
           end
         end
         object panelHddTracks: TPanel
-          Left = 126
+          Left = 132
           Height = 31
           Top = 0
-          Width = 114
+          Width = 119
           BevelOuter = bvNone
           ChildSizing.EnlargeHorizontal = crsHomogenousChildResize
           ChildSizing.EnlargeVertical = crsHomogenousChildResize
           ChildSizing.Layout = cclLeftToRightThenTopToBottom
           ChildSizing.ControlsPerLine = 3
           ClientHeight = 31
-          ClientWidth = 114
+          ClientWidth = 119
           TabOrder = 1
           object labelHddTracks: TLabel
             Left = 0
             Height = 31
             Top = 0
-            Width = 49
+            Width = 54
             AutoSize = False
             Caption = ' Spuren: '
             Layout = tlCenter
             ParentColor = False
           end
           object editHddTracks: TEdit
-            Left = 49
-            Height = 23
-            Top = 4
+            Left = 54
+            Height = 30
+            Top = 0
             Width = 48
             Alignment = taRightJustify
             AutoSize = False
@@ -172,7 +172,7 @@ object HddSettings: THddSettings
             TabOrder = 0
           end
           object updownHddTracks: TUpDown
-            Left = 97
+            Left = 102
             Height = 31
             Top = 0
             Width = 17
@@ -185,32 +185,32 @@ object HddSettings: THddSettings
           end
         end
         object panelHddSectors: TPanel
-          Left = 272
+          Left = 283
           Height = 31
           Top = 0
-          Width = 108
+          Width = 115
           BevelOuter = bvNone
           ChildSizing.EnlargeHorizontal = crsHomogenousChildResize
           ChildSizing.EnlargeVertical = crsHomogenousChildResize
           ChildSizing.Layout = cclLeftToRightThenTopToBottom
           ChildSizing.ControlsPerLine = 3
           ClientHeight = 31
-          ClientWidth = 108
+          ClientWidth = 115
           TabOrder = 2
           object labelHddSectors: TLabel
             Left = 0
             Height = 31
             Top = 0
-            Width = 59
+            Width = 66
             AutoSize = False
             Caption = ' Sektoren: '
             Layout = tlCenter
             ParentColor = False
           end
           object editHddSectors: TEdit
-            Left = 59
-            Height = 23
-            Top = 4
+            Left = 66
+            Height = 30
+            Top = 0
             Width = 32
             Alignment = taRightJustify
             AutoSize = False
@@ -222,7 +222,7 @@ object HddSettings: THddSettings
             TabOrder = 0
           end
           object updownHddSectors: TUpDown
-            Left = 91
+            Left = 98
             Height = 31
             Top = 0
             Width = 17
@@ -235,10 +235,10 @@ object HddSettings: THddSettings
           end
         end
         object panelHddSize: TPanel
-          Left = 412
+          Left = 430
           Height = 31
           Top = 0
-          Width = 125
+          Width = 129
           BorderSpacing.Right = 4
           BevelOuter = bvNone
           ChildSizing.EnlargeHorizontal = crsHomogenousChildResize
@@ -246,22 +246,22 @@ object HddSettings: THddSettings
           ChildSizing.Layout = cclLeftToRightThenTopToBottom
           ChildSizing.ControlsPerLine = 2
           ClientHeight = 31
-          ClientWidth = 125
+          ClientWidth = 129
           TabOrder = 3
           object labelHddSize: TLabel
             Left = 0
             Height = 31
             Top = 0
-            Width = 45
+            Width = 49
             AutoSize = False
             Caption = ' Größe: '
             Layout = tlCenter
             ParentColor = False
           end
           object editHddSize: TEdit
-            Left = 45
-            Height = 23
-            Top = 4
+            Left = 49
+            Height = 30
+            Top = 0
             Width = 80
             Alignment = taRightJustify
             AutoSize = False
@@ -277,31 +277,31 @@ object HddSettings: THddSettings
     end
     object groupboxHddImage: TGroupBox
       Left = 4
-      Height = 50
+      Height = 57
       Top = 83
-      Width = 543
+      Width = 565
       BorderSpacing.Bottom = 4
       ChildSizing.EnlargeHorizontal = crsHomogenousChildResize
       ChildSizing.EnlargeVertical = crsHomogenousChildResize
       ChildSizing.Layout = cclLeftToRightThenTopToBottom
       ChildSizing.ControlsPerLine = 1
-      ClientHeight = 48
-      ClientWidth = 541
+      ClientHeight = 55
+      ClientWidth = 563
       TabOrder = 0
       object labelHddImage: TLabel
         Left = 4
         Height = 17
         Top = 0
-        Width = 533
+        Width = 555
         BorderSpacing.Bottom = 4
         Caption = ' Image Datei '
         ParentColor = False
       end
       object editHddImageFile: TFileNameEdit
         Left = 4
-        Height = 23
+        Height = 30
         Top = 21
-        Width = 533
+        Width = 555
         DialogOptions = [ofPathMustExist, ofFileMustExist, ofNoNetworkButton, ofEnableSizing, ofViewDetail]
         Filter = 'Festplatten Image Dateien (*.hdd , *.dsk; *.img)|*.hdd;*.HDD;*.dsk;*.DSK;*.img;*.IMG|Alle Dateien (*.*)|*.*'
         FilterIndex = 0
