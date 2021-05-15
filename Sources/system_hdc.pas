@@ -313,20 +313,19 @@ begin
     try
         Reset(hddData, SECBYTES);
         Seek(hddData, hdcLba.Value);
-        hdcStatus.bit[DSC] := True;
         BlockRead(hddData, dataBuffer[0], 1);
         CloseFile(hddData);
+        hdcStatus.bit[DSC] := True;
+        hdcStatus.bit[DRQ] := True;
+        dataCount := 0;
+        dataMode := SECTOR_READ;
+        setHddReadState;
     except
         hdcStatus.bit[ERR] := True;
         hdcError.bit[AMNF] := True;
         hdcStatus.bit[BSY] := False;
-        exit;
     end;
     hdcStatus.bit[BSY] := False;
-    hdcStatus.bit[DRQ] := True;
-    dataCount := 0;
-    dataMode := SECTOR_READ;
-    setHddReadState;
 end;
 
 // --------------------------------------------------------------------------------
@@ -457,17 +456,16 @@ begin
                 Seek(hddData, hdcLba.Value);
                 BlockWrite(hddData, dataBuffer[0], 1);
                 CloseFile(hddData);
+                Dec(hdcSectorCount);
+                if (hdcSectorCount > 0) then begin
+                    Inc(hdcLba.Value);
+                    calcChsValues;
+                    prepareWriteSectors;
+                end;
             except
                 hdcStatus.bit[ERR] := True;
                 hdcError.bit[AMNF] := True;
                 hdcStatus.bit[BSY] := False;
-                exit;
-            end;
-            Dec(hdcSectorCount);
-            if (hdcSectorCount > 0) then begin
-                Inc(hdcLba.Value);
-                calcChsValues;
-                prepareWriteSectors;
             end;
         end;
     end;
