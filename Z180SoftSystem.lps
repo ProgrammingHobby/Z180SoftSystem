@@ -3,7 +3,7 @@
   <ProjectSession>
     <Version Value="11"/>
     <BuildModes Active="Debug"/>
-    <Units Count="72">
+    <Units Count="75">
       <Unit0>
         <Filename Value="Z180SoftSystem.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -18,9 +18,10 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="Main_Window"/>
-        <TopLine Value="202"/>
-        <CursorPos X="43" Y="231"/>
-        <UsageCount Value="69"/>
+        <EditorIndex Value="1"/>
+        <TopLine Value="273"/>
+        <CursorPos X="14" Y="286"/>
+        <UsageCount Value="77"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit1>
@@ -34,16 +35,16 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="279"/>
         <CursorPos X="53" Y="285"/>
-        <UsageCount Value="69"/>
+        <UsageCount Value="77"/>
       </Unit2>
       <Unit3>
         <Filename Value="Sources/system_memory.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="System_Memory"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="52"/>
+        <TopLine Value="200"/>
         <CursorPos X="17" Y="76"/>
-        <UsageCount Value="69"/>
+        <UsageCount Value="77"/>
       </Unit3>
       <Unit4>
         <Filename Value="Sources/memory_editor.pas"/>
@@ -52,7 +53,7 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="Memory_Editor"/>
-        <UsageCount Value="69"/>
+        <UsageCount Value="77"/>
       </Unit4>
       <Unit5>
         <Filename Value="Sources/system_settings.pas"/>
@@ -61,26 +62,25 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="DataModule"/>
         <UnitName Value="System_Settings"/>
-        <UsageCount Value="69"/>
+        <UsageCount Value="77"/>
       </Unit5>
       <Unit6>
         <Filename Value="Sources/z180_cpu.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="Z180_CPU"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="2228"/>
-        <CursorPos X="11" Y="2035"/>
-        <UsageCount Value="69"/>
+        <CursorPos X="19" Y="6"/>
+        <UsageCount Value="77"/>
+        <Loaded Value="True"/>
       </Unit6>
       <Unit7>
         <Filename Value="Sources/system_terminal.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="System_Terminal"/>
         <IsVisibleTab Value="True"/>
-        <EditorIndex Value="1"/>
-        <TopLine Value="180"/>
-        <CursorPos X="40" Y="207"/>
-        <UsageCount Value="69"/>
+        <EditorIndex Value="2"/>
+        <TopLine Value="1299"/>
+        <CursorPos X="8" Y="41"/>
+        <UsageCount Value="77"/>
         <Loaded Value="True"/>
       </Unit7>
       <Unit8>
@@ -90,16 +90,16 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="Cpu_Io_Register"/>
-        <UsageCount Value="69"/>
+        <UsageCount Value="77"/>
       </Unit8>
       <Unit9>
         <Filename Value="Sources/system_fdc.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="System_Fdc"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="147"/>
-        <CursorPos Y="161"/>
-        <UsageCount Value="69"/>
+        <TopLine Value="306"/>
+        <CursorPos X="46" Y="329"/>
+        <UsageCount Value="77"/>
       </Unit9>
       <Unit10>
         <Filename Value="Sources/memory_settings.pas"/>
@@ -111,7 +111,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="98"/>
         <CursorPos X="45" Y="133"/>
-        <UsageCount Value="69"/>
+        <UsageCount Value="77"/>
       </Unit10>
       <Unit11>
         <Filename Value="Sources/system_inout.pas"/>
@@ -120,7 +120,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="167"/>
         <CursorPos Y="182"/>
-        <UsageCount Value="69"/>
+        <UsageCount Value="77"/>
       </Unit11>
       <Unit12>
         <Filename Value="Sources/fdd_settings.pas"/>
@@ -132,7 +132,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="62"/>
         <CursorPos X="95" Y="276"/>
-        <UsageCount Value="69"/>
+        <UsageCount Value="77"/>
       </Unit12>
       <Unit13>
         <Filename Value="Sources/terminal_settings.pas"/>
@@ -141,12 +141,10 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="Terminal_Settings"/>
-        <EditorIndex Value="2"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="76"/>
         <CursorPos X="80" Y="109"/>
-        <UsageCount Value="69"/>
-        <Loaded Value="True"/>
-        <LoadedDesigner Value="True"/>
+        <UsageCount Value="77"/>
       </Unit13>
       <Unit14>
         <Filename Value="Sources/about_window.pas"/>
@@ -155,22 +153,22 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="About_Window"/>
-        <UsageCount Value="69"/>
+        <UsageCount Value="77"/>
       </Unit14>
       <Unit15>
         <Filename Value="Sources/version_info.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="Version_Info"/>
-        <UsageCount Value="69"/>
+        <UsageCount Value="77"/>
       </Unit15>
       <Unit16>
         <Filename Value="Sources/system_hdc.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="System_Hdc"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="572"/>
-        <CursorPos X="5" Y="585"/>
-        <UsageCount Value="69"/>
+        <TopLine Value="445"/>
+        <CursorPos X="21" Y="464"/>
+        <UsageCount Value="77"/>
       </Unit16>
       <Unit17>
         <Filename Value="Sources/hdd_settings.pas"/>
@@ -180,9 +178,9 @@
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="Hdd_Settings"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="110"/>
-        <CursorPos X="31" Y="21"/>
-        <UsageCount Value="69"/>
+        <TopLine Value="20"/>
+        <CursorPos X="57" Y="32"/>
+        <UsageCount Value="77"/>
       </Unit17>
       <Unit18>
         <Filename Value="Sources/hardware_info.pas"/>
@@ -191,13 +189,13 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="Hardware_Info"/>
-        <UsageCount Value="69"/>
+        <UsageCount Value="77"/>
       </Unit18>
       <Unit19>
         <Filename Value="Sources/system_rtc.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="System_Rtc"/>
-        <UsageCount Value="69"/>
+        <UsageCount Value="77"/>
       </Unit19>
       <Unit20>
         <Filename Value="main_window.pas"/>
@@ -627,122 +625,54 @@
         <CursorPos Y="50"/>
         <UsageCount Value="10"/>
       </Unit71>
+      <Unit72>
+        <Filename Value="/usr/share/lazarus/2.0.12/lcl/include/customform.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="455"/>
+        <CursorPos Y="474"/>
+        <UsageCount Value="10"/>
+      </Unit72>
+      <Unit73>
+        <Filename Value="/usr/share/lazarus/2.0.12/lcl/include/wincontrol.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="5647"/>
+        <CursorPos Y="5667"/>
+        <UsageCount Value="10"/>
+      </Unit73>
+      <Unit74>
+        <Filename Value="/usr/share/lazarus/2.0.12/lcl/include/control.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="2945"/>
+        <CursorPos Y="2959"/>
+        <UsageCount Value="10"/>
+      </Unit74>
     </Units>
-    <JumpHistory Count="25" HistoryIndex="24">
-      <Position1>
-        <Filename Value="Sources/terminal_settings.pas"/>
-        <Caret Line="98" Column="48" TopLine="65"/>
-      </Position1>
-      <Position2>
-        <Filename Value="Sources/terminal_settings.pas"/>
-        <Caret Line="97" Column="48" TopLine="65"/>
-      </Position2>
-      <Position3>
-        <Filename Value="Sources/terminal_settings.pas"/>
-        <Caret Line="98" Column="48" TopLine="66"/>
-      </Position3>
-      <Position4>
-        <Filename Value="Sources/terminal_settings.pas"/>
-        <Caret Line="99" Column="48" TopLine="67"/>
-      </Position4>
-      <Position5>
-        <Filename Value="Sources/terminal_settings.pas"/>
-        <Caret Line="100" Column="48" TopLine="68"/>
-      </Position5>
-      <Position6>
-        <Filename Value="Sources/terminal_settings.pas"/>
-        <Caret Line="77" Column="27" TopLine="57"/>
-      </Position6>
-      <Position7>
-        <Filename Value="Sources/terminal_settings.pas"/>
-        <Caret Line="90" Column="88" TopLine="64"/>
-      </Position7>
-      <Position8>
-        <Filename Value="Sources/terminal_settings.pas"/>
-        <Caret Line="91" Column="88" TopLine="65"/>
-      </Position8>
-      <Position9>
-        <Filename Value="Sources/terminal_settings.pas"/>
-        <Caret Line="92" Column="88" TopLine="66"/>
-      </Position9>
-      <Position10>
-        <Filename Value="Sources/terminal_settings.pas"/>
-        <Caret Line="91" Column="88" TopLine="65"/>
-      </Position10>
-      <Position11>
-        <Filename Value="Sources/terminal_settings.pas"/>
-        <Caret Line="92" Column="88" TopLine="66"/>
-      </Position11>
-      <Position12>
-        <Filename Value="Sources/terminal_settings.pas"/>
-        <Caret Line="91" Column="88" TopLine="65"/>
-      </Position12>
-      <Position13>
-        <Filename Value="Sources/terminal_settings.pas"/>
-        <Caret Line="90" Column="88" TopLine="64"/>
-      </Position13>
-      <Position14>
-        <Filename Value="Sources/terminal_settings.pas"/>
-        <Caret Line="91" Column="88" TopLine="65"/>
-      </Position14>
-      <Position15>
-        <Filename Value="Sources/terminal_settings.pas"/>
-        <Caret Line="90" Column="5" TopLine="64"/>
-      </Position15>
-      <Position16>
-        <Filename Value="Sources/terminal_settings.pas"/>
-        <Caret Line="89" Column="5" TopLine="63"/>
-      </Position16>
-      <Position17>
-        <Filename Value="Sources/terminal_settings.pas"/>
-        <Caret Line="90" Column="22" TopLine="64"/>
-      </Position17>
-      <Position18>
-        <Filename Value="Sources/terminal_settings.pas"/>
-        <Caret Line="89" Column="22" TopLine="63"/>
-      </Position18>
-      <Position19>
-        <Filename Value="Sources/terminal_settings.pas"/>
-        <Caret Line="92" Column="31" TopLine="66"/>
-      </Position19>
-      <Position20>
-        <Filename Value="Sources/terminal_settings.pas"/>
-        <Caret Line="103" Column="36" TopLine="72"/>
-      </Position20>
-      <Position21>
-        <Filename Value="Sources/terminal_settings.pas"/>
-        <Caret Line="106" Column="84" TopLine="72"/>
-      </Position21>
-      <Position22>
-        <Filename Value="Sources/terminal_settings.pas"/>
-        <Caret Line="107" Column="84" TopLine="73"/>
-      </Position22>
-      <Position23>
-        <Filename Value="Sources/terminal_settings.pas"/>
-        <Caret Line="106" Column="84" TopLine="72"/>
-      </Position23>
-      <Position24>
-        <Filename Value="Sources/terminal_settings.pas"/>
-        <Caret Line="107" Column="84" TopLine="73"/>
-      </Position24>
-      <Position25>
-        <Filename Value="Sources/terminal_settings.pas"/>
-        <Caret Line="105" Column="84" TopLine="71"/>
-      </Position25>
-    </JumpHistory>
+    <JumpHistory HistoryIndex="-1"/>
     <RunParams>
       <FormatVersion Value="2"/>
       <Modes Count="0" ActiveMode=""/>
     </RunParams>
   </ProjectSession>
   <Debugging>
-    <Watches Count="2">
+    <Watches Count="6">
       <Item1>
-        <Expression Value="charWidth"/>
+        <Expression Value="hdcSector"/>
       </Item1>
       <Item2>
-        <Expression Value="charHeight"/>
+        <Expression Value="hdcTrack.low"/>
       </Item2>
+      <Item3>
+        <Expression Value=" hdcTrack.high"/>
+      </Item3>
+      <Item4>
+        <Expression Value="hdcDriveHead.Value"/>
+      </Item4>
+      <Item5>
+        <Expression Value="pageWidth"/>
+      </Item5>
+      <Item6>
+        <Expression Value="pageHeight"/>
+      </Item6>
     </Watches>
   </Debugging>
 </CONFIG>
