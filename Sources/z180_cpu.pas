@@ -5,7 +5,7 @@ unit Z180_CPU;
 {$coperators off}
 {$rangechecks off}
 
-//{$define NOTRAP}
+{$define NOTRAP}
 
 interface
 
@@ -164,8 +164,6 @@ type
         shiftModeRatio0, shiftModeRatio1: byte;          // Gesamtzahl der zu Übertragenden Bits pro Datenbyte
         transmitShiftCount0, transmitShiftCount1: byte;  // Bit-Zaehler fuer das Senden von Daten
         receiveShiftCount0, receiveShiftCount1: byte;    // Bit-Zaehler fuer das Empfangen von Daten
-        timer0Count, timer0Reload: word;                  // Zähler und Reload für Timer 0
-        timer1Count, timer1Reload: word;                  // Zähler und Reload für Timer 0
         TSR0, TSR1: byte;                                // Sende Schiebe-Register (nicht per I/O Ansprechbar)
         RSR0, RSR1: byte;                                // Empfangs Schiebe-Register (nicht per I/O Ansprechbar)
         asciTSR0E, asciTSR1E: boolean;                   // Hilfsflag 'Transmit Shift Register Empty'
@@ -564,11 +562,11 @@ begin
             end;
             $0D: begin   //portTMDR0H
                 if (isBufTMDR0H = True) then begin   // wenn gepuffertes High-Byte vorhanden
-                    Result := (bufTMDR0H and $FF);   // dann dieses auslesen
+                    Result := bufTMDR0H;   // dann dieses auslesen
                     isBufTMDR0H := False;    // und Puffer-Marker loeschen.
                 end
                 else begin
-                    Result := (ioTMDR0.high and $FF00);
+                    Result := (ioTMDR0.high and $FF);
                 end;
                 ioTCR.bit[TIF0] := False; // Timer 0 Interrupt Flag beim lesen von TMDR0H loeschen
             end;
@@ -591,7 +589,7 @@ begin
             end;
             $15: begin   //portTMDR1H
                 if (isBufTMDR1H = True) then begin  // wenn gepuffertes High-Byte vorhanden
-                    Result := (bufTMDR1H and $FF);   // dann dieses auslesen
+                    Result := bufTMDR1H;   // dann dieses auslesen
                     isBufTMDR1H := False;    // und Puffer-Marker loeschen.
                 end
                 else begin
@@ -767,7 +765,6 @@ begin
                 else begin  //portTMDR0H
                     ioTMDR0.high := ((ioTMDR0.high and not $FF) or (Data and $FF));
                 end;
-                timer0Count := (ioTMDR0.Value shr clockShift);
             end;
             $0E, $0F: begin
                 if ((portLO and $3F) = $0E) then begin  //portRLDR0L
@@ -776,7 +773,6 @@ begin
                 else begin  //portRLDR0H
                     ioRLDR0.high := ((ioRLDR0.high and not $FF) or (Data and $FF));
                 end;
-                timer0Reload := (ioRLDR0.Value shr clockShift);
             end;
             $10: begin   //portTCR
                 ioTCR.Value := ((ioTCR.Value and not $3F) or (Data and $3F));
@@ -788,16 +784,14 @@ begin
                 else begin  //portTMDR1H
                     ioTMDR1.high := ((ioTMDR1.high and not $FF) or (Data and $FF));
                 end;
-                timer1Count := (ioTMDR1.Value shr clockShift);
             end;
-            $16: begin   //portRLDR1L
+            $16, $17: begin   //portRLDR1L
                 if ((portLO and $3F) = $16) then begin  //portRLDR1L
                     ioRLDR1.low := ((ioRLDR1.low and not $FF) or (Data and $FF));
                 end
                 else begin  //portRLDR1H
                     ioRLDR1.high := ((ioRLDR1.high and not $FF) or (Data and $FF));
                 end;
-                timer1Reload := (ioRLDR1.Value shr clockShift);
             end;
             $18: begin   //portFRC
                 ioFRC := ((ioFRC and not $00) or (Data and $00));
@@ -818,10 +812,6 @@ begin
                 else if (ioCMR.bit[7] and ioCCR.bit[7]) then begin
                     clockShift := 2;
                 end;
-                timer0Count := (ioTMDR0.Value shr clockShift);
-                timer0Reload := (ioRLDR0.Value shr clockShift);
-                timer1Count := (ioTMDR1.Value shr clockShift);
-                timer1Reload := (ioRLDR1.Value shr clockShift);
                 asciPhiDevideRatio0 := (calcAsciPhiDevide(ioCNTLB0.Value) shr clockShift);
                 asciPhiDevideRatio1 := (calcAsciPhiDevide(ioCNTLB1.Value) shr clockShift);
             end;
@@ -968,7 +958,7 @@ begin
             physAddr := physAddr + (ioBBR shl 12);
         end;
     end;
-    Result := (physAddr and $FFFFF);
+    Result := physAddr;
 end;
 
 // --------------------------------------------------------------------------------
@@ -1058,9 +1048,9 @@ end;
 // --------------------------------------------------------------------------------
 procedure TZ180Cpu.doPrt0;
 begin
-    Dec(timer0Count);
-    if (timer0Count = 0) then begin // Counter auf 0 ?
-        timer0Count := timer0Reload; // aus dem Reload-Register neu laden
+    Dec(ioTMDR0.Value);
+    if (ioTMDR0.Value = 0) then begin // Counter auf 0 ?
+        ioTMDR0.Value := ioRLDR0.Value; // aus dem Reload-Register neu laden
         if (ioTCR.bit[TIE0]) then begin // und falls Interrupts eingeschaltet
             ioTCR.bit[TIF0] := True; // Channel 0 Interrupt Flag setzen
             intPRT0 := True; // und PRT-Interrupt generieren
@@ -1071,9 +1061,9 @@ end;
 // --------------------------------------------------------------------------------
 procedure TZ180Cpu.doPrt1;
 begin
-    Dec(timer1Count);
-    if (timer1Count = 0) then begin // Counter auf 0 ?
-        timer1Count := timer1Reload; // aus dem Reload-Register neu laden
+    Dec(ioTMDR1.Value);
+    if (ioTMDR1.Value = 0) then begin // Counter auf 0 ?
+        ioTMDR1.Value := ioRLDR1.Value; // aus dem Reload-Register neu laden
         if (ioTCR.bit[TIE1]) then begin // und falls Interrupts eingeschaltet
             ioTCR.bit[TIF1] := True; // Channel 1 Interrupt Flag setzen
             intPRT1 := True; // und PRT-Interrupt generieren
@@ -1093,101 +1083,101 @@ begin
     case (ioDMODE.Value and (DMsel or SMsel)) of
         $00: begin // Memory SAR0++ to Memory DAR0++ transfer
             systemmemory.Write(ioDAR0.Value, systemmemory.Read(ioSAR0.Value));
-            ioDAR0.Value := ((ioDAR0.Value + 1) and $FFFFF);
-            ioSAR0.Value := ((ioSAR0.Value + 1) and $FFFFF);
             clockCycles := clockCycles + (2 * memWaitCycles) + 6;
-            ioBCR0.Value := ((ioBCR0.Value - 1) and $FFFFF);
+            Inc(ioDAR0.Value);
+            Inc(ioSAR0.Value);
+            Dec(ioBCR0.Value);
         end;
         $04: begin // Memory SAR0-- to Memory DAR0++ transfer
             systemmemory.Write(ioDAR0.Value, systemmemory.Read(ioSAR0.Value));
-            ioDAR0.Value := ((ioDAR0.Value + 1) and $FFFFF);
-            ioSAR0.Value := ((ioSAR0.Value - 1) and $FFFFF);
             clockCycles := clockCycles + (2 * memWaitCycles) + 6;
-            ioBCR0.Value := ((ioBCR0.Value - 1) and $FFFFF);
+            Inc(ioDAR0.Value);
+            Dec(ioSAR0.Value);
+            Dec(ioBCR0.Value);
         end;
         $08: begin // Memory SAR0 to Memory DAR0++ transfer
             if (dreq0) then begin
                 systemmemory.Write(ioDAR0.Value, systemmemory.Read(ioSAR0.Value));
-                ioDAR0.Value := ((ioDAR0.Value + 1) and $FFFFF);
                 clockCycles := clockCycles + (2 * memWaitCycles) + 6;
-                ioBCR0.Value := ((ioBCR0.Value - 1) and $FFFFF);
+                Inc(ioDAR0.Value);
+                Dec(ioBCR0.Value);
                 dreq0 := False;
             end;
         end;
         $0C: begin // 64k-I/O SAR0 to Memory DAR0++ transfer
             if (dreq0) then begin
                 systemmemory.Write(ioDAR0.Value, ioRead(ioSAR0.high, ioSAR0.low));
-                ioDAR0.Value := ((ioDAR0.Value + 1) and $FFFFF);
                 clockCycles := clockCycles + memWaitCycles + 6;
-                ioBCR0.Value := ((ioBCR0.Value - 1) and $FFFFF);
+                Inc(ioDAR0.Value);
+                Dec(ioBCR0.Value);
                 dreq0 := False;
             end;
         end;
         $10: begin // Memory SAR0++ to Memory DAR0-- transfer
             systemmemory.Write(ioDAR0.Value, systemmemory.Read(ioSAR0.Value));
-            ioDAR0.Value := ((ioDAR0.Value - 1) and $FFFFF);
-            ioSAR0.Value := ((ioSAR0.Value + 1) and $FFFFF);
             clockCycles := clockCycles + (2 * memWaitCycles) + 6;
-            ioBCR0.Value := ((ioBCR0.Value - 1) and $FFFFF);
+            Dec(ioDAR0.Value);
+            Inc(ioSAR0.Value);
+            Dec(ioBCR0.Value);
         end;
         $14: begin // Memory SAR0-- to Memory DAR0-- transfer
             systemmemory.Write(ioDAR0.Value, systemmemory.Read(ioSAR0.Value));
-            ioDAR0.Value := ((ioDAR0.Value - 1) and $FFFFF);
-            ioSAR0.Value := ((ioSAR0.Value - 1) and $FFFFF);
             clockCycles := clockCycles + (2 * memWaitCycles) + 6;
-            ioBCR0.Value := ((ioBCR0.Value - 1) and $FFFFF);
+            Dec(ioDAR0.Value);
+            Dec(ioSAR0.Value);
+            Dec(ioBCR0.Value);
         end;
         $18: begin // Memory SAR0 to Memory DAR0-- transfer
             if (dreq0) then begin
                 systemmemory.Write(ioDAR0.Value, systemmemory.Read(ioSAR0.Value));
-                ioDAR0.Value := ((ioDAR0.Value - 1) and $FFFFF);
                 clockCycles := clockCycles + (2 * memWaitCycles) + 6;
-                ioBCR0.Value := ((ioBCR0.Value - 1) and $FFFFF);
+                Dec(ioDAR0.Value);
+                Dec(ioBCR0.Value);
                 dreq0 := False;
             end;
         end;
         $1C: begin // 64k-I/O SAR0 to Memory DAR0-- transfer
             if (dreq0) then begin
                 systemmemory.Write(ioDAR0.Value, ioRead(ioSAR0.high, ioSAR0.low));
-                ioDAR0.Value := ((ioDAR0.Value - 1) and $FFFFF);
                 clockCycles := clockCycles + memWaitCycles + 6;
-                ioBCR0.Value := ((ioBCR0.Value - 1) and $FFFFF);
+                Dec(ioDAR0.Value);
+                Dec(ioBCR0.Value);
                 dreq0 := False;
             end;
         end;
         $20: begin // Memory SAR0++ to Memory DAR0 transfer
             if (dreq0) then begin
                 systemmemory.Write(ioDAR0.Value, systemmemory.Read(ioSAR0.Value));
-                ioSAR0.Value := ((ioSAR0.Value + 1) and $FFFFF);
                 clockCycles := clockCycles + (2 * memWaitCycles) + 6;
-                ioBCR0.Value := ((ioBCR0.Value - 1) and $FFFFF);
+                Inc(ioSAR0.Value);
+                Inc(ioBCR0.Value);
                 dreq0 := False;
             end;
         end;
         $24: begin // Memory SAR0-- to Memory DAR0 transfer
             if (dreq0) then begin
                 systemmemory.Write(ioDAR0.Value, systemmemory.Read(ioSAR0.Value));
-                ioSAR0.Value := ((ioSAR0.Value - 1) and $FFFFF);
                 clockCycles := clockCycles + (2 * memWaitCycles) + 6;
-                ioBCR0.Value := ((ioBCR0.Value - 1) and $FFFFF);
+                Dec(ioSAR0.Value);
+                Dec(ioBCR0.Value);
                 dreq0 := False;
             end;
         end;
         $30: begin // Memory SAR0++ to 64k-I/O DAR0 transfer
             if (dreq0) then begin
                 ioWrite(ioDAR0.high, ioDAR0.low, systemmemory.Read(ioSAR0.Value));
-                ioSAR0.Value := ((ioSAR0.Value + 1) and $FFFFF);
                 clockCycles := clockCycles + memWaitCycles + 6;
-                ioBCR0.Value := ((ioBCR0.Value - 1) and $FFFFF);
+                Inc(ioSAR0.Value);
+                Dec(ioBCR0.Value);
                 dreq0 := False;
             end;
         end;
         $34: begin // Memory SAR0-- to 64k-I/O DAR0 transfer
             if (dreq0) then begin
                 ioWrite(ioDAR0.high, ioDAR0.low, systemmemory.Read(ioSAR0.Value));
-                ioSAR0.Value := ((ioSAR0.Value - 1) and $FFFFF);
                 clockCycles := clockCycles + memWaitCycles + 6;
-                ioBCR0.Value := ((ioBCR0.Value - 1) and $FFFFF);
+                Dec(ioSAR0.Value);
+                Dec(ioBCR0.Value);
                 dreq0 := False;
             end;
         end;
@@ -1202,7 +1192,7 @@ begin
             intDMA0 := True; // DMA0-Interrupt generieren
         end;
         if (not (asciDmaMode = OFF)) then begin // wenn der Transfer ein Memory <-> ASCI war
-            asciDmaMode := OFF; // und den ASCI-DMA-MODE ausschalten
+            asciDmaMode := OFF; // den ASCI-DMA-MODE ausschalten
         end;
     end;
 end;
@@ -1220,47 +1210,47 @@ begin
         $00: begin // Memory MAR1++ to I/O IAR1 transfer
             if (dreq1) then begin
                 ioWrite(ioIAR1.high, ioIAR1.low, systemmemory.Read(ioMAR1.Value));
-                ioMAR1.Value := ((ioMAR1.Value + 1) and $FFFFF);
                 clockCycles := clockCycles + memWaitCycles + 6;
-                ioBCR1.Value := ((ioBCR1.Value - 1) and $FFFFF);
+                Inc(ioMAR1.Value);
+                Dec(ioBCR1.Value);
                 dreq1 := False;
             end;
         end;
         $01: begin // Memory MAR1-- to I/O IAR1 transfer
             if (dreq1) then begin
                 ioWrite(ioIAR1.high, ioIAR1.low, systemmemory.Read(ioMAR1.Value));
-                ioMAR1.Value := ((ioMAR1.Value - 1) and $FFFFF);
                 clockCycles := clockCycles + memWaitCycles + 6;
-                ioBCR1.Value := ((ioBCR1.Value - 1) and $FFFFF);
+                Dec(ioMAR1.Value);
+                Dec(ioBCR1.Value);
                 dreq1 := False;
             end;
         end;
         $02: begin // I/O IAR1 to Memory MAR1++ transfer
             if (dreq1) then begin
                 systemmemory.Write(ioMAR1.Value, ioRead(ioIAR1.high, ioIAR1.low));
-                ioMAR1.Value := ((ioMAR1.Value + 1) and $FFFFF);
                 clockCycles := clockCycles + memWaitCycles + 6;
-                ioBCR1.Value := ((ioBCR1.Value - 1) and $FFFFF);
+                Inc(ioMAR1.Value);
+                Dec(ioBCR1.Value);
                 dreq1 := False;
             end;
         end;
         $03: begin // I/O IAR1 to Memory MAR1-- transfer
             if (dreq1) then begin
                 systemmemory.Write(ioMAR1.Value, ioRead(ioIAR1.high, ioIAR1.low));
-                ioMAR1.Value := ((ioMAR1.Value - 1) and $FFFFF);
                 clockCycles := clockCycles + memWaitCycles + 6;
-                ioBCR1.Value := ((ioBCR1.Value - 1) and $FFFFF);
+                Dec(ioMAR1.Value);
+                Dec(ioBCR1.Value);
                 dreq1 := False;
             end;
         end;
     end;
     if (ioBCR1.Value = 0) then begin // aktueller DMA-Transfer beendet
-        ioDSTAT.bit[DE1] := False; // DMA0-Enable loeschen
+        ioDSTAT.bit[DE1] := False; // DMA1-Enable loeschen
         if (not ioDSTAT.bit[DE0]) then begin // nur wenn Channel 0 nicht (noch) aktiv
             ioDSTAT.bit[DME] := False; // DMA Main Enable loeschen
         end;
         if (ioDSTAT.bit[DIE1]) then begin // und falls Interrupts eingeschaltet
-            intDMA1 := True; // DMA0-Interrupt generieren
+            intDMA1 := True; // DMA1-Interrupt generieren
         end;
     end;
 end;
@@ -1299,14 +1289,10 @@ begin
     ioCNTR.Value := $0F;
     ioTRD := $00;
     ioTMDR0.Value := $FFFF;
-    timer0Count := ioTMDR0.Value;
     ioRLDR0.Value := $FFFF;
-    timer0Reload := ioRLDR0.Value;
     ioTCR.Value := $00;
     ioTMDR1.Value := $FFFF;
-    timer1Count := ioTMDR0.Value;
     ioRLDR1.Value := $FFFF;
-    timer1Reload := ioRLDR0.Value;
     ioFRC := $FF;
     ioCMR.Value := $7F;
     ioCCR.Value := $00;
@@ -1341,6 +1327,8 @@ begin
     shiftModeRatio0 := asciTransLength[ioCNTLA0.Value and MODSEL];
     asciPhiDevideRatio1 := calcAsciPhiDevide(ioCNTLB1.Value);
     shiftModeRatio1 := asciTransLength[ioCNTLA1.Value and MODSEL];
+    memWaitCycles := memCycles[((ioDCNTL.Value and MWIsel) shr $06)];
+    ioWaitCycles := ioCycles[((ioDCNTL.Value and IWIsel) shr $04)];
 end;
 
 // --------------------------------------------------------------------------------
@@ -1387,47 +1375,48 @@ begin
             end;
             if (ioCNTLA0.bit[TE] or ioCNTLA0.bit[RE]) then begin // nur wenn ASCI0 Senden oder Empfangen soll
                 Inc(asciClockCount0);    // wird der 'Takt' fuer ASCI0 gestartet
-                if ((not ioSTAT0.bit[TDRE]) and asciTSR0E) then begin // ist TSR leer und liegen neue Daten im TDR
-                    TSR0 := ioTDR0; // werden diese ins TSR kopiert
-                    asciTSR0E := False; // und die Status-Flags entsprechend setzen
-                    ioSTAT0.bit[TDRE] := True;
-                    if (asciDmaMode = ASCI0SEND) then begin // falls ASCI DMA-Mode aktiv
-                        dreq0 := True; // dann einen DMA-Request auslösen
-                    end;
-                end;
-                if ((not ioSTAT0.bit[RDRF]) and asciRSR0F) then begin // ist RDR leer und liegen neue Daten im RSR
-                    ioRDR0 := RSR0; // werden diese ins RDR kopier
-                    asciRSR0F := False; // und die Status-Flags entsprechend setzen
-                    ioSTAT0.bit[RDRF] := True;
-                    if (asciDmaMode = ASCI0RECEIVE) then begin // falls ASCI DMA-Mode aktiv
-                        dreq0 := True; // dann einen DMA-Request auslösen
-                    end;
-                end;
                 if (asciClockCount0 >= asciPhiDevideRatio0) then begin // nach Ablauf der entsprechenden System-Takte
                     asciClockCount0 := 0; // wird der Baudraten-Takt getriggert
+                    if ((not ioSTAT0.bit[TDRE]) and asciTSR0E) then begin // ist TSR leer und liegen neue Daten im TDR
+                        TSR0 := ioTDR0; // werden diese ins TSR kopiert
+                        asciTSR0E := False; // und die Status-Flags entsprechend setzen
+                        ioSTAT0.bit[TDRE] := True;
+                        if (asciDmaMode = ASCI0SEND) then begin // falls ASCI DMA-Mode aktiv
+                            dreq0 := True; // dann einen DMA-Request auslösen
+                        end;
+                    end;
+                    if ((not ioSTAT0.bit[RDRF]) and asciRSR0F) then begin // ist RDR leer und liegen neue Daten im RSR
+                        ioRDR0 := RSR0; // werden diese ins RDR kopier
+                        asciRSR0F := False; // und die Status-Flags entsprechend setzen
+                        ioSTAT0.bit[RDRF] := True;
+                        if (asciDmaMode = ASCI0RECEIVE) then begin // falls ASCI DMA-Mode aktiv
+                            dreq0 := True; // dann einen DMA-Request auslösen
+                        end;
+                    end;
                     doAsci0;
                 end;
             end;
             if (ioCNTLA1.bit[TE] or ioCNTLA1.bit[RE]) then begin// nur wenn ASCI1 Senden oder Empfangen soll
                 Inc(asciClockCount1);    // wird der 'Takt' fuer ASCI1 gestartet
-                if ((not ioSTAT1.bit[TDRE]) and asciTSR1E) then begin// ist TSR leer und liegen neue Daten im TDR
-                    TSR1 := ioTDR1; // werden diese ins TSR kopiert
-                    asciTSR1E := False; // und die Status-Flags entsprechend setzen
-                    ioSTAT1.bit[TDRE] := True;
-                    if (asciDmaMode = ASCI1SEND) then begin // falls ASCI DMA-Mode aktiv
-                        dreq0 := True; // dann einen DMA-Request auslösen
-                    end;
-                end;
-                if ((not ioSTAT1.bit[RDRF]) and asciRSR1F) then begin // ist RDR leer und liegen neue Daten im RSR
-                    ioRDR1 := RSR1; // werden diese ins RDR kopier
-                    asciRSR1F := False; // und die Status-Flags entsprechend setzen
-                    ioSTAT1.bit[RDRF] := True;
-                    if (asciDmaMode = ASCI1RECEIVE) then begin // falls ASCI DMA-Mode aktiv
-                        dreq0 := True; // dann einen DMA-Request auslösen
-                    end;
-                end;
+
                 if (asciClockCount1 >= asciPhiDevideRatio1) then begin // nach Ablauf der entsprechenden System-Takte
                     asciClockCount1 := 0; // wird der Baudraten-Takt getriggert
+                    if ((not ioSTAT1.bit[TDRE]) and asciTSR1E) then begin// ist TSR leer und liegen neue Daten im TDR
+                        TSR1 := ioTDR1; // werden diese ins TSR kopiert
+                        asciTSR1E := False; // und die Status-Flags entsprechend setzen
+                        ioSTAT1.bit[TDRE] := True;
+                        if (asciDmaMode = ASCI1SEND) then begin // falls ASCI DMA-Mode aktiv
+                            dreq1 := True; // dann einen DMA-Request auslösen
+                        end;
+                    end;
+                    if ((not ioSTAT1.bit[RDRF]) and asciRSR1F) then begin // ist RDR leer und liegen neue Daten im RSR
+                        ioRDR1 := RSR1; // werden diese ins RDR kopier
+                        asciRSR1F := False; // und die Status-Flags entsprechend setzen
+                        ioSTAT1.bit[RDRF] := True;
+                        if (asciDmaMode = ASCI1RECEIVE) then begin // falls ASCI DMA-Mode aktiv
+                            dreq1 := True; // dann einen DMA-Request auslösen
+                        end;
+                    end;
                     doAsci1;
                 end;
             end;
@@ -1453,7 +1442,7 @@ begin
                 tmpHALT := False;
                 tmpSLP := False;
                 push(regPC.Value);
-                vectorAddress := ((regI shl 8) or ((ioIL and $E0) or $04)) and $FFFF;
+                vectorAddress := ((regI shl 8) or ((ioIL and $E0) or $04));
                 regPC.low := memRead(vectorAddress);
                 regPC.high := memRead(vectorAddress + 1);
                 intPRT0 := False;
@@ -1462,7 +1451,7 @@ begin
                 tmpHALT := False;
                 tmpSLP := False;
                 push(regPC.Value);
-                vectorAddress := ((regI shl 8) or ((ioIL and $E0) or $06)) and $FFFF;
+                vectorAddress := ((regI shl 8) or ((ioIL and $E0) or $06));
                 regPC.low := memRead(vectorAddress);
                 regPC.high := memRead(vectorAddress + 1);
                 intPRT1 := False;
@@ -1470,7 +1459,7 @@ begin
             else if (intDMA0) then begin
                 tmpHALT := False;
                 push(regPC.Value);
-                vectorAddress := ((regI shl 8) or ((ioIL and $E0) or $08)) and $FFFF;
+                vectorAddress := ((regI shl 8) or ((ioIL and $E0) or $08));
                 regPC.low := memRead(vectorAddress);
                 regPC.high := memRead(vectorAddress + 1);
                 intDMA0 := False;
@@ -1478,7 +1467,7 @@ begin
             else if (intDMA1) then begin
                 tmpHALT := False;
                 push(regPC.Value);
-                vectorAddress := ((regI shl 8) or ((ioIL and $E0) or $0A)) and $FFFF;
+                vectorAddress := ((regI shl 8) or ((ioIL and $E0) or $0A));
                 regPC.low := memRead(vectorAddress);
                 regPC.high := memRead(vectorAddress + 1);
                 intDMA1 := False;
@@ -1487,7 +1476,7 @@ begin
                 tmpHALT := False;
                 tmpSLP := False;
                 push(regPC.Value);
-                vectorAddress := ((regI shl 8) or ((ioIL and $E0) or $0C)) and $FFFF;
+                vectorAddress := ((regI shl 8) or ((ioIL and $E0) or $0C));
                 regPC.low := memRead(vectorAddress);
                 regPC.high := memRead(vectorAddress + 1);
                 intCSIO := False;
@@ -1496,7 +1485,7 @@ begin
                 tmpHALT := False;
                 tmpSLP := False;
                 push(regPC.Value);
-                vectorAddress := ((regI shl 8) or ((ioIL and $E0) or $0E)) and $FFFF;
+                vectorAddress := ((regI shl 8) or ((ioIL and $E0) or $0E));
                 regPC.low := memRead(vectorAddress);
                 regPC.high := memRead(vectorAddress + 1);
                 intASCI0 := False;
@@ -1505,7 +1494,7 @@ begin
                 tmpHALT := False;
                 tmpSLP := False;
                 push(regPC.Value);
-                vectorAddress := ((regI shl 8) or ((ioIL and $E0) or $10)) and $FFFF;
+                vectorAddress := ((regI shl 8) or ((ioIL and $E0) or $10));
                 regPC.low := memRead(vectorAddress);
                 regPC.high := memRead(vectorAddress + 1);
                 intASCI1 := False;
@@ -1672,7 +1661,7 @@ end;
 // --------------------------------------------------------------------------------
 procedure TZ180Cpu.inc8Bit(var Value: byte); // inline;
 begin
-    Value := (Value + 1);
+    Inc(Value);
     regAF.Flag[H] := ((Value and $0F) = $00);   // H is set if carry from bit 3; reset otherwise
     regAF.Flag[PV] := (Value = $80);            // P/V is set if r was 7FH before operation; reset otherwise
     regAF.Flag[S] := ((Value and $80) <> $00);  // S is set if result is negative; reset otherwise
@@ -1683,7 +1672,7 @@ end;
 // --------------------------------------------------------------------------------
 procedure TZ180Cpu.dec8Bit(var Value: byte); // inline;
 begin
-    Value := (Value - 1);
+    Dec(Value);
     regAF.Flag[H] := ((Value and $0F) = $0F);   // H is set if borrow from bit 4, reset otherwise
     regAF.Flag[PV] := (Value = $7F);            // P/V is set if r was 80H before operation; reset otherwise
     regAF.Flag[S] := ((Value and $80) <> $00);  // S is set if result is negative; reset otherwise
@@ -1697,7 +1686,8 @@ var
     tmpA: byte;
 begin
     tmpA := (regAF.A + Value);
-    regAF.Flag[PV] := ((((regAF.A xor (not Value)) and $FFFF) and (regAF.A xor tmpA) and $80) <> $00);  // P/V is set if overflow; reset otherwise
+    //regAF.Flag[PV] := ((((regAF.A xor (not Value)) and $FFFF) and (regAF.A xor tmpA) and $80) <> $00);  // P/V is set if overflow; reset otherwise
+    regAF.Flag[PV] := (((regAF.A xor (not Value)) and (regAF.A xor tmpA) and $80) <> $00);  // P/V is set if overflow; reset otherwise
     regAF.Flag[H] := ((((regAF.A and $0F) + (Value and $0F)) and $10) <> $00);  // H is set if carry from bit 3; reset otherwise
     regAF.Flag[S] := ((tmpA and $80) <> $00);   // S is set if result is negative; reset otherwise
     regAF.Flag[Z] := (tmpA = $00);  // Z is set if result is zero; reset otherwise
@@ -1714,7 +1704,8 @@ var
 begin
     carry := byte(regAF.Flag[C]);
     tmpA := (regAF.A + Value + carry);
-    regAF.Flag[PV] := ((((regAF.A xor (not Value)) and $FFFF) and ((regAF.A xor tmpA) and $80)) <> $00);  // P/V is set if overflow; reset otherwise
+    //regAF.Flag[PV] := ((((regAF.A xor (not Value)) and $FFFF) and ((regAF.A xor tmpA) and $80)) <> $00);  // P/V is set if overflow; reset otherwise
+    regAF.Flag[PV] := (((regAF.A xor (not Value)) and ((regAF.A xor tmpA) and $80)) <> $00);  // P/V is set if overflow; reset otherwise
     regAF.Flag[H] := ((((regAF.A and $0F) + (Value and $0F) + carry) and $10) <> $00);  // H is set if carry from bit 3; reset otherwise
     regAF.Flag[S] := ((tmpA and $80) <> $00);  // S is set if result is negative; reset otherwise
     regAF.Flag[Z] := (tmpA = $00);  // Z is set if result is zero; reset otherwise
@@ -1969,7 +1960,8 @@ begin
     regAF.Flag[S] := ((tmpHL and $8000) <> $00);  // S is set if result is negative; reset otherwise
     regAF.Flag[Z] := (tmpHL = $0000);  // Z is set if result is zero; reset otherwise
     regAF.Flag[C] := ((tmpHL and $10000) <> $00);  // C is set if carry from bit 15; reset otherwise
-    regAF.Flag[PV] := (((regHL.Value xor ((not Value) and $FFFF)) and (regHL.Value xor tmpHL) and $8000) <> $00);  // P/V is set if overflow; reset otherwise
+    //regAF.Flag[PV] := (((regHL.Value xor ((not Value) and $FFFF)) and (regHL.Value xor tmpHL) and $8000) <> $00);  // P/V is set if overflow; reset otherwise
+    regAF.Flag[PV] := (((regHL.Value xor (not Value)) and (regHL.Value xor tmpHL) and $8000) <> $00);  // P/V is set if overflow; reset otherwise
     regAF.Flag[H] := ((((regHL.Value and $0FFF) + (Value and $0FFF) + carry) and $1000) <> $00);  // H is set if carry out of bit 11; reset otherwise
     regAF.Flag[N] := False;
     regHL.Value := tmpHL;
@@ -5060,8 +5052,8 @@ begin
         end;
         $23: begin   // OP-Code 0xDD23 : INC IX
             Inc(regIX.Value);
-            machineCycles := 2;
-            clockCycles := 4;
+            machineCycles := 3;
+            clockCycles := 7;
         end;
         $29: begin   // OP-Code 0xDD29 : ADD IX,IX
             addIX16Bit(regIX.Value);
@@ -5080,8 +5072,8 @@ begin
         end;
         $2B: begin   // OP-Code 0xDD2B : DEC IX
             Dec(regIX.Value);
-            machineCycles := 2;
-            clockCycles := 4;
+            machineCycles := 3;
+            clockCycles := 7;
         end;
         $34: begin   // OP-Code 0xDD34 : INC (IX+d)
             memOffset := memRead(regPC.Value);
@@ -5605,8 +5597,8 @@ begin
         end;
         $23: begin   // OP-Code 0xFD23 : INC IY
             Inc(regIY.Value);
-            machineCycles := 2;
-            clockCycles := 4;
+            machineCycles := 3;
+            clockCycles := 7;
         end;
         $29: begin   // OP-Code 0xFD29 : ADD IY,IY
             addIY16Bit(regIY.Value);
@@ -5625,8 +5617,8 @@ begin
         end;
         $2B: begin   // OP-Code 0xFD2B : DEC IY
             Dec(regIY.Value);
-            machineCycles := 2;
-            clockCycles := 4;
+            machineCycles := 3;
+            clockCycles := 7;
         end;
         $34: begin   // OP-Code 0xFD34 : INC (IY+d)
             memOffset := memRead(regPC.Value);
@@ -6322,7 +6314,8 @@ begin
             clockCycles := 18;
         end;
         $4C: begin   // OP-Code 0xED4C : MLT BC
-            regBC.Value := ((regBC.B * regBC.C) and $FFFF);
+            //regBC.Value := ((regBC.B * regBC.C) and $FFFF);
+            regBC.Value := (regBC.B * regBC.C);
             machineCycles := 13;
             clockCycles := 17;
         end;
@@ -6403,7 +6396,8 @@ begin
             clockCycles := 18;
         end;
         $5C: begin   // OP-Code 0xED5C : MLT DE
-            regDE.Value := ((regDE.D * regDE.E) and $FFFF);
+            //regDE.Value := ((regDE.D * regDE.E) and $FFFF);
+            regDE.Value := (regDE.D * regDE.E);
             machineCycles := 13;
             clockCycles := 17;
         end;
@@ -6493,7 +6487,8 @@ begin
             clockCycles := 18;
         end;
         $6C: begin   // OP-Code 0xED6C : MLT HL
-            regHL.Value := ((regHL.H * regHL.L) and $FFFF);
+            //regHL.Value := ((regHL.H * regHL.L) and $FFFF);
+            regHL.Value := (regHL.H * regHL.L);
             machineCycles := 13;
             clockCycles := 17;
         end;
@@ -6570,7 +6565,8 @@ begin
             clockCycles := 18;
         end;
         $7C: begin   // OP-Code 0xED7C : MLT SP
-            regSP.Value := ((regSP.high * regSP.low) and $FFFF);
+            //regSP.Value := ((regSP.high * regSP.low) and $FFFF);
+            regSP.Value := (regSP.high * regSP.low);
             machineCycles := 13;
             clockCycles := 17;
         end;
@@ -6617,7 +6613,8 @@ begin
             regAF.Flag[Z] := (regBC.B = $00); // Z is set if B=OO after B-l; reset otherwise
             regAF.Flag[S] := ((regBC.B and $80) <> $00); // S is set if B is negative after B-l; reset otherwise
             if (not regAF.Flag[Z]) then begin
-                regPC.Value := ((regPC.Value - 2) and $FFFF);
+                //regPC.Value := ((regPC.Value - 2) and $FFFF);
+                Dec(regPC.Value, 2);
                 machineCycles := 8;
                 clockCycles := 16;
             end
@@ -6639,7 +6636,8 @@ begin
             regAF.Flag[Z] := (regBC.B = $00); // Z is set if B=OO after B-l; reset otherwise
             regAF.Flag[S] := ((regBC.B and $80) <> $00); // S is set if B is negative after B-l; reset otherwise
             if (not regAF.Flag[Z]) then begin
-                regPC.Value := ((regPC.Value - 2) and $FFFF);
+                //regPC.Value := ((regPC.Value - 2) and $FFFF);
+                Dec(regPC.Value, 2);
                 machineCycles := 8;
                 clockCycles := 16;
             end
@@ -6741,7 +6739,8 @@ begin
             regAF.Flag[H] := False;
             regAF.Flag[N] := False;
             if (regBC.Value <> $0000) then begin
-                regPC.Value := ((regPC.Value - 2) and $FFFF);
+                //regPC.Value := ((regPC.Value - 2) and $FFFF);
+                Dec(regPC.Value, 2);
                 machineCycles := 6;
                 clockCycles := 14;
             end
@@ -6761,7 +6760,8 @@ begin
             regAF.Flag[PV] := (regBC.Value <> $0000); // P/V is set if BC-1 is not 0; reset otherwise
             regAF.Flag[N] := True;
             if (regAF.Flag[PV] and not regAF.Flag[Z]) then begin
-                regPC.Value := ((regPC.Value - 2) and $FFFF);
+                //regPC.Value := ((regPC.Value - 2) and $FFFF);
+                Dec(regPC.Value, 2);
                 machineCycles := 8;
                 clockCycles := 14;
             end
@@ -6777,7 +6777,8 @@ begin
             regAF.Flag[Z] := True;
             regAF.Flag[N] := True;
             if (regBC.B <> $00) then begin
-                regPC.Value := ((regPC.Value - 2) and $FFFF);
+                //regPC.Value := ((regPC.Value - 2) and $FFFF);
+                Dec(regPC.Value, 2);
                 machineCycles := 6;
                 clockCycles := 14;
             end
@@ -6793,7 +6794,8 @@ begin
             regAF.Flag[Z] := True;
             regAF.Flag[N] := True;
             if (regBC.B <> $00) then begin
-                regPC.Value := ((regPC.Value - 2) and $FFFF);
+                //regPC.Value := ((regPC.Value - 2) and $FFFF);
+                Dec(regPC.Value, 2);
                 machineCycles := 6;
                 clockCycles := 14;
             end
@@ -6811,7 +6813,8 @@ begin
             regAF.Flag[H] := False;
             regAF.Flag[N] := False;
             if (regBC.Value <> $0000) then begin
-                regPC.Value := ((regPC.Value - 2) and $FFFF);
+                //regPC.Value := ((regPC.Value - 2) and $FFFF);
+                Dec(regPC.Value, 2);
                 machineCycles := 6;
                 clockCycles := 14;
             end
@@ -6831,7 +6834,8 @@ begin
             regAF.Flag[PV] := (regBC.Value <> $0000); // P/V is set if BC-1 is not 0; reset otherwise
             regAF.Flag[N] := True;
             if (regAF.Flag[PV] and not regAF.Flag[Z]) then begin
-                regPC.Value := ((regPC.Value - 2) and $FFFF);
+                //regPC.Value := ((regPC.Value - 2) and $FFFF);
+                Dec(regPC.Value, 2);
                 machineCycles := 8;
                 clockCycles := 14;
             end
@@ -6847,7 +6851,8 @@ begin
             regAF.Flag[Z] := True;
             regAF.Flag[N] := True;
             if (regBC.B <> $00) then begin
-                regPC.Value := ((regPC.Value - 2) and $FFFF);
+                //regPC.Value := ((regPC.Value - 2) and $FFFF);
+                Dec(regPC.Value, 2);
                 machineCycles := 6;
                 clockCycles := 14;
             end
@@ -6863,7 +6868,8 @@ begin
             regAF.Flag[Z] := True;
             regAF.Flag[N] := True;
             if (regBC.B <> $00) then begin
-                regPC.Value := ((regPC.Value - 2) and $FFFF);
+                //regPC.Value := ((regPC.Value - 2) and $FFFF);
+                Dec(regPC.Value, 2);
                 machineCycles := 6;
                 clockCycles := 14;
             end
@@ -6875,7 +6881,7 @@ begin
         {$ifndef NOTRAP}
         else begin
             ioITC.bit[TRAP] := True;  // TRAP Flag in ITC-Register setzen
-            ioITC.bit[UFO] := False;  // UFO-Flag loeschen, da TRAP in 2. OP-Code aufgetreten 
+            ioITC.bit[UFO] := False;  // UFO-Flag loeschen, da TRAP in 2. OP-Code aufgetreten
             Dec(regPC.Value);         // PC korrigieren
             push(regPC.Value);
             regPC.Value := $0000;
