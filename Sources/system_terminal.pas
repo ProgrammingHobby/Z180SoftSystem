@@ -39,7 +39,6 @@ type
         maxCharacterBuffer = 1024;
 
     var
-        imagePage: TImage;
         terminalPanel: TPanel;
         timerTerminalPageRefresh: TTimer;
         timerFlash: TTimer;
@@ -60,6 +59,7 @@ type
             backCol: TColor;
         end;
         charWidth, charHeight, charSize: integer;
+        pageWidth, pageHeight: integer;
         csiPar: array[1..8] of word;
         parCount: word;
         keyboardBuffer: array[1..maxKeyboardBuffer] of byte;
@@ -125,7 +125,7 @@ type
         procedure setLocalEcho(enable: boolean);
         procedure setLogging(enable: boolean);
         procedure setColorType(colorType: integer);
-        procedure SetCharSize(size: integer);
+        procedure setCharSize(size: integer);
         procedure writeCharacter(character: byte);
         function readCharacter: byte;
         function terminalReadable: boolean;
@@ -188,10 +188,10 @@ begin
                 charCol := backCol;
                 backCol := tmpCol;
             end;
-            imagePage.Canvas.Brush.Color := backCol;
-            imagePage.Canvas.Font.Color := charCol;
-            imagePage.Canvas.Font.Style := viewStyle;
-            imagePage.Canvas.TextOut(posX, posY, viewChar);
+            terminalPanel.Canvas.Brush.Color := backCol;
+            terminalPanel.Canvas.Font.Color := charCol;
+            terminalPanel.Canvas.Font.Style := viewStyle;
+            terminalPanel.Canvas.TextOut(posX, posY, viewChar);
             posX := (posX + charWidth);
         end;
         posY := (posY + charHeight);
@@ -208,10 +208,11 @@ begin
     {$else}
     terminalPanel.Font.Name := 'DejaVu Sans Mono';
     {$endif}
+
     setCrLF(SystemSettings.ReadBoolean('Terminal', 'UseCRLF', False));
     setLocalEcho(SystemSettings.ReadBoolean('Terminal', 'LocalEcho', False));
     setLogging(SystemSettings.ReadBoolean('Terminal', 'Loggin', False));
-    SetCharSize(SystemSettings.ReadInteger('Terminal', 'CharacterSize', 10));
+    setCharSize(SystemSettings.ReadInteger('Terminal', 'CharacterSize', 10));
     setColorType(SystemSettings.ReadInteger('Terminal', 'ColorType', 0));
 
     timerFlash := TTimer.Create(terminalPanel);
@@ -780,9 +781,7 @@ begin
             if (enableTerminalLogging) then begin
                 Write(loggingFile, chr(character));
             end;
-
         end;
-
     until (Terminated);
 end;
 
@@ -869,10 +868,24 @@ end;
 
 // --------------------------------------------------------------------------------
 procedure TSystemTerminal.lineFeed;
+var
+    column, row: integer;
 begin
     Inc(terminalCursor.row);
     if (terminalCursor.row > terminalRows) then begin
-        scrollTerminalContentUp;
+        for row := 1 to terminalRows - 1 do begin
+            charData[row] := charData[row + 1];
+            charColor[row] := charColor[row + 1];
+            backColor[row] := backColor[row + 1];
+            charStyle[row] := charStyle[row + 1];
+        end;
+        for column := 1 to terminalColumns do begin
+            charData[terminalRows, column] := ' ';
+            charColor[terminalRows, column] := defaultCharColor;
+            backColor[terminalRows, column] := defaultBackColor;
+            charStyle[terminalRows, column] := [];
+        end;
+        terminalCursor.row := terminalRows;
     end;
 end;
 
@@ -1165,11 +1178,12 @@ begin
             monochromTerminal := False;
         end;
     end;
-    with (imagePage) do begin
-        Canvas.Font.Color := defaultCharColor;
+    with (terminalPanel) do begin
+        Color := defaultBackColor;
         Canvas.Brush.Color := defaultBackColor;
         Canvas.Pen.Color := defaultBackColor;
-        Canvas.Rectangle(0, 0, imagePage.Width, imagePage.Height);
+        Canvas.Font.Color := defaultCharColor;
+        Canvas.Rectangle(0, 0, terminalPanel.Width, terminalPanel.Height);
     end;
     for row := 1 to terminalRows do begin
         for column := 1 to terminalColumns do begin
@@ -1187,23 +1201,12 @@ end;
 
 // --------------------------------------------------------------------------------
 procedure TSystemTerminal.SetCharSize(size: integer);
-var
-    pageWidth, pageHeight: integer;
 begin
     charSize := size;
     terminalPanel.Font.Size := charSize;
-    terminalPanel.Canvas.GetTextSize(' ', charWidth, charHeight);
+    terminalPanel.Canvas.GetTextSize('#', charWidth, charHeight);
     pageWidth := (charWidth * terminalColumns) + (2 * screenBorder);
     pageHeight := (charHeight * terminalRows) + (2 * screenBorder);
-
-    imagePage := TImage.Create(terminalPanel);
-    with (imagePage) do begin
-        SetBounds(0, 0, pageWidth, pageHeight);
-        Canvas.Font := terminalPanel.Font;
-        Parent := terminalPanel;
-        Enabled := True;
-        Visible := True;
-    end;
 end;
 
 // --------------------------------------------------------------------------------
@@ -1363,8 +1366,8 @@ function TSystemTerminal.getDisplaySize: TSize;
 var
     size: TSize;
 begin
-    size.Width := imagePage.Width;
-    size.Height := imagePage.Height;
+    size.Width := pageWidth;
+    size.Height := pageHeight;
     Result := size;
 end;
 
