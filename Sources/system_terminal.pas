@@ -18,7 +18,11 @@ unit System_Terminal;
 interface
 
 uses
-    Classes, SysUtils, Controls, ExtCtrls, Graphics, Types;
+    Classes, SysUtils, Controls,
+    {$ifdef Windows}
+    Windows, JwaWinGDI, Win32Proc,
+    {$endif}
+    ExtCtrls, Graphics, Types;
 
 type
 
@@ -40,6 +44,7 @@ type
 
     var
         terminalPanel: TPanel;
+        screenPage: TImage;
         timerTerminalPageRefresh: TTimer;
         timerFlash: TTimer;
         charData: array[1..terminalRows, 1..terminalColumns] of char;
@@ -58,7 +63,7 @@ type
             charCol: TColor;
             backCol: TColor;
         end;
-        charWidth, charHeight, charSize: integer;
+        charWidth, charHeight: integer;
         pageWidth, pageHeight: integer;
         csiPar: array[1..8] of word;
         parCount: word;
@@ -143,6 +148,10 @@ implementation
 
 uses System_Settings;
 
+{$ifdef Windows}
+{$R system_terminal.res}
+{$endif}
+
 // --------------------------------------------------------------------------------
 procedure TSystemTerminal.timerFlashTimer(Sender: TObject);
 begin
@@ -160,7 +169,11 @@ begin
     timerTerminalPageRefresh.Enabled := False;
     posY := screenBorder;
     for row := 1 to terminalRows do begin
+    {$ifdef Windows}
+        posX := screenBorder + 1;
+    {$else}
         posX := screenBorder;
+    {$endif}
         for column := 1 to terminalColumns do begin
             viewStyle := charStyle[row, column];
             charCol := charColor[row, column];
@@ -188,10 +201,10 @@ begin
                 charCol := backCol;
                 backCol := tmpCol;
             end;
-            terminalPanel.Canvas.Brush.Color := backCol;
-            terminalPanel.Canvas.Font.Color := charCol;
-            terminalPanel.Canvas.Font.Style := viewStyle;
-            terminalPanel.Canvas.TextOut(posX, posY, viewChar);
+            screenPage.Canvas.Brush.Color := backCol;
+            screenPage.Canvas.Font.Color := charCol;
+            screenPage.Canvas.Font.Style := viewStyle;
+            screenPage.Canvas.TextOut(posX, posY, viewChar);
             posX := (posX + charWidth);
         end;
         posY := (posY + charHeight);
@@ -201,13 +214,27 @@ end;
 
 // --------------------------------------------------------------------------------
 constructor TSystemTerminal.Create(panel: TPanel; CreateSuspended: boolean);
+{$ifdef Windows}
+var
+    resStream: TResourceStream;
+    fontsCount: dword;
+{$endif}
 begin
     terminalPanel := panel;
-    {$ifdef Windows}
-    terminalPanel.Font.Name := 'Courier';
-    {$else}
+{$ifdef Windows}
+    resStream := TResourceStream.Create(hInstance, 'FONT', Windows.RT_RCDATA);
+    try
+        AddFontMemResourceEx(resStream.Memory, resStream.Size, nil, @fontsCount);
+    finally
+        ResStream.Free;
+    end;
+{$endif}
     terminalPanel.Font.Name := 'DejaVu Sans Mono';
-    {$endif}
+    screenPage := TImage.Create(terminalPanel);
+    with (screenPage) do begin
+        Parent := terminalPanel;
+        Align := alClient;
+    end;
 
     setCrLF(SystemSettings.ReadBoolean('Terminal', 'UseCRLF', False));
     setLocalEcho(SystemSettings.ReadBoolean('Terminal', 'LocalEcho', False));
@@ -683,7 +710,7 @@ var
                 ansiEscapeModeParameter;
                 termMode := ANSI_ESC_PAR;
             end;
-            $3F: begin  // ESC [ ? 
+            $3F: begin  // ESC [ ?
                 Inc(parCount);
                 termMode := ANSI_ESC_PAR;
             end;
@@ -1178,12 +1205,12 @@ begin
             monochromTerminal := False;
         end;
     end;
-    with (terminalPanel) do begin
-        Color := defaultBackColor;
+    terminalPanel.Color := defaultBackColor;
+    with (screenPage) do begin
+        Canvas.Font.Color := defaultCharColor;
         Canvas.Brush.Color := defaultBackColor;
         Canvas.Pen.Color := defaultBackColor;
-        Canvas.Font.Color := defaultCharColor;
-        Canvas.Rectangle(0, 0, terminalPanel.Width, terminalPanel.Height);
+        Canvas.FillRect(0, 0, pageWidth, pageHeight);
     end;
     for row := 1 to terminalRows do begin
         for column := 1 to terminalColumns do begin
@@ -1201,12 +1228,31 @@ end;
 
 // --------------------------------------------------------------------------------
 procedure TSystemTerminal.SetCharSize(size: integer);
+var
+    bitmap: TBitmap;
 begin
-    charSize := size;
-    terminalPanel.Font.Size := charSize;
+    terminalPanel.Font.Size := size;
     terminalPanel.Canvas.GetTextSize('#', charWidth, charHeight);
+{$ifdef Windows}
+    if (WindowsVersion > wvXP) then begin
+        Inc(charWidth, 2);
+    end;
+{$endif}
     pageWidth := (charWidth * terminalColumns) + (2 * screenBorder);
     pageHeight := (charHeight * terminalRows) + (2 * screenBorder);
+    try
+        bitmap := TBitmap.Create;
+        bitmap.SetSize(pageWidth, pageHeight);
+        with (screenPage) do begin
+            Picture.Bitmap := bitmap;
+            SetBounds(0, 0, pageWidth, pageHeight);
+            Canvas.Brush.Color := defaultBackColor;
+            Canvas.FillRect(0, 0, pageWidth, pageHeight);
+            Canvas.Font := terminalPanel.Font;
+        end;
+    finally
+        bitmap.Free;
+    end;
 end;
 
 // --------------------------------------------------------------------------------
@@ -1371,15 +1417,5 @@ begin
     Result := size;
 end;
 
-// --------------------------------------------------------------------------------
 end.
-
-
-
-
-
-
-
-
-
-
+// --------------------------------------------------------------------------------
