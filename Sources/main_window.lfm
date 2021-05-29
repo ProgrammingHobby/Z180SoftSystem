@@ -22,7 +22,6 @@ object MainWindow: TMainWindow
   OnKeyUp = FormKeyUp
   OnShow = FormShow
   ParentDoubleBuffered = False
-  LCLVersion = '2.0.12.0'
   object panelSystemTerminal: TPanel
     Left = 0
     Height = 1
@@ -49,8 +48,8 @@ object MainWindow: TMainWindow
     Width = 550
     Align = alBottom
     BevelOuter = bvNone
-    ClientHeight = 24
-    ClientWidth = 550
+    ClientHeight = 20
+    ClientWidth = 546
     Constraints.MaxHeight = 24
     Constraints.MinHeight = 24
     ParentColor = False
@@ -112,8 +111,8 @@ object MainWindow: TMainWindow
     ChildSizing.EnlargeVertical = crsHomogenousChildResize
     ChildSizing.Layout = cclLeftToRightThenTopToBottom
     ChildSizing.ControlsPerLine = 6
-    ClientHeight = 31
-    ClientWidth = 550
+    ClientHeight = 27
+    ClientWidth = 546
     TabOrder = 2
     object panelCpuDataView: TPanel
       Left = 0
@@ -126,8 +125,8 @@ object MainWindow: TMainWindow
       ChildSizing.EnlargeVertical = crsHomogenousSpaceResize
       ChildSizing.Layout = cclLeftToRightThenTopToBottom
       ChildSizing.ControlsPerLine = 3
-      ClientHeight = 31
-      ClientWidth = 86
+      ClientHeight = 27
+      ClientWidth = 82
       TabOrder = 0
       object buttonMemoryEditor: TSpeedButton
         Left = 0
@@ -176,8 +175,8 @@ object MainWindow: TMainWindow
       ChildSizing.EnlargeVertical = crsHomogenousSpaceResize
       ChildSizing.Layout = cclLeftToRightThenTopToBottom
       ChildSizing.ControlsPerLine = 3
-      ClientHeight = 31
-      ClientWidth = 86
+      ClientHeight = 27
+      ClientWidth = 82
       TabOrder = 1
       object buttonMemorySettings: TSpeedButton
         Left = 0
@@ -227,8 +226,8 @@ object MainWindow: TMainWindow
       ChildSizing.EnlargeVertical = crsHomogenousSpaceResize
       ChildSizing.Layout = cclLeftToRightThenTopToBottom
       ChildSizing.ControlsPerLine = 5
-      ClientHeight = 31
-      ClientWidth = 344
+      ClientHeight = 27
+      ClientWidth = 340
       TabOrder = 2
       object buttonStop: TSpeedButton
         Left = 0
@@ -274,8 +273,8 @@ object MainWindow: TMainWindow
         Width = 128
         AutoSize = True
         BevelOuter = bvNone
-        ClientHeight = 31
-        ClientWidth = 128
+        ClientHeight = 27
+        ClientWidth = 124
         TabOrder = 0
         object buttonSlowRun: TSpeedButton
           Left = 0
@@ -322,8 +321,8 @@ object MainWindow: TMainWindow
         Width = 128
         AutoSize = True
         BevelOuter = bvNone
-        ClientHeight = 31
-        ClientWidth = 128
+        ClientHeight = 27
+        ClientWidth = 124
         TabOrder = 1
         object buttonRun: TSpeedButton
           Left = 0
@@ -373,8 +372,8 @@ object MainWindow: TMainWindow
       ChildSizing.EnlargeVertical = crsHomogenousSpaceResize
       ChildSizing.Layout = cclLeftToRightThenTopToBottom
       ChildSizing.ControlsPerLine = 5
-      ClientHeight = 31
-      ClientWidth = 28
+      ClientHeight = 27
+      ClientWidth = 24
       TabOrder = 3
       object buttonTerminal: TSpeedButton
         Left = 0
