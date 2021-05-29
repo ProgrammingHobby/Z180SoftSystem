@@ -5,7 +5,7 @@ unit Z180_CPU;
 {$coperators off}
 {$rangechecks off}
 
-{$define NOTRAP}
+{$define Z180TRAP}
 
 interface
 
@@ -181,6 +181,10 @@ type
         tend0: boolean;         // Transfer End Channel 0
         tend1: boolean;         // Transfer End Channel 1
         asciDmaMode: TAcsiDmaMode;
+
+        // Hilfsarrays
+        mmu: array[0..15] of dword;         // Array für schnelle MMU-Berechnung
+        parity: array[0..255] of boolean;   // Array für schnelle Parity-Berechnung
 
         // statische Arrays fuer ASCI- und Wait-Cycles
     const
@@ -391,7 +395,7 @@ type
         procedure memWrite(const addr: word; const Value: byte);
         function ioRead(const portHI: byte; const portLO: byte): byte;
         procedure ioWrite(const portHI: byte; const portLO: byte; const Data: byte);
-        function calcPhysicalMemAddr(logAddr: word): DWord;
+        procedure calcMmuPageTable;
         function calcAsciPhiDevide(asciControlRegister: byte): dword;
         function readOpCode(const addr: DWord): byte;
         procedure doAsci0;
@@ -401,8 +405,6 @@ type
         procedure doDma0;
         procedure doDma1;
 
-
-        function calcParity(Value: byte): boolean;
         procedure inc8Bit(var Value: byte);
         procedure dec8Bit(var Value: byte);
         procedure addA8Bit(const Value: byte);
@@ -465,6 +467,8 @@ uses
 
 // --------------------------------------------------------------------------------
 constructor TZ180Cpu.Create;
+var
+    value, data: byte;
 begin
     inherited Create;
     asciClockCount0 := 0;
@@ -487,6 +491,15 @@ begin
     clockShift := 0;
     memWaitCycles := 0;
     ioWaitCycles := 0;
+
+    // Initialisieren des Parity-Arrays
+    for value:=0 to 255 do begin
+        data:=value;
+       data := data xor data shr 4;
+    data := data xor data shr 2;
+    data := data xor data shr 1;
+    parity[value] := ((data and $01) = $00);
+    end;
 end;
 
 // --------------------------------------------------------------------------------
@@ -499,14 +512,14 @@ end;
 function TZ180Cpu.memRead(const addr: word): byte; inline;
 begin
     extraWaitCycles := extraWaitCycles + memWaitCycles;
-    Result := SystemMemory.Read(calcPhysicalMemAddr(addr));
+    Result := SystemMemory.Read(mmu[((addr shr 12) and $0F)] or (addr and $0FFF));
 end;
 
 // --------------------------------------------------------------------------------
 procedure TZ180Cpu.memWrite(const addr: word; const Value: byte); inline;
 begin
     extraWaitCycles := extraWaitCycles + memWaitCycles;
-    SystemMemory.Write(calcPhysicalMemAddr(addr), Value);
+    SystemMemory.Write((mmu[((addr shr 12) and $0F)] or (addr and $0FFF)), Value);
 end;
 
 // --------------------------------------------------------------------------------
@@ -920,12 +933,15 @@ begin
             end;
             $38: begin   //portCBR
                 ioCBR := ((ioCBR and not $FF) or (Data and $FF));
+                calcMmuPageTable;
             end;
             $39: begin   //portBBR
                 ioBBR := ((ioBBR and not $FF) or (Data and $FF));
+                calcMmuPageTable;
             end;
             $3A: begin   //portCBAR
                 ioCBAR := ((ioCBAR and not $FF) or (Data and $FF));
+                calcMmuPageTable;
             end;
             $3E: begin   //portOMCR
                 ioOMCR.Value := ((ioOMCR.Value and not $E0) or (Data and $E0));
@@ -941,24 +957,27 @@ begin
 end;
 
 // --------------------------------------------------------------------------------
-function TZ180Cpu.calcPhysicalMemAddr(logAddr: word): DWord; inline;
+procedure TZ180Cpu.calcMmuPageTable;
 var
-    physAddr: DWord;
-    page, baseArea, commonArea: byte;
+    addr, page: DWord;
+    baseArea, commonArea: DWord;
 begin
-    physAddr := logAddr;
-    page := ((logAddr and $F000) shr 12) and $FF;
     baseArea := (ioCBAR and $0F);
     commonArea := ((ioCBAR and $F0) shr 4);
-    if (page >= baseArea) then begin
-        if (page >= commonArea) then begin
-            physAddr := physAddr + (ioCBR shl 12);
-        end
-        else begin
-            physAddr := physAddr + (ioBBR shl 12);
+    for page := 0 to 15 do begin
+
+        addr := (page shl 12);
+        if (page >= baseArea) then begin
+            if (page >= commonArea) then begin
+                addr := addr + (ioCBR shl 12);
+            end
+            else begin
+                addr := addr + (ioBBR shl 12);
+            end;
         end;
+        mmu[page] := addr;
+
     end;
-    Result := physAddr;
 end;
 
 // --------------------------------------------------------------------------------
@@ -982,7 +1001,7 @@ function TZ180Cpu.readOpCode(const addr: DWord): byte; inline;
 begin
     regR := (regR + 1) and $7F; // Die letzten 7 Bit von Register R werden bei jedem OpCode Read um 1 hochgezaehlt
     extraWaitCycles := extraWaitCycles + memWaitCycles;
-    Result := SystemMemory.Read(calcPhysicalMemAddr(addr));
+    Result := SystemMemory.Read((mmu[((addr shr 12) and $0F)] or (addr and $0FFF)));
 end;
 
 // --------------------------------------------------------------------------------
@@ -1329,6 +1348,7 @@ begin
     shiftModeRatio1 := asciTransLength[ioCNTLA1.Value and MODSEL];
     memWaitCycles := memCycles[((ioDCNTL.Value and MWIsel) shr $06)];
     ioWaitCycles := ioCycles[((ioDCNTL.Value and IWIsel) shr $04)];
+    calcMmuPageTable;
 end;
 
 // --------------------------------------------------------------------------------
@@ -1517,38 +1537,38 @@ begin
         B1 := regBC.B;
         C1 := regBC.C;
         BC1 := regBC.Value;
-        BCi1 := SystemMemory.Read(calcPhysicalMemAddr(regBC.Value));
+        BCi1 := SystemMemory.Read(mmu[((regBC.Value shr 12) and $0F)] or (regBC.Value and $0FFF));
         D1 := regDE.D;
         E1 := regDE.E;
         DE1 := regDE.Value;
-        DEi1 := SystemMemory.Read(calcPhysicalMemAddr(regDE.Value));
+        DEi1 := SystemMemory.Read(mmu[((regDE.Value shr 12) and $0F)] or (regDE.Value and $0FFF));
         H1 := regHL.H;
         L1 := regHL.L;
         HL1 := regHL.Value;
-        HLi1 := SystemMemory.Read(calcPhysicalMemAddr(regHL.Value));
+        HLi1 := SystemMemory.Read(mmu[((regHL.Value shr 12) and $0F)] or (regHL.Value and $0FFF));
         A2 := (regAF_ and $FF00) shr 8;
         F2 := (regAF_ and $00FF);
         B2 := (regBC_ and $FF00) shr 8;
         C2 := (regBC_ and $00FF);
         BC2 := regBC_;
-        BCi2 := SystemMemory.Read(calcPhysicalMemAddr(regBC_));
+        BCi2 := SystemMemory.Read(mmu[((regBC_ shr 12) and $0F)] or (regBC_ and $0FFF));
         D2 := (regDE_ and $FF00) shr 8;
         E2 := (regDE_ and $00FF);
         DE2 := regDE_;
-        DEi2 := SystemMemory.Read(calcPhysicalMemAddr(regDE_));
+        DEi2 := SystemMemory.Read(mmu[((regDE_ shr 12) and $0F)] or (regDE_ and $0FFF));
         H2 := (regHL_ and $FF00) shr 8;
         L2 := (regHL_ and $00FF);
         HL2 := regHL_;
-        HLi2 := SystemMemory.Read(calcPhysicalMemAddr(regHL_));
+        HLi2 := SystemMemory.Read(mmu[((regHL_ shr 12) and $0F)] or (regHL_ and $0FFF));
         I := regI;
         R := regR;
         IX := regIX.Value;
         IY := regIY.Value;
         SP := regSP.Value;
-        SPi := systemmemory.Read(calcPhysicalMemAddr(regSP.Value));
+        SPi := systemmemory.Read(mmu[((regSP.Value shr 12) and $0F)] or (regSP.Value and $0FFF));
         PC := regPC.Value;
-        PCi := systemmemory.Read(calcPhysicalMemAddr(regPC.Value));
-        PCmmu := calcPhysicalMemAddr(regPC.Value);
+        PCi := systemmemory.Read(mmu[((regPC.Value shr 12) and $0F)] or (regPC.Value and $0FFF));
+        PCmmu := mmu[((regPC.Value shr 12) and $0F)] or (regPC.Value and $0FFF);
         IFF1 := IFF1;
         IFF2 := IFF2;
         intMode := intMode;
@@ -1650,16 +1670,7 @@ begin
 end;
 
 // --------------------------------------------------------------------------------
-function TZ180Cpu.calcParity(Value: byte): boolean; // inline;
-begin
-    Value := Value xor Value shr 4;
-    Value := Value xor Value shr 2;
-    Value := Value xor Value shr 1;
-    Result := ((Value and $01) = $00);
-end;
-
-// --------------------------------------------------------------------------------
-procedure TZ180Cpu.inc8Bit(var Value: byte); // inline;
+procedure TZ180Cpu.inc8Bit(var Value: byte);
 begin
     Inc(Value);
     regAF.Flag[H] := ((Value and $0F) = $00);   // H is set if carry from bit 3; reset otherwise
@@ -1670,7 +1681,7 @@ begin
 end;
 
 // --------------------------------------------------------------------------------
-procedure TZ180Cpu.dec8Bit(var Value: byte); // inline;
+procedure TZ180Cpu.dec8Bit(var Value: byte);
 begin
     Dec(Value);
     regAF.Flag[H] := ((Value and $0F) = $0F);   // H is set if borrow from bit 4, reset otherwise
@@ -1681,12 +1692,11 @@ begin
 end;
 
 // --------------------------------------------------------------------------------
-procedure TZ180Cpu.addA8Bit(const Value: byte); // inline;
+procedure TZ180Cpu.addA8Bit(const Value: byte);
 var
     tmpA: byte;
 begin
     tmpA := (regAF.A + Value);
-    //regAF.Flag[PV] := ((((regAF.A xor (not Value)) and $FFFF) and (regAF.A xor tmpA) and $80) <> $00);  // P/V is set if overflow; reset otherwise
     regAF.Flag[PV] := (((regAF.A xor (not Value)) and (regAF.A xor tmpA) and $80) <> $00);  // P/V is set if overflow; reset otherwise
     regAF.Flag[H] := ((((regAF.A and $0F) + (Value and $0F)) and $10) <> $00);  // H is set if carry from bit 3; reset otherwise
     regAF.Flag[S] := ((tmpA and $80) <> $00);   // S is set if result is negative; reset otherwise
@@ -1697,14 +1707,13 @@ begin
 end;
 
 // --------------------------------------------------------------------------------
-procedure TZ180Cpu.adcA8Bit(const Value: byte); // inline;
+procedure TZ180Cpu.adcA8Bit(const Value: byte);
 var
     carry: byte;
     tmpA: byte;
 begin
     carry := byte(regAF.Flag[C]);
     tmpA := (regAF.A + Value + carry);
-    //regAF.Flag[PV] := ((((regAF.A xor (not Value)) and $FFFF) and ((regAF.A xor tmpA) and $80)) <> $00);  // P/V is set if overflow; reset otherwise
     regAF.Flag[PV] := (((regAF.A xor (not Value)) and ((regAF.A xor tmpA) and $80)) <> $00);  // P/V is set if overflow; reset otherwise
     regAF.Flag[H] := ((((regAF.A and $0F) + (Value and $0F) + carry) and $10) <> $00);  // H is set if carry from bit 3; reset otherwise
     regAF.Flag[S] := ((tmpA and $80) <> $00);  // S is set if result is negative; reset otherwise
@@ -1715,7 +1724,7 @@ begin
 end;
 
 // --------------------------------------------------------------------------------
-procedure TZ180Cpu.subA8Bit(const Value: byte); // inline;
+procedure TZ180Cpu.subA8Bit(const Value: byte);
 var
     tmp: integer;
     tmpA: byte;
@@ -1732,7 +1741,7 @@ begin
 end;
 
 // --------------------------------------------------------------------------------
-procedure TZ180Cpu.sbcA8Bit(const Value: byte); // inline;
+procedure TZ180Cpu.sbcA8Bit(const Value: byte);
 var
     carry: byte;
     tmpA: byte;
@@ -1749,43 +1758,43 @@ begin
 end;
 
 // --------------------------------------------------------------------------------
-procedure TZ180Cpu.andA8Bit(const Value: byte); // inline;
+procedure TZ180Cpu.andA8Bit(const Value: byte);
 begin
     regAF.A := (regAF.A and Value);
     regAF.Flag[S] := ((regAF.A and $80) <> $00);  // S is set if result is negative; reset otherwise
     regAF.Flag[Z] := (regAF.A = $00);             // Z is set if result is zero; reset otherwise
-    regAF.Flag[PV] := calcParity(regAF.A);        // P/V is set if parity even; reset otherwise
+    regAF.Flag[PV] := parity[regAF.A];        // P/V is set if parity even; reset otherwise
     regAF.Flag[H] := True;
     regAF.Flag[N] := False;
     regAF.Flag[C] := False;
 end;
 
 // --------------------------------------------------------------------------------
-procedure TZ180Cpu.xorA8Bit(const Value: byte); // inline;
+procedure TZ180Cpu.xorA8Bit(const Value: byte);
 begin
     regAF.A := (regAF.A xor Value);
     regAF.Flag[S] := ((regAF.A and $80) <> $00);  // S is set if result is negative; reset otherwise
     regAF.Flag[Z] := (regAF.A = $00);             // Z is set if result is zero; reset otherwise
-    regAF.Flag[PV] := calcParity(regAF.A);        // P/V is set if parity even; reset otherwise
+    regAF.Flag[PV] := parity[regAF.A];        // P/V is set if parity even; reset otherwise
     regAF.Flag[H] := False;
     regAF.Flag[N] := False;
     regAF.Flag[C] := False;
 end;
 
 // --------------------------------------------------------------------------------
-procedure TZ180Cpu.orA8Bit(const Value: byte); // inline;
+procedure TZ180Cpu.orA8Bit(const Value: byte);
 begin
     regAF.A := (regAF.A or Value);
     regAF.Flag[S] := ((regAF.A and $80) <> $00);  // S is set if result is negative; reset otherwise
     regAF.Flag[Z] := (regAF.A = $00);             // Z is set if result is zero; reset otherwise
-    regAF.Flag[PV] := calcParity(regAF.A);        // P/V is set if parity even; reset otherwise
+    regAF.Flag[PV] := parity[regAF.A];        // P/V is set if parity even; reset otherwise
     regAF.Flag[H] := False;
     regAF.Flag[N] := False;
     regAF.Flag[C] := False;
 end;
 
 // --------------------------------------------------------------------------------
-procedure TZ180Cpu.cpA8Bit(const Value: byte); // inline;
+procedure TZ180Cpu.cpA8Bit(const Value: byte);
 var
     test: byte;
 begin
@@ -1799,31 +1808,31 @@ begin
 end;
 
 // --------------------------------------------------------------------------------
-procedure TZ180Cpu.rlc8Bit(var Value: byte); // inline;
+procedure TZ180Cpu.rlc8Bit(var Value: byte);
 begin
     regAF.Flag[C] := ((Value and $80) <> $00); // C is data from bit 7 of source register
     Value := ((Value shl 1) or byte(regAF.Flag[C]));
     regAF.Flag[S] := ((Value and $80) <> $00); // S is set if result is negative; reset otherwise
     regAF.Flag[Z] := (Value = $00);            // Z is set if result is zero; reset otherwise
-    regAF.Flag[PV] := calcParity(Value);       // P/V is set if parity even; reset otherwise
+    regAF.Flag[PV] := parity[Value];       // P/V is set if parity even; reset otherwise
     regAF.Flag[H] := False;
     regAF.Flag[N] := False;
 end;
 
 // --------------------------------------------------------------------------------
-procedure TZ180Cpu.rrc8Bit(var Value: byte); // inline;
+procedure TZ180Cpu.rrc8Bit(var Value: byte);
 begin
     regAF.Flag[C] := ((Value and $01) <> $00); // C is data from bit 0 of source register
     Value := ((Value shr 1) or (byte(regAF.Flag[C]) shl 7));
     regAF.Flag[S] := ((Value and $80) <> $00); // S is set if result is negative; reset otherwise
     regAF.Flag[Z] := (Value = $00);            // Z is set if result is zero; reset otherwise
-    regAF.Flag[PV] := calcParity(Value);       // P/V is set if parity even; reset otherwise
+    regAF.Flag[PV] := parity[Value];       // P/V is set if parity even; reset otherwise
     regAF.Flag[H] := False;
     regAF.Flag[N] := False;
 end;
 
 // --------------------------------------------------------------------------------
-procedure TZ180Cpu.rl8Bit(var Value: byte); // inline;
+procedure TZ180Cpu.rl8Bit(var Value: byte);
 var
     tmpCarry: boolean;
 begin
@@ -1832,13 +1841,13 @@ begin
     Value := ((Value shl 1) or byte(tmpCarry));
     regAF.Flag[S] := ((Value and $80) <> $00); // S is set if result is negative; reset otherwise
     regAF.Flag[Z] := (Value = $00);            // Z is set if result is zero; reset otherwise
-    regAF.Flag[PV] := calcParity(Value);       // P/V is set if parity even; reset otherwise
+    regAF.Flag[PV] := parity[Value];       // P/V is set if parity even; reset otherwise
     regAF.Flag[H] := False;
     regAF.Flag[N] := False;
 end;
 
 // --------------------------------------------------------------------------------
-procedure TZ180Cpu.rr8Bit(var Value: byte); // inline;
+procedure TZ180Cpu.rr8Bit(var Value: byte);
 var
     tmpCarry: boolean;
 begin
@@ -1847,32 +1856,32 @@ begin
     Value := ((Value shr 1) or (byte(tmpCarry) shl 7));
     regAF.Flag[S] := ((Value and $80) <> $00); // S is set if result is negative; reset otherwise
     regAF.Flag[Z] := (Value = $00);            // Z is set if result is zero; reset otherwise
-    regAF.Flag[PV] := calcParity(Value);       // P/V is set if parity even; reset otherwise
+    regAF.Flag[PV] := parity[Value];       // P/V is set if parity even; reset otherwise
     regAF.Flag[H] := False;
     regAF.Flag[N] := False;
 
 end;
 
 // --------------------------------------------------------------------------------
-procedure TZ180Cpu.sla8Bit(var Value: byte); // inline;
+procedure TZ180Cpu.sla8Bit(var Value: byte);
 begin
     regAF.Flag[C] := ((Value and $80) <> $00); // C is data from bit 7 of source register
     Value := (Value shl 1);
     regAF.Flag[S] := ((Value and $80) <> $00); // S is set if result is negative; reset otherwise
     regAF.Flag[Z] := (Value = $00);            // Z is set if result is zero; reset otherwise
-    regAF.Flag[PV] := calcParity(Value);       // P/V is set if parity even; reset otherwise
+    regAF.Flag[PV] := parity[Value];       // P/V is set if parity even; reset otherwise
     regAF.Flag[H] := False;
     regAF.Flag[N] := False;
 end;
 
 // --------------------------------------------------------------------------------
-procedure TZ180Cpu.sra8Bit(var Value: byte); // inline;
+procedure TZ180Cpu.sra8Bit(var Value: byte);
 var
     tmpValue: byte;
 begin
     regAF.Flag[C] := ((Value and $01) <> $00);  // C is data from bit 0 of source register
     tmpValue := ((Value shr 1) or (Value and $80));
-    regAF.Flag[PV] := calcParity(tmpValue);  // P/V is set if parity even; reset otherwise
+    regAF.Flag[PV] := parity[tmpValue];  // P/V is set if parity even; reset otherwise
     regAF.Flag[S] := ((tmpValue and $80) <> $00);  // S is set if result is negative; reset otherwise
     regAF.Flag[Z] := (tmpValue = $00);  // Z is set if result is zero; reset otherwise
     regAF.Flag[H] := False;
@@ -1881,19 +1890,19 @@ begin
 end;
 
 // --------------------------------------------------------------------------------
-procedure TZ180Cpu.srl8Bit(var Value: byte); // inline;
+procedure TZ180Cpu.srl8Bit(var Value: byte);
 begin
     regAF.Flag[C] := ((Value and $01) <> $00); // C is data from bit 0 of source register
     Value := (Value shr 1);
     regAF.Flag[S] := ((Value and $80) <> $00); // S is set if result is negative; reset otherwise
     regAF.Flag[Z] := (Value = $00);            // Z is set if result is zero; reset otherwise
-    regAF.Flag[PV] := calcParity(Value);       // P/V is set if parity even; reset otherwise
+    regAF.Flag[PV] := parity[Value];       // P/V is set if parity even; reset otherwise
     regAF.Flag[H] := False;
     regAF.Flag[N] := False;
 end;
 
 // --------------------------------------------------------------------------------
-procedure TZ180Cpu.tstBit(const Bit: byte; const Value: byte); // inline;
+procedure TZ180Cpu.tstBit(const Bit: byte; const Value: byte);
 begin
     regAF.Flag[Z] := (Value and (1 shl Bit) = $00);  // Z is set if specified bit is 0; reset otherwise
     regAF.Flag[H] := True;
@@ -1901,47 +1910,47 @@ begin
 end;
 
 // --------------------------------------------------------------------------------
-procedure TZ180Cpu.resBit(const Bit: byte; var Value: byte); // inline;
+procedure TZ180Cpu.resBit(const Bit: byte; var Value: byte);
 begin
     Value := (Value and not (1 shl Bit));
 end;
 
 // --------------------------------------------------------------------------------
-procedure TZ180Cpu.setBit(const Bit: byte; var Value: byte); // inline;
+procedure TZ180Cpu.setBit(const Bit: byte; var Value: byte);
 begin
     Value := (Value or (1 shl Bit));
 end;
 
 // -------------------------------------------------------------------------------
-procedure TZ180Cpu.tstA8Bit(const Value: byte); // inline;
+procedure TZ180Cpu.tstA8Bit(const Value: byte);
 var
     tmpByte: byte;
 begin
     tmpByte := (regAF.A and Value);
     regAF.Flag[S] := ((tmpByte and $80) <> $00); // S is set if the result is negative; reset otherwise
     regAF.Flag[Z] := (tmpByte = $00);            // Z is set if the result is zero; reset otherwise
-    regAF.Flag[PV] := calcParity(tmpByte);       // P/V is set if parity is even; reset otherwise
+    regAF.Flag[PV] := parity[tmpByte];       // P/V is set if parity is even; reset otherwise
     regAF.Flag[H] := True;
     regAF.Flag[N] := False;
     regAF.Flag[C] := False;
 end;
 
 // --------------------------------------------------------------------------------
-function TZ180Cpu.inreg8Bit(const portHi: byte; const portLo: byte): byte; // inline;
+function TZ180Cpu.inreg8Bit(const portHi: byte; const portLo: byte): byte;
 var
     tmpByte: byte;
 begin
     tmpByte := ioRead(portHi, portLo);
     regAF.Flag[S] := ((tmpByte and $80) <> $00); // S is set if input data is negative; reset otherwise
     regAF.Flag[Z] := (tmpByte = $00);            // Z is set if input data is zero; reset otherwise
-    regAF.Flag[PV] := calcParity(tmpByte);       // P/V is set if parity is even; reset otherwise
+    regAF.Flag[PV] := parity[tmpByte];       // P/V is set if parity is even; reset otherwise
     regAF.Flag[H] := False;
     regAF.Flag[N] := False;
     Result := tmpByte;
 end;
 
 // --------------------------------------------------------------------------------
-procedure TZ180Cpu.addHL16Bit(const Value: word); // inline;
+procedure TZ180Cpu.addHL16Bit(const Value: word);
 begin
     regAF.Flag[H] := ((regHL.Value and $0FFF) + (Value and $0FFF) > $0FFF); // H is set if carry out of bit 11; reset otherwise
     regAF.Flag[C] := ((regHL.Value + Value) > $FFFF);                       // C is set if carry from bit 15; reset otherwise
@@ -1950,7 +1959,7 @@ begin
 end;
 
 // --------------------------------------------------------------------------------
-procedure TZ180Cpu.adcHL16Bit(const Value: word); // inline;
+procedure TZ180Cpu.adcHL16Bit(const Value: word);
 var
     carry: byte;
     tmpHL: dword;
@@ -1968,7 +1977,7 @@ begin
 end;
 
 // --------------------------------------------------------------------------------
-procedure TZ180Cpu.sbcHL16Bit(const Value: word); // inline;
+procedure TZ180Cpu.sbcHL16Bit(const Value: word);
 var
     carry: byte;
     tmpHL: dword;
@@ -1985,7 +1994,7 @@ begin
 end;
 
 // --------------------------------------------------------------------------------
-procedure TZ180Cpu.addIX16Bit(const Value: word); // inline;
+procedure TZ180Cpu.addIX16Bit(const Value: word);
 begin
     regAF.Flag[H] := ((regIX.Value and $0FFF) + (Value and $0FFF) > $0FFF); // H is set if carry out of bit 11; reset otherwise
     regAF.Flag[C] := ((regIX.Value + Value) > $FFFF);                       // C is set if carry from bit 15; reset otherwise
@@ -1994,7 +2003,7 @@ begin
 end;
 
 // --------------------------------------------------------------------------------
-procedure TZ180Cpu.addIY16Bit(const Value: word); // inline;
+procedure TZ180Cpu.addIY16Bit(const Value: word);
 begin
     regAF.Flag[H] := ((regIY.Value and $0FFF) + (Value and $0FFF) > $0FFF); // H is set if carry out of bit 11; reset otherwise
     regAF.Flag[C] := ((regIY.Value + Value) > $FFFF);                       // C is set if carry from bit 15; reset otherwise
@@ -2305,7 +2314,7 @@ begin
                 regAF.Flag[H] := ((((regAF.A and $0F) + (tmpByte and $0F)) and $10) <> $00);
                 regAF.A := (regAF.A + tmpByte);
             end;
-            regAF.Flag[PV] := calcParity(regAF.A);
+            regAF.Flag[PV] := parity[regAF.A];
             regAF.Flag[S] := ((regAF.A and $80) <> $00);
             regAF.Flag[Z] := (regAF.A = $00);
             machineCycles := 2;
@@ -4999,7 +5008,7 @@ begin
             machineCycles := 3;
             clockCycles := 7;
         end;
-        {$ifndef NOTRAP}
+        {$ifdef Z180TRAP}
         else begin
             ioITC.bit[TRAP] := True;  // TRAP Flag in ITC-Register setzen
             ioITC.bit[UFO] := False;  // UFO-Flag loeschen, da TRAP in 2. OP-Code aufgetreten
@@ -5295,7 +5304,7 @@ begin
             machineCycles := 3;
             clockCycles := 7;
         end;
-        {$ifndef NOTRAP}
+        {$ifdef Z180TRAP}
         else begin
             ioITC.bit[TRAP] := True;  // TRAP Flag in ITC-Register setzen
             ioITC.bit[UFO] := False;  // UFO-Flag loeschen, da TRAP in 2. OP-Code aufgetreten
@@ -5544,7 +5553,7 @@ begin
             machineCycles := 7;
             clockCycles := 19;
         end;
-        {$ifndef NOTRAP}
+        {$ifdef Z180TRAP}
         else begin
             ioITC.bit[TRAP] := True;   // TRAP Flag in ITC-Register setzen
             ioITC.bit[UFO] := True;    // UFO-Flag setzen, da TRAP in 3. OP-Code aufgetreten
@@ -5840,7 +5849,7 @@ begin
             machineCycles := 3;
             clockCycles := 7;
         end;
-        {$ifndef NOTRAP}
+        {$ifdef Z180TRAP}
         else begin
             ioITC.bit[TRAP] := True;  // TRAP Flag in ITC-Register setzen
             ioITC.bit[UFO] := False;  // UFO-Flag loeschen, da TRAP in 2. OP-Code aufgetreten
@@ -6089,7 +6098,7 @@ begin
             machineCycles := 7;
             clockCycles := 19;
         end;
-        {$ifndef NOTRAP}
+        {$ifdef Z180TRAP}
         else begin
             ioITC.bit[TRAP] := True;   // TRAP Flag in ITC-Register setzen
             ioITC.bit[UFO] := True;    // UFO-Flag setzen, da TRAP in 3. OP-Code aufgetreten
@@ -6455,7 +6464,7 @@ begin
             memWrite(regHL.Value, tmpByte);
             regAF.Flag[S] := ((tmpByte and $80) <> $00); // S is set if (HL) is negative after operation; reset otherwise
             regAF.Flag[Z] := (tmpByte = $00); // Z is set if (HL) is zero after operation; reset otherwise
-            regAF.Flag[PV] := calcParity(tmpByte); // P/V is set if parity of (HL) is even after operation; reset otherwise
+            regAF.Flag[PV] := parity[tmpByte]; // P/V is set if parity of (HL) is even after operation; reset otherwise
             regAF.Flag[H] := False;
             regAF.Flag[N] := False;
             machineCycles := 8;
@@ -6500,7 +6509,7 @@ begin
             memWrite(regHL.Value, tmpByte);
             regAF.Flag[S] := ((tmpByte and $80) <> $00); // S is set if (HL) is negative after operation; reset otherwise
             regAF.Flag[Z] := (tmpByte = $00); // Z is set if (HL) is zero after operation; reset otherwise
-            regAF.Flag[PV] := calcParity(tmpByte); // P/V is set if parity of (HL) is even after operation; reset otherwise
+            regAF.Flag[PV] := parity[tmpByte]; // P/V is set if parity of (HL) is even after operation; reset otherwise
             regAF.Flag[H] := False;
             regAF.Flag[N] := False;
             machineCycles := 8;
@@ -6525,7 +6534,7 @@ begin
             tmpByte := memRead(regPC.Value);
             Inc(regPC.Value);
             tmpByte := (tmpByte and ioRead($00, regBC.C));
-            regAF.Flag[PV] := calcParity(tmpByte); // P/V is set if parity is even; reset otherwise
+            regAF.Flag[PV] := parity[tmpByte]; // P/V is set if parity is even; reset otherwise
             regAF.Flag[Z] := (tmpByte = $00); // Z is set if the result is zero; reset otherwise
             regAF.Flag[S] := ((tmpByte and $80) <> $00); // S is set if the result is negative; reset otherwise
             regAF.Flag[C] := False;
@@ -6578,7 +6587,7 @@ begin
             Dec(regBC.B);
             regAF.Flag[C] := (regBC.B = $FF); // C is set if a borrow occurs after B-l; reset otherwise
             regAF.Flag[N] := ((tmpByte and $80) <> $00); // N is set if MSB of memData=1; reset otherwise
-            regAF.Flag[PV] := calcParity(regBC.B); // P/V is set if parity in B is even after B-l; reset otherwise
+            regAF.Flag[PV] := parity[regBC.B]; // P/V is set if parity in B is even after B-l; reset otherwise
             regAF.Flag[H] := ((regBC.B and $0F) = $0F); // H is set if a borrow from bit 4 of B occurs after B-l; reset otherwise
             regAF.Flag[Z] := (regBC.B = $00); // Z is set if B=OO after B-l; reset otherwise
             regAF.Flag[S] := ((regBC.B and $80) <> $00); // S is set if B is negative after B-l; reset otherwise
@@ -6593,7 +6602,7 @@ begin
             Dec(regBC.B);
             regAF.Flag[C] := (regBC.B = $FF); // C is set if a borrow occurs after B-l; reset otherwise
             regAF.Flag[N] := ((tmpByte and $80) <> $00); // N is set if MSB of memData=1; reset otherwise
-            regAF.Flag[PV] := calcParity(regBC.B); // P/V is set if parity in B is even after B-l; reset otherwise
+            regAF.Flag[PV] := parity[regBC.B]; // P/V is set if parity in B is even after B-l; reset otherwise
             regAF.Flag[H] := ((regBC.B and $0F) = $0F); // H is set if a borrow from bit 4 of B occurs after B-l; reset otherwise
             regAF.Flag[Z] := (regBC.B = $00); // Z is set if B=OO after B-l; reset otherwise
             regAF.Flag[S] := ((regBC.B and $80) <> $00); // S is set if B is negative after B-l; reset otherwise
@@ -6608,7 +6617,7 @@ begin
             Dec(regBC.B);
             regAF.Flag[C] := (regBC.B = $FF); // C is set if a borrow occurs after B-l; reset otherwise
             regAF.Flag[N] := ((tmpByte and $80) <> $00); // N is set if MSB of memData=1; reset otherwise
-            regAF.Flag[PV] := calcParity(regBC.B); // P/V is set if parity in B is even after B-l; reset otherwise
+            regAF.Flag[PV] := parity[regBC.B]; // P/V is set if parity in B is even after B-l; reset otherwise
             regAF.Flag[H] := ((regBC.B and $0F) = $0F); // H is set if a borrow from bit 4 of B occurs after B-l; reset otherwise
             regAF.Flag[Z] := (regBC.B = $00); // Z is set if B=OO after B-l; reset otherwise
             regAF.Flag[S] := ((regBC.B and $80) <> $00); // S is set if B is negative after B-l; reset otherwise
@@ -6631,7 +6640,7 @@ begin
             Dec(regBC.B);
             regAF.Flag[C] := (regBC.B = $FF); // C is set if a borrow occurs after B-l; reset otherwise
             regAF.Flag[N] := ((tmpByte and $80) <> $00); // N is set if MSB of memData=1; reset otherwise
-            regAF.Flag[PV] := calcParity(regBC.B); // P/V is set if parity in B is even after B-l; reset otherwise
+            regAF.Flag[PV] := parity[regBC.B]; // P/V is set if parity in B is even after B-l; reset otherwise
             regAF.Flag[H] := ((regBC.B and $0F) = $0F); // H is set if a borrow from bit 4 of B occurs after B-l; reset otherwise
             regAF.Flag[Z] := (regBC.B = $00); // Z is set if B=OO after B-l; reset otherwise
             regAF.Flag[S] := ((regBC.B and $80) <> $00); // S is set if B is negative after B-l; reset otherwise
@@ -6878,7 +6887,7 @@ begin
                 clockCycles := 12;
             end;
         end;
-        {$ifndef NOTRAP}
+        {$ifdef Z180TRAP}
         else begin
             ioITC.bit[TRAP] := True;  // TRAP Flag in ITC-Register setzen
             ioITC.bit[UFO] := False;  // UFO-Flag loeschen, da TRAP in 2. OP-Code aufgetreten
