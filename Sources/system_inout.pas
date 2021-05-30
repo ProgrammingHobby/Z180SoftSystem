@@ -48,7 +48,7 @@ var
 
 implementation
 
-uses System_Terminal, System_Memory, System_Fdc, System_Hdc, System_Rtc;
+uses System_Terminal, System_Memory, System_Fdc, System_Hdc, System_Rtc, System_Prt;
 
 // --------------------------------------------------------------------------------
 constructor TSystemInOut.Create;
@@ -112,6 +112,9 @@ begin
         end;
         $A8: begin
             Result := SystemHdc.getDataHigh;
+            end;
+        $DB: begin
+            Result := SystemPrt.getStatus;
         end;
         else begin
             Result := $FF;
@@ -170,6 +173,9 @@ begin
         end;
         $A8: begin
             SystemHdc.setDataHigh(Data);
+            end;
+        $DB: begin
+            SystemPrt.setData(Data);
         end;
         $FF: begin
             SystemMemory.EnableBootRom(False);

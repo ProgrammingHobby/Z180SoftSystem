@@ -134,7 +134,7 @@ implementation
 
 uses UscaleDPI, System_Settings, Cpu_Register, Cpu_Io_Register, Memory_Editor, Memory_Settings,
     System_Memory, System_InOut, Z180_CPU, System_Terminal, System_Fdc, Fdd_Settings, Terminal_Settings,
-    About_Window, System_Hdc, Hdd_Settings, Hardware_Info, System_Rtc, Types;
+    About_Window, System_Hdc, Hdd_Settings, Hardware_Info, System_Rtc, System_Prt, Types;
 
 { TformMainWindow }
 
@@ -171,6 +171,7 @@ begin
     FreeAndNil(SystemFdc);
     FreeAndNil(SystemHdc);
     FreeAndNil(SystemRtc);
+    FreeAndNil(SystemPrt);
     FreeAndNil(SystemMemory);
     FreeAndNil(SystemTerminal);
     SystemSettings.saveFormState(TForm(self));
@@ -222,6 +223,7 @@ begin
     SystemHdc := TSystemHdc.Create(panelHdd);
     SystemTerminal := TSystemTerminal.Create(panelSystemTerminal, False);
     SystemRtc := TSystemRtc.Create;
+    SystemPrt := TSystemPrt.Create;
     SystemInOut := TSystemInOut.Create;
     Z180Cpu := TZ180Cpu.Create;
 
