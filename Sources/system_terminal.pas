@@ -83,8 +83,6 @@ type
         monochromTerminal: boolean;
 
     protected // Attribute
-        procedure timerFlashTimer(Sender: TObject);
-        procedure timerTerminalPageRefreshTimer(Sender: TObject);
 
     public    // Attribute
 
@@ -123,6 +121,8 @@ type
 
     protected // Methoden
         procedure Execute; override;
+        procedure timerFlashTimer(Sender: TObject);
+        procedure timerTerminalPageRefreshTimer(Sender: TObject);
 
     public    // Methoden
         procedure terminalReset;
@@ -242,12 +242,12 @@ begin
     setCharSize(SystemSettings.ReadInteger('Terminal', 'CharacterSize', 10));
     setColorType(SystemSettings.ReadInteger('Terminal', 'ColorType', 0));
 
-    timerFlash := TTimer.Create(terminalPanel);
+    timerFlash := TTimer.Create(nil);
     timerFlash.Interval := 500;
     timerFlash.OnTimer := @timerFlashTimer;
     timerFlash.Enabled := False;
 
-    timerTerminalPageRefresh := TTimer.Create(terminalPanel);
+    timerTerminalPageRefresh := TTimer.Create(nil);
     timerTerminalPageRefresh.Interval := 50;
     timerTerminalPageRefresh.OnTimer := @timerTerminalPageRefreshTimer;
     timerTerminalPageRefresh.Enabled := False;
@@ -262,8 +262,10 @@ destructor TSystemTerminal.Destroy;
 begin
     timerFlash.Enabled := False;
     timerFlash.OnTimer := nil;
+    FreeAndNil(timerFlash);
     timerTerminalPageRefresh.Enabled := False;
     timerTerminalPageRefresh.OnTimer := nil;
+    FreeAndNil(timerTerminalPageRefresh);
     if (enableTerminalLogging) then begin
         CloseFile(loggingFile);
     end;
