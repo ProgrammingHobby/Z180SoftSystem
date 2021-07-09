@@ -194,7 +194,7 @@ begin
     inherited Create;
     timerHddStatus := TTimer.Create(nil);
     timerHddStatus.Enabled := False;
-    timerHddStatus.Interval := 50;
+    timerHddStatus.Interval := 30;
     timerHddStatus.OnTimer := @setHddOffState;
     hardDrive.Ready := False;
     hardDrive.HddStatus := panel;
@@ -320,6 +320,7 @@ begin
         dataCount := 0;
         dataMode := SECTOR_READ;
         setHddReadState;
+        timerHddStatus.Enabled := True;
     except
         hdcStatus.bit[ERR] := True;
         hdcError.bit[AMNF] := True;
@@ -336,6 +337,7 @@ begin
     dataCount := 0;
     dataMode := BUFFER_READ;
     setHddReadState;
+    timerHddStatus.Enabled := True;
 end;
 
 // --------------------------------------------------------------------------------
@@ -393,7 +395,6 @@ begin
     dataBuffer[122] := iddoubleword.high.low;
     dataBuffer[123] := iddoubleword.high.high;
     dataMode := ID_READ;
-    setHddReadState;
 end;
 
 // --------------------------------------------------------------------------------
@@ -410,7 +411,6 @@ begin
             end;
         end;
     end;
-    timerHddStatus.Enabled := True;
 end;
 
 // --------------------------------------------------------------------------------
@@ -433,6 +433,7 @@ begin
     dataCount := 0;
     dataMode := SECTOR_WRITE;
     setHddWriteState;
+    timerHddStatus.Enabled := True;
 end;
 
 // --------------------------------------------------------------------------------
@@ -443,6 +444,7 @@ begin
     dataCount := 0;
     dataMode := BUFFER_WRITE;
     setHddWriteState;
+    timerHddStatus.Enabled := True;
 end;
 
 // --------------------------------------------------------------------------------
@@ -469,7 +471,6 @@ begin
             end;
         end;
     end;
-    timerHddStatus.Enabled := True;
 end;
 
 // --------------------------------------------------------------------------------
@@ -585,7 +586,6 @@ end;
 // --------------------------------------------------------------------------------
 procedure TSystemHdc.setDataLow(Value: byte);
 begin
-    timerHddStatus.Enabled := True;
     dataBuffer[dataCount] := Value;
     Inc(dataCount);
     if (not enable8BitDataTransfer) then begin
@@ -688,7 +688,6 @@ end;
 // --------------------------------------------------------------------------------
 function TSystemHdc.getDataLow: byte;
 begin
-    timerHddStatus.Enabled := True;
     Result := dataBuffer[dataCount];
     Inc(dataCount);
     if (not enable8BitDataTransfer) then begin

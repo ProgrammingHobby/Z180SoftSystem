@@ -169,7 +169,7 @@ begin
     inherited Create;
     timerFddStatus := TTimer.Create(nil);
     timerFddStatus.Enabled := False;
-    timerFddStatus.Interval := 50;
+    timerFddStatus.Interval := 30;
     timerFddStatus.OnTimer := @setFddOffState;
     resetFloppyDrive.Size := 0;
     resetFloppyDrive.Changed := False;
@@ -317,12 +317,13 @@ begin
             Reset(actualFloppyDrive^.ImageData, actualFloppyDrive^.SectorBytes);
             Seek(actualFloppyDrive^.ImageData, filePos);
             BlockRead(actualFloppyDrive^.ImageData, dataBuffer[0], 1);
-            CloseFile(actualFloppyDrive^.ImageData); 
-        fdcStatus.bit[DRQ] := True;
-        extStatus.bit[DRQ] := True;
-        dataCount := 0;
-        dataMode := SECTOR_READ;
-        setFddReadState;
+            CloseFile(actualFloppyDrive^.ImageData);
+            fdcStatus.bit[DRQ] := True;
+            extStatus.bit[DRQ] := True;
+            dataCount := 0;
+            dataMode := SECTOR_READ;
+            setFddReadState;
+            timerFddStatus.Enabled := True;
         except
             extStatus.bit[INTQ] := True;
             fdcStatus.bit[BUSY] := False;
@@ -347,7 +348,6 @@ begin
         dataMode := NONE;
         isMultiSectorCommand := False;
     end;
-    timerFddStatus.Enabled := True;
 end;
 
 // --------------------------------------------------------------------------------
@@ -366,6 +366,7 @@ begin
         extStatus.bit[DRQ] := True;
         dataMode := SECTOR_WRITE;
         setFddWriteState;
+        timerFddStatus.Enabled := True;
     end;
 end;
 
@@ -380,22 +381,21 @@ begin
         Seek(actualFloppyDrive^.ImageData, filePos);
         BlockWrite(actualFloppyDrive^.ImageData, dataBuffer[0], 1);
         CloseFile(actualFloppyDrive^.ImageData);
-    if ((isMultiSectorCommand) and (fdcSector < actualFloppyDrive^.Sectors)) then begin
-        Inc(fdcSector);
-        prepareWriteSectors;
-    end
-    else begin
-        extStatus.bit[INTQ] := True;
-        fdcStatus.bit[BUSY] := False;
-        dataMode := NONE;
-        isMultiSectorCommand := False;
-    end;
+        if ((isMultiSectorCommand) and (fdcSector < actualFloppyDrive^.Sectors)) then begin
+            Inc(fdcSector);
+            prepareWriteSectors;
+        end
+        else begin
+            extStatus.bit[INTQ] := True;
+            fdcStatus.bit[BUSY] := False;
+            dataMode := NONE;
+            isMultiSectorCommand := False;
+        end;
     except
         extStatus.bit[INTQ] := True;
         fdcStatus.bit[BUSY] := False;
         fdcStatus.bit[CRCERROR] := True;
     end;
-    timerFddStatus.Enabled := True;
 end;
 
 // --------------------------------------------------------------------------------
@@ -632,7 +632,6 @@ procedure TSystemFdc.setData(Data: byte);
 begin
     case (dataMode) of
         SECTOR_WRITE: begin
-            timerFddStatus.Enabled := True;
             dataBuffer[dataCount] := Data;
             Inc(dataCount);
             if (dataCount >= actualFloppyDrive^.SectorBytes) then begin
@@ -817,7 +816,6 @@ function TSystemFdc.getData: byte;
 begin
     case (dataMode) of
         SECTOR_READ: begin
-            timerFddStatus.Enabled := True;
             Result := dataBuffer[dataCount];
             Inc(dataCount);
             if (dataCount >= actualFloppyDrive^.SectorBytes) then begin
