@@ -5,7 +5,7 @@ unit Z180_CPU;
 {$coperators off}
 {$rangechecks off}
 
-{$define Z180TRAP}
+//{$define Z180TRAP}
 
 interface
 
@@ -468,7 +468,7 @@ uses
 // --------------------------------------------------------------------------------
 constructor TZ180Cpu.Create;
 var
-    value, data: byte;
+    Value, Data: byte;
 begin
     inherited Create;
     asciClockCount0 := 0;
@@ -493,12 +493,12 @@ begin
     ioWaitCycles := 0;
 
     // Initialisieren des Parity-Arrays
-    for value:=0 to 255 do begin
-        data:=value;
-       data := data xor data shr 4;
-    data := data xor data shr 2;
-    data := data xor data shr 1;
-    parity[value] := ((data and $01) = $00);
+    for Value := 0 to 255 do begin
+        Data := Value;
+        Data := Data xor Data shr 4;
+        Data := Data xor Data shr 2;
+        Data := Data xor Data shr 1;
+        parity[Value] := ((Data and $01) = $00);
     end;
 end;
 
@@ -1169,7 +1169,7 @@ begin
                 systemmemory.Write(ioDAR0.Value, systemmemory.Read(ioSAR0.Value));
                 clockCycles := clockCycles + (2 * memWaitCycles) + 6;
                 Inc(ioSAR0.Value);
-                Inc(ioBCR0.Value);
+                Dec(ioBCR0.Value);
                 dreq0 := False;
             end;
         end;
@@ -1969,7 +1969,6 @@ begin
     regAF.Flag[S] := ((tmpHL and $8000) <> $00);  // S is set if result is negative; reset otherwise
     regAF.Flag[Z] := (tmpHL = $0000);  // Z is set if result is zero; reset otherwise
     regAF.Flag[C] := ((tmpHL and $10000) <> $00);  // C is set if carry from bit 15; reset otherwise
-    //regAF.Flag[PV] := (((regHL.Value xor ((not Value) and $FFFF)) and (regHL.Value xor tmpHL) and $8000) <> $00);  // P/V is set if overflow; reset otherwise
     regAF.Flag[PV] := (((regHL.Value xor (not Value)) and (regHL.Value xor tmpHL) and $8000) <> $00);  // P/V is set if overflow; reset otherwise
     regAF.Flag[H] := ((((regHL.Value and $0FFF) + (Value and $0FFF) + carry) and $1000) <> $00);  // H is set if carry out of bit 11; reset otherwise
     regAF.Flag[N] := False;
